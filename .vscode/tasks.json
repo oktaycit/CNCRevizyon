@@ -1,0 +1,113 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "AI: Kod Yazdır (CNC)",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/AI/orchestration && python3 cnc_orchestrator.py --task code --custom \"${input:userTask}\"",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "AI: Tasarım Önerisi Al",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/AI/orchestration && python3 cnc_orchestrator.py --task design --custom \"${input:userTask}\"",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "AI: Optimizasyon Yap",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/AI/orchestration && python3 cnc_orchestrator.py --task optimize --custom \"${input:userTask}\"",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "AI: Hata Ayıkla",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/AI/orchestration && python3 cnc_orchestrator.py --task debug --custom \"${input:userTask}\"",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "AI: PLC/EtherCAT Ayarları",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/AI/orchestration && python3 cnc_orchestrator.py --task plc --custom \"${input:userTask}\"",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "AI: E-Cam Profili Tasarla",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/AI/orchestration && python3 cnc_orchestrator.py --task cam --custom \"${input:userTask}\"",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "AI: G-Kod Programı Oluştur",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/AI/orchestration && python3 cnc_orchestrator.py --task gcode --custom \"${input:userTask}\"",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "AI: Güvenlik Analizi",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/AI/orchestration && python3 cnc_orchestrator.py --task safety --custom \"${input:userTask}\"",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "AI: Modelleri Karşılaştır",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/AI/orchestration && python3 cnc_orchestrator.py --task compare --custom \"${input:userTask}\"",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "AI: Seçili Metni Analiz Et",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/AI/orchestration && python3 cnc_orchestrator.py --task code --custom \"${selectedText}\"",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "enableContextMenu": true
+    }
+  ],
+  "inputs": [
+    {
+      "id": "userTask",
+      "type": "promptString",
+      "description": "AI'den istediğiniz görevi yazın:"
+    }
+  ]
+}

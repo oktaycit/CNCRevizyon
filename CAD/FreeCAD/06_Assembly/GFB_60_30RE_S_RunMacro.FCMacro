@@ -1,0 +1,40 @@
+# -*- coding: utf-8 -*-
+"""
+GFB-60/30RE-S Makro
+FreeCAD için doğrudan çalıştırılabilir makro
+Bu dosyayı FreeCAD'de açın ve çalıştırın (F5)
+"""
+
+import FreeCAD as App
+import FreeCADGui as Gui
+import sys
+import os
+
+# Model script yolunu ekle
+script_dir = os.path.dirname(App.ActiveDocument.FileName) if App.ActiveDocument else os.path.expanduser("~/Projeler/CNCRevizyon/CAD/FreeCAD/06_Assembly")
+model_script = os.path.join(script_dir, "GFB_60_30RE_S_Model.py")
+
+print("=" * 60)
+print("GFB-60/30RE-S HİBRİT SİSTEM MODELİ")
+print("=" * 60)
+
+try:
+    # Model scriptini yükle
+    print(f"Model yükleniyor: {model_script}")
+    exec(open(model_script).read())
+    
+    # Makine montajını oluştur
+    print("\nMakine montajı oluşturuluyor...")
+    doc = create_complete_machine()
+    
+    print("\n" + "=" * 60)
+    print("MONTAJ TAMAMLANDI!")
+    print("=" * 60)
+    print("\nSimülasyon için Python konsolunda şunu çalıştırın:")
+    print("  run_lamine_cutting_simulation(App.ActiveDocument, MachineParameters(), 30)")
+    print("=" * 60)
+    
+except Exception as e:
+    print(f"HATA: {e}")
+    import traceback
+    traceback.print_exc()

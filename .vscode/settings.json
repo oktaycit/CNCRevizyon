@@ -1,0 +1,12 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "editor.formatOnSave": true,
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "files.associations": {
+    "*.fcstd": "xml",
+    "*.step": "text",
+    "*.stp": "text"
+  }
+}

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module fritzingVersion="0.4.3b.27.05.5339" date="Fri Apr 05 10:24:09 2026">
+  <version>1.0</version>
+  <author>Lisec GFB-60/30RE CNC Revizyon Projesi</author>
+  <title>Leuze IS 218 Inductive Sensor</title>
+  <label>S@</label>
+  <description>Leuze IS 218 Inductive Sensor with M12 4-pin connector for CNC limit/home detection</description>
+  <tags>CNC, inductive sensor, Leuze, IS 218, M12 connector, limit switch, home sensor</tags>
+  
+  <packageInformation>
+    <package name="M12-4pin" type="custom" />
+  </packageInformation>
+  
+  <views>
+    <breadboardView>
+      <layers image="Leuze_IS218_breadboard.svg" layerId="breadboard" />
+    </breadboardView>
+    <schematicView>
+      <layers image="Leuze_IS218_schematic.svg" layerId="schematic" />
+    </schematicView>
+    <pcbView>
+      <layers image="Leuze_IS218_pcb.svg" layerId="copper0" />
+    </pcbView>
+  </views>
+  
+  <connectors>
+    <connector id="connector0" name="1" type="male">
+      <description>+24V DC (Brown)</description>
+      <views>
+        <breadboardView>
+          <p svgId="connector0pin" layer="breadboard" terminalId="connector0terminal" />
+        </breadboardView>
+        <schematicView>
+          <p svgId="connector0pin" layer="schematic" terminalId="connector0terminal" />
+        </schematicView>
+        <pcbView>
+          <p svgId="connector0pin" layer="copper0" terminalId="connector0terminal" />
+        </pcbView>
+      </views>
+    </connector>
+    
+    <connector id="connector1" name="2" type="male">
+      <description>Output PNP (White)</description>
+      <views>
+        <breadboardView>
+          <p svgId="connector1pin" layer="breadboard" terminalId="connector1terminal" />
+        </breadboardView>
+        <schematicView>
+          <p svgId="connector1pin" layer="schematic" terminalId="connector1terminal" />
+        </schematicView>
+        <pcbView>
+          <p svgId="connector1pin" layer="copper0" terminalId="connector1terminal" />
+        </pcbView>
+      </views>
+    </connector>
+    
+    <connector id="connector2" name="3" type="male">
+      <description>0V DC (Blue)</description>
+      <views>
+        <breadboardView>
+          <p svgId="connector2pin" layer="breadboard" terminalId="connector2terminal" />
+        </breadboardView>
+        <schematicView>
+          <p svgId="connector2pin" layer="schematic" terminalId="connector2terminal" />
+        </schematicView>
+        <pcbView>
+          <p svgId="connector2pin" layer="copper0" terminalId="connector2terminal" />
+        </pcbView>
+      </views>
+    </connector>
+    
+    <connector id="connector3" name="4" type="male">
+      <description>NO/NC Select (Black)</description>
+      <views>
+        <breadboardView>
+          <p svgId="connector3pin" layer="breadboard" terminalId="connector3terminal" />
+        </breadboardView>
+        <schematicView>
+          <p svgId="connector3pin" layer="schematic" terminalId="connector3terminal" />
+        </schematicView>
+        <pcbView>
+          <p svgId="connector3pin" layer="copper0" terminalId="connector3terminal" />
+        </pcbView>
+      </views>
+    </connector>
+  </connectors>
+</module>

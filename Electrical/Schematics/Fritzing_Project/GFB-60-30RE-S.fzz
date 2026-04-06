@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fritzing version="0.4.3b.27.05.5339" date="Fri Apr 05 10:17:05 2026">
+  <model id="GFB-60-30RE-S">
+    <title>GFB-60/30RE-S CNC Revizyon Projesi Elektrik Şeması</title>
+    <author>Lisec GFB-60/30RE Cam Kesme Makinesi</author>
+    <description>Delta ASDA-A3-E EtherCAT Servo Sistem, Leuze IS 218 Sensörler, R1-EC Uzak I/O Sistemi</description>
+    <tags>CNC, servo, EtherCAT, inductive sensor, I/O module</tags>
+  </model>
+  <parts>
+    <!-- Power Supply -->
+    <part id="power_24v" label="P+" title="+24V" libname="Power" libversion="1.0" modelfix="true" type="power" />
+    <part id="ground" label="GND" title="GND" libname="Power" libversion="1.0" modelfix="true" type="ground" />
+    
+    <!-- Delta NC300 Controller -->
+    <part id="nc300" label="U3" title="Delta NC300" libname="Custom" libversion="1.0" modelfix="true" type="controller" />
+    
+    <!-- Delta ASDA-A3-E Servo Drivers (we'll use 3 for X, Y, Z axes) -->
+    <part id="servo_x" label="U1" title="Delta ASDA-A3-E X" libname="Custom" libversion="1.0" modelfix="true" type="servo_driver" />
+    <part id="servo_y" label="U4" title="Delta ASDA-A3-E Y" libname="Custom" libversion="1.0" modelfix="true" type="servo_driver" />
+    <part id="servo_z" label="U5" title="Delta ASDA-A3-E Z" libname="Custom" libversion="1.0" modelfix="true" type="servo_driver" />
+    
+    <!-- R1-EC I/O Modules (we'll use 2 modules for all inputs) -->
+    <part id="io_module_1" label="U2" title="R1-EC I/O Module 1" libname="Custom" libversion="1.0" modelfix="true" type="io_module" />
+    <part id="io_module_2" label="U6" title="R1-EC I/O Module 2" libname="Custom" libversion="1.0" modelfix="true" type="io_module" />
+    
+    <!-- Leuze IS 218 Sensors (12 sensors total based on documentation) -->
+    <part id="sensor_x_plus" label="S1" title="Leuze IS 218 X+LIMIT" libname="Custom" libversion="1.0" modelfix="true" type="sensor" />
+    <part id="sensor_x_minus" label="S2" title="Leuze IS 218 X-LIMIT" libname="Custom" libversion="1.0" modelfix="true" type="sensor" />
+    <part id="sensor_x_home" label="S3" title="Leuze IS 218 X-HOME" libname="Custom" libversion="1.0" modelfix="true" type="sensor" />
+    <part id="sensor_y_plus" label="S4" title="Leuze IS 218 Y+LIMIT" libname="Custom" libversion="1.0" modelfix="true" type="sensor" />
+    <part id="sensor_y_minus" label="S5" title="Leuze IS 218 Y-LIMIT" libname="Custom" libversion="1.0" modelfix="true" type="sensor" />
+    <part id="sensor_y_home" label="S6" title="Leuze IS 218 Y-HOME" libname="Custom" libversion="1.0" modelfix="true" type="sensor" />
+    <part id="sensor_z_plus" label="S7" title="Leuze IS 218 Z+LIMIT" libname="Custom" libversion="1.0" modelfix="true" type="sensor" />
+    <part id="sensor_z_home" label="S8" title="Leuze IS 218 Z-HOME" libname="Custom" libversion="1.0" modelfix="true" type="sensor" />
+    <part id="sensor_alt_plus" label="S9" title="Leuze IS 218 ALT+LIM" libname="Custom" libversion="1.0" modelfix="true" type="sensor" />
+    <part id="sensor_alt_minus" label="S10" title="Leuze IS 218 ALT-LIM" libname="Custom" libversion="1.0" modelfix="true" type="sensor" />
+    <part id="sensor_alt_home" label="S11" title="Leuze IS 218 ALT-HOM" libname="Custom" libversion="1.0" modelfix="true" type="sensor" />
+    <part id="sensor_estop" label="S12" title="Leuze IS 218 E-STOP" libname="Custom" libversion="1.0" modelfix="true" type="sensor" />
+  </parts>
+  <connections>
+    <!-- Power Connections -->
+    <connection from="power_24v" to="servo_x" pin="2" />
+    <connection from="power_24v" to="servo_y" pin="2" />
+    <connection from="power_24v" to="servo_z" pin="2" />
+    <connection from="power_24v" to="io_module_1" pin="2" />
+    <connection from="power_24v" to="io_module_2" pin="2" />
+    <connection from="power_24v" to="sensor_x_plus" pin="1" />
+    <connection from="power_24v" to="sensor_x_minus" pin="1" />
+    <connection from="power_24v" to="sensor_x_home" pin="1" />
+    <connection from="power_24v" to="sensor_y_plus" pin="1" />
+    <connection from="power_24v" to="sensor_y_minus" pin="1" />
+    <connection from="power_24v" to="sensor_y_home" pin="1" />
+    <connection from="power_24v" to="sensor_z_plus" pin="1" />
+    <connection from="power_24v" to="sensor_z_home" pin="1" />
+    <connection from="power_24v" to="sensor_alt_plus" pin="1" />
+    <connection from="power_24v" to="sensor_alt_minus" pin="1" />
+    <connection from="power_24v" to="sensor_alt_home" pin="1" />
+    <connection from="power_24v" to="sensor_estop" pin="1" />
+    
+    <!-- Ground Connections -->
+    <connection from="ground" to="servo_x" pin="3" />
+    <connection from="ground" to="servo_y" pin="3" />
+    <connection from="ground" to="servo_z" pin="3" />
+    <connection from="ground" to="io_module_1" pin="3" />
+    <connection from="ground" to="io_module_2" pin="3" />
+    <connection from="ground" to="sensor_x_plus" pin="3" />
+    <connection from="ground" to="sensor_x_minus" pin="3" />
+    <connection from="ground" to="sensor_x_home" pin="3" />
+    <connection from="ground" to="sensor_y_plus" pin="3" />
+    <connection from="ground" to="sensor_y_minus" pin="3" />
+    <connection from="ground" to="sensor_y_home" pin="3" />
+    <connection from="ground" to="sensor_z_plus" pin="3" />
+    <connection from="ground" to="sensor_z_home" pin="3" />
+    <connection from="ground" to="sensor_alt_plus" pin="3" />
+    <connection from="ground" to="sensor_alt_minus" pin="3" />
+    <connection from="ground" to="sensor_alt_home" pin="3" />
+    <connection from="ground" to="sensor_estop" pin="3" />
+    
+    <!-- EtherCAT Network -->
+    <connection from="nc300" to="servo_x" pin="COM1" pin2="4" />
+    <connection from="servo_x" to="io_module_1" pin="5" pin2="COM2" />
+    <connection from="io_module_1" to="servo_y" pin="COM1" pin2="4" />
+    <connection from="servo_y" to="io_module_2" pin="5" pin2="COM2" />
+    <connection from="io_module_2" to="servo_z" pin="COM1" pin2="4" />
+    <connection from="servo_z" to="nc300" pin="5" pin2="COM2" />
+    
+    <!-- Sensor Connections to I/O Modules -->
+    <!-- Module 1 Inputs -->
+    <connection from="sensor_x_plus" to="io_module_1" pin="2" pin2="IN1" />
+    <connection from="sensor_x_minus" to="io_module_1" pin="2" pin2="IN2" />
+    <connection from="sensor_x_home" to="io_module_1" pin="2" pin2="IN3" />
+    <connection from="sensor_y_plus" to="io_module_1" pin="2" pin2="IN4" />
+    <connection from="sensor_y_minus" to="io_module_1" pin="2" pin2="IN5" />
+    <connection from="sensor_y_home" to="io_module_1" pin="2" pin2="IN6" />
+    <connection from="sensor_z_plus" to="io_module_1" pin="2" pin2="IN7" />
+    <connection from="sensor_z_home" to="io_module_1" pin="2" pin2="IN8" />
+    
+    <!-- Module 2 Inputs -->
+    <connection from="sensor_alt_plus" to="io_module_2" pin="2" pin2="IN1" />
+    <connection from="sensor_alt_minus" to="io_module_2" pin="2" pin2="IN2" />
+    <connection from="sensor_alt_home" to="io_module_2" pin="2" pin2="IN3" />
+    <connection from="sensor_estop" to="io_module_2" pin="2" pin2="IN4" />
+    
+    <!-- Control Signals -->
+    <connection from="nc300" to="servo_x" pin="DO1" pin2="6" />
+    <connection from="nc300" to="servo_y" pin="DO2" pin2="6" />
+    <connection from="nc300" to="servo_z" pin="DO3" pin2="6" />
+    
+    <!-- Feedback Signals -->
+    <connection from="servo_x" to="nc300" pin="7" pin2="DI1" />
+    <connection from="servo_y" to="nc300" pin="7" pin2="DI2" />
+    <connection from="servo_z" to="nc300" pin="7" pin2="DI3" />
+  </connections>
+</fritzing>

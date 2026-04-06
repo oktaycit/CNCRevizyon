@@ -1,0 +1,26 @@
+{
+  "cline.apiProvider": "openai-compatible",
+  "cline.apiEndpoint": "https://coding-intl.dashscope.aliyuncs.com/v1",
+  "cline.apiKey": "sk-sp-1dfff295506a4cbba9c3745dd54e5796",
+  "cline.modelId": "qwen3.5-plus",
+  
+  "_comment": "Kullanılabilir diğer modeller:",
+  "_models": {
+    "qwen": [
+      "qwen3.5-plus",
+      "qwen3-max-2026-01-23",
+      "qwen3-coder-next",
+      "qwen3-coder-plus"
+    ],
+    "zhipu": [
+      "glm-5",
+      "glm-4.7"
+    ],
+    "kimi": [
+      "kimi-k2.5"
+    ],
+    "minimax": [
+      "MiniMax-M2.5"
+    ]
+  }
+}

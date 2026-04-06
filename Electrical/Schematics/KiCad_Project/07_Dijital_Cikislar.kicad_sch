@@ -1,0 +1,28 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "10177777-7777-4777-8777-777777777777")
+	(paper "A3")
+	(title_block
+		(title "07 Dijital Cikislar ve Aktuatorler")
+		(company "CNCRevizyon")
+		(rev "3.0")
+		(date "2026-04-05")
+	)
+	(lib_symbols)
+	(text "07 - Dijital Cikislar ve Aktuatorler" (exclude_from_sim no) (at 24 20 0)
+		(effects (font (size 2 2)) (justify left bottom))
+		(uuid "1fd7ee66-5d85-42ad-ba00-fd0194d30e14")
+	)
+	(text "On tanimli cikislar: %QX0.0 SERVO_ENABLE, %QX0.1 VACUUM_PUMP, %QX0.4 WARNING_LIGHT, %QX0.5 BUZZER, %QX0.7 BREAKER_ENABLE" (exclude_from_sim no) (at 24 30 0)
+		(effects (font (size 1.27 1.27)) (justify left top))
+		(uuid "4663f588-0529-4d59-b9bb-b19102d46f9f")
+	)
+	(sheet_instances
+		(path "/"
+			(page "8")
+		)
+	)
+	(embedded_fonts no)
+)

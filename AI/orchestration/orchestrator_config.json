@@ -1,0 +1,26 @@
+{
+  "api_key": "sk-sp-1dfff295506a4cbba9c3745dd54e5796",
+  "api_endpoint": "https://coding-intl.dashscope.aliyuncs.com/v1",
+  "models": [
+    {
+      "model_id": "qwen3.5-plus",
+      "temperature": 0.7,
+      "max_tokens": 2048,
+      "system_prompt": "Sen yardımsever bir AI asistansısın."
+    },
+    {
+      "model_id": "qwen3-max-2026-01-23",
+      "temperature": 0.7,
+      "max_tokens": 2048,
+      "system_prompt": "Sen yardımsever bir AI asistansısın."
+    },
+    {
+      "model_id": "qwen3-coder-plus",
+      "temperature": 0.3,
+      "max_tokens": 4096,
+      "system_prompt": "Sen uzman bir yazılım geliştirme asistanısın. Kod yazma ve açıklama konusunda uzmansın."
+    }
+  ],
+  "default_mode": "parallel",
+  "timeout_seconds": 60
+}

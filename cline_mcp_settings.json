@@ -1,0 +1,14 @@
+{
+    "mcpServers": {
+        "cnc-ai-orchestrator": {
+            "command": "python3.14",
+            "args": [
+                "/Users/oktaycit/Projeler/CNCRevizyon/AI/orchestration/mcp_server.py"
+            ],
+            "cwd": "/Users/oktaycit/Projeler/CNCRevizyon/AI/orchestration",
+            "env": {},
+            "disabled": false,
+            "autoApprove": []
+        }
+    }
+}

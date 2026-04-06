@@ -1,0 +1,7 @@
+# CNC AI Orchestrator Dependencies
+
+# HTTP client for async requests
+aiohttp>=3.9.0
+
+# MCP Server (VS Code Cline entegrasyonu için)
+mcp[cli]>=1.0.0

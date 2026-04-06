@@ -1,0 +1,28 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "eee55555-5555-4555-8555-555555555555")
+	(paper "A3")
+	(title_block
+		(title "05 R1-EC Bus Coupler ve I/O Modulleri")
+		(company "CNCRevizyon")
+		(rev "3.0")
+		(date "2026-04-05")
+	)
+	(lib_symbols)
+	(text "05 - R1-EC Bus Coupler ve I/O Modulleri" (exclude_from_sim no) (at 24 20 0)
+		(effects (font (size 2 2)) (justify left bottom))
+		(uuid "3fef6fcb-59d8-4816-a44c-5803ae4d3d0c")
+	)
+	(text "Plan:\n- R1-EC bus coupler\n- DI: R1-EC0902D x3\n- DO: R1-EC0902O x3\n- EtherCAT node konumu ve kanal gruplari" (exclude_from_sim no) (at 24 34 0)
+		(effects (font (size 1.27 1.27)) (justify left top))
+		(uuid "9f3b2d0c-b42d-449d-8f1c-72485bd7a0f8")
+	)
+	(sheet_instances
+		(path "/"
+			(page "6")
+		)
+	)
+	(embedded_fonts no)
+)

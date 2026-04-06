@@ -1,0 +1,42 @@
+[
+    {
+        "key": "ctrl+shift+a",
+        "command": "workbench.action.tasks.runTask",
+        "args": "AI: Kod Yazdır (CNC)"
+    },
+    {
+        "key": "ctrl+shift+d",
+        "command": "workbench.action.tasks.runTask",
+        "args": "AI: Hata Ayıkla"
+    },
+    {
+        "key": "ctrl+shift+o",
+        "command": "workbench.action.tasks.runTask",
+        "args": "AI: Optimizasyon Yap"
+    },
+    {
+        "key": "ctrl+shift+t",
+        "command": "workbench.action.tasks.runTask",
+        "args": "AI: Tasarım Önerisi Al"
+    },
+    {
+        "key": "ctrl+shift+p",
+        "command": "workbench.action.tasks.runTask",
+        "args": "AI: PLC/EtherCAT Ayarları"
+    },
+    {
+        "key": "ctrl+shift+e",
+        "command": "workbench.action.tasks.runTask",
+        "args": "AI: E-Cam Profili Tasarla"
+    },
+    {
+        "key": "ctrl+shift+g",
+        "command": "workbench.action.tasks.runTask",
+        "args": "AI: G-Kod Programı Oluştur"
+    },
+    {
+        "key": "ctrl+shift+s",
+        "command": "workbench.action.tasks.runTask",
+        "args": "AI: Güvenlik Analizi"
+    }
+]
