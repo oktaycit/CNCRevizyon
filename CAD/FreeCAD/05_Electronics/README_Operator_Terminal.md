@@ -2,6 +2,9 @@
 
 **DOP-110CS HMI + R1-EC Uzak I/O Entegrasyonu**
 
+**Doküman Versiyonu:** 2.0  
+**Güncelleme:** ✅ Elektriksel Bağlantılar Eklendi
+
 ---
 
 ## 📋 Genel Bilgi
@@ -88,6 +91,18 @@ Bu FreeCAD modeli, LiSEC GFB-60/30RE cam kesim makinesinin operatör kontrol ter
 | `IP65_Vent_Filter.stp` | Havalandırma filtresi | ~60 KB |
 | `Operator_Terminal_Complete.stp` | Tam montaj | ~300 KB |
 
+### Elektriksel Export Dosyaları (CSV + JSON)
+
+| Dosya | Açıklama | İçerik |
+|-------|----------|--------|
+| `Wire_Connections.csv` | Tüm kablo bağlantıları | Wire ID, From, To, Cable Type, Kesit, Renk, Uzunluk |
+| `Terminal_Blocks.csv` | Terminal blokları | Terminal ID, Tip, Kutup, Voltaj, Akım, Tork |
+| `Device_List.csv` | Cihaz listesi | Device ID, Tip, Model, Güç, Voltaj, Lokasyon |
+| `BOM.csv` | Malzeme listesi | Cihazlar, Terminaller, Kablolar (toplu) |
+| `Electrical_Data.json` | Tüm veriler | JSON formatında tüm elektriksel data |
+| `Connection_Matrix.csv` | From/To matrisi | Bağlantı matrisi (kablo bazlı) |
+| `Cable_Schedule.csv` | Kablo programı | Güzergah bazında kablo özeti |
+
 ---
 
 ## 🔧 Montaj Talimatları
@@ -114,6 +129,7 @@ Bu FreeCAD modeli, LiSEC GFB-60/30RE cam kesim makinesinin operatör kontrol ter
 ```
 
 **Kesim Toleransları:**
+
 - Cutout: +0.5/-0 mm (HMI sıkı oturmalı)
 - Montaj delikleri: Ø4.5 ±0.1 mm
 - Köşe radyusları: R3 max
@@ -136,6 +152,7 @@ Bu FreeCAD modeli, LiSEC GFB-60/30RE cam kesim makinesinin operatör kontrol ter
 ```
 
 **Montaj Adımları:**
+
 1. DIN ray plakasını kutu tabanına 4x M5 vida ile sabitle
 2. R1-EC01 Bus Coupler'ı DIN rayın sol tarafına tak
 3. R1-EC0902D (DI modülü) ve R1-EC0902O (DO modülü) ekle
@@ -166,6 +183,7 @@ Bu FreeCAD modeli, LiSEC GFB-60/30RE cam kesim makinesinin operatör kontrol ter
 ```
 
 **Montaj Adımları:**
+
 1. HMI'yi panel cutout'a ön taraftan yerleştir
 2. 4 montaj klipsini köşelere tak ve sık
 3. Panel kalınlığını 2-6 mm arasında ayarla
@@ -199,6 +217,7 @@ Kablo Giriş Listesi:
 ```
 
 **Kablo Giriş Montajı:**
+
 1. Kablo giriş deliklerini matkapla aç (Ø40, Ø32, Ø25)
 2. IP65 rakorları tak ve sık
 3. Kabloları rakorlardan geçir
@@ -223,6 +242,7 @@ Kablo Giriş Listesi:
 ```
 
 **Filtre Değişimi:**
+
 1. Filtre kapağını 4 vidadan sökün
 2. Eski filtre elemanını çıkarın
 3. Yeni filtre elemanını takın
@@ -235,6 +255,7 @@ Kablo Giriş Listesi:
 ### Terminal Dağılımı
 
 **R1-EC01 Bus Coupler:**
+
 ```
 ┌─────────────────────────────────────┐
 │ R1-EC01 EtherCAT Bus Coupler       │
@@ -248,6 +269,7 @@ Kablo Giriş Listesi:
 ```
 
 **R1-EC0902D (32-CH DI):**
+
 ```
 ┌─────────────────────────────────────┐
 │ R1-EC0902D 32-Channel Digital In   │
@@ -265,6 +287,7 @@ Kablo Giriş Listesi:
 ```
 
 **R1-EC0902O (32-CH DO Relay):**
+
 ```
 ┌─────────────────────────────────────┐
 │ R1-EC0902O 32-Channel Relay Out    │
@@ -282,6 +305,7 @@ Kablo Giriş Listesi:
 ### Güç Dağıtımı
 
 **24V DC Besleme:**
+
 ```
 Ana Pano (24V/10A PSU)
     │
@@ -324,6 +348,7 @@ Sigorta: 5A (her dal için)
 ```
 
 **Montaj Adımları:**
+
 1. Taban plakasını zemine 4x M12 kimyasal dübel ile sabitle
 2. Montaj ayaklarını taban plakasına kaynak yap veya cıvata ile sabitle
 3. Terminal kutusunu ayaklara 4x M8 vida ile monte et
