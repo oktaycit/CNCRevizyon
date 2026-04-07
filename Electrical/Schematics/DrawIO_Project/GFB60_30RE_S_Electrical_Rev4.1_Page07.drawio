@@ -1,0 +1,112 @@
+<mxfile host="app.diagrams.net" modified="2026-04-07T18:00:00Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="page-7" name="07 Actuator Details - Rev4.1">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title Block -->
+        <mxCell id="title" value="GFB60/30RE-S&#10;07 Aktuatör Detayları&#10;Revizyon 4.1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=26;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="480" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="Valf çıkışları, röle sürme devreleri, uyarı lambası, buzzer, vakum pompa kontaktörü&#10;Kesim yağı pompası, blade spin kontrol, sigorta dağıtımı (F7-F10, 2A)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="620" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="pageTag7" value="PAGE 07 / ACTUATORS&#10;Rev 4.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#2b5a8a;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="30" width="170" height="32" as="geometry"/>
+        </mxCell>
+
+        <!-- R1-EC0902O Relay Output Module -->
+        <mxCell id="r1ec0902o" value="R1-EC0902O&#10;32-Channel Relay Output Module&#10;&#10;Relay Specifications:&#10;• Type: SPST (Form A)&#10;• Max Voltage: 250VAC / 30VDC&#10;• Max Current: 2A per channel&#10;• Total Current: 8A per module&#10;• Coil Voltage: 24VDC&#10;• Response Time: &lt; 10ms&#10;• Life: 100,000 cycles&#10;&#10;Terminal Blocks: 2x 16-channel&#10;Isolation: 500VAC (coil to contacts)" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="150" width="280" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- Terminal Block 1 Detail -->
+        <mxCell id="tb1" value="TERMINAL BLOCK 1 (DO_0 - DO_7)&#10;&#10;┌───────────────────────────────────┐&#10;│ Terminal │ Signal   │ PLC Addr   │&#10;├──────────┼──────────┼────────────┤&#10;│    1     │ DO_0 NO  │ %QX0.0     │&#10;│    2     │ DO_0 COM │ Common     │&#10;│    3     │ DO_1 NO  │ %QX0.1     │&#10;│    4     │ DO_1 COM │ Common     │&#10;│    5     │ DO_2 NO  │ %QX0.2     │&#10;│    6     │ DO_2 COM │ Common     │&#10;│    7     │ DO_3 NO  │ %QX0.3     │&#10;│    8     │ DO_3 COM │ Common     │&#10;│    9     │ DO_4 NO  │ %QX0.4     │&#10;│   10     │ DO_4 COM │ Common     │&#10;│   11     │ DO_5 NO  │ %QX0.5     │&#10;│   12     │ DO_5 COM │ Common     │&#10;│   13     │ DO_6 NO  │ %QX0.6     │&#10;│   14     │ DO_6 COM │ Common     │&#10;│   15     │ DO_7 NO  │ %QX0.7     │&#10;│   16     │ DO_7 COM │ Common     │&#10;└───────────────────────────────────┘&#10;&#10;NO: Normally Open&#10;COM: Common terminal" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="80" y="350" width="280" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- Valve Outputs Circuit -->
+        <mxCell id="valvecircuit" value="VALF ÇIKIŞLARI (%QX0.0 - %QX0.7)&#10;&#10;         +24V (Page 01 X2.3)&#10;              │&#10;         ┌────┴────┐&#10;         │  F7-F10 │&#10;         │  2A     │&#10;         └────┬────┘&#10;              │&#10;    ┌─────────┼─────────┐&#10;    │         │         │&#10;    ▼         ▼         ▼&#10; ┌──────┐ ┌──────┐ ┌──────┐&#10; │ Valf │ │ Valf │ │ Valf │&#10; │  1   │ │  2   │ │  3   │&#10; └──┬───┘ └──┬───┘ └──┬───┘&#10;    │        │        │&#10;    │        │        │&#10; ┌──┴───┐ ┌──┴───┐ ┌──┴───┐&#10; │DO_X NO│ │DO_X NO│ │DO_X NO│&#10; │DO_X COM│ │DO_X COM│ │DO_X COM│&#10; └──┬───┘ └──┬───┘ └──┬───┘&#10;    │        │        │&#10;    └────────┼────────┘&#10;              │&#10;              ▼&#10;           0V BUS&#10;         (Page 01 X2.6)&#10;&#10;Flyback Diyot: Dahili (röle koruma)&#10;Harici diyot: Opsiyonel (valf için)" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="400" y="150" width="260" height="320" as="geometry"/>
+        </mxCell>
+
+        <!-- Relay Drive Circuit with Flyback Diode -->
+        <mxCell id="relaydrive" value="RÖLE SÜRME DEVRESİ VE FLYBACK DİYOT&#10;&#10;         +24V (Page 01 X2.3)&#10;              │&#10;              │&#10;         ┌────┴────┐&#10;         │    F7   │&#10;         │   2A    │&#10;         └────┬────┘&#10;              │&#10;              ├──────────►到其他 DO 通道&#10;              │&#10;         ┌────┴────┐&#10;         │  Relay  │&#10;         │  Coil   │&#10;         │ (24VDC) │&#10;         └────┬────┘&#10;              │&#10;         ┌────┴────┐&#10;         │  NPN    │&#10;         │ Transistor│&#10;         └────┬────┘&#10;              │&#10;              ▼&#10;             0V&#10;&#10;    ┌─────────────────┐&#10;    │  Flyback Diode  │&#10;    │  (1N4007)       │&#10;    │   ┌───┐         │&#10;    │   │ → │ 反向并联 │&#10;    │   └───┘         │&#10;    │  跨接在线圈两端   │&#10;    └─────────────────┘&#10;&#10;功能：&#10;• 抑制感应电压尖峰&#10;• 保护晶体管&#10;• 标准配置：1N4007或1N4148" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="400" y="490" width="240" height="320" as="geometry"/>
+        </mxCell>
+
+        <!-- Warning Light Circuit -->
+        <mxCell id="warninglight" value="UYARI LAMBASI (%QX0.4)&#10;&#10;         +24V (Page 01 X2.3)&#10;              │&#10;         ┌────┴────┐&#10;         │   F9    │&#10;         │   2A    │&#10;         └────┬────┘&#10;              │&#10;              │&#10;         ┌────┴────┐&#10;         │ Warning │&#10;         │  Light  │&#10;         │ 24VDC   │&#10;         │  21W    │&#10;         │ 0.875A  │&#10;         └────┬────┘&#10;              │&#10;              │&#10;         ┌────┴────┐&#10;         │ DO_4 NO │&#10;         │ %QX0.4  │&#10;         │DO_4 COM │&#10;         └────┬────┘&#10;              │&#10;              ▼&#10;           0V BUS&#10;&#10;Lamba Özellikleri:&#10;• Voltaj: 24VDC&#10;• Güç: 21W (0.875A)&#10;• Renk: Turuncu (amber)&#10;• Tip: LED flasher&#10;• Montaj: Pano üstü&#10;&#10;Kontrol:&#10;• DO_4 = HIGH → Lamba AÇIK&#10;• DO_4 = LOW → Lamba KAPALI" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="700" y="150" width="240" height="340" as="geometry"/>
+        </mxCell>
+
+        <!-- Buzzer Circuit -->
+        <mxCell id="buzzercircuit" value="BUZZER (%QX0.5)&#10;&#10;         +24V (Page 01 X2.3)&#10;              │&#10;         ┌────┴────┐&#10;         │   F9    │&#10;         │   2A    │&#10;         └────┬────┘&#10;              │&#10;              │&#10;         ┌────┴────┐&#10;         │ Buzzer  │&#10;         │ 24VDC   │&#10;         │  85dB   │&#10;         │ ~0.1A   │&#10;         └────┬────┘&#10;              │&#10;              │&#10;         ┌────┴────┐&#10;         │ DO_5 NO │&#10;         │ %QX0.5  │&#10;         │DO_5 COM │&#10;         └────┬────┘&#10;              │&#10;              ▼&#10;           0V BUS&#10;&#10;Buzzer Özellikleri:&#10;• Voltaj: 24VDC&#10;• Ses Seviyesi: 85dB @ 1m&#10;• Akım: ~100mA&#10;• Frekans: 2.4kHz&#10;• Tip: Piezo electronic&#10;&#10;Kullanım:&#10;• Alarm durumu&#10;• E-STOP aktivasyonu&#10;• Sistem uyarısı" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="700" y="510" width="240" height="320" as="geometry"/>
+        </mxCell>
+
+        <!-- Vacuum Pump Contactor -->
+        <mxCell id="vacuumpump" value="VAKUM POMPA KONTAKTÖRÜ (K2, %QX0.1)&#10;&#10;         +24V (Page 01 X2.3)&#10;              │&#10;         ┌────┴────┐&#10;         │   F8    │&#10;         │   2A    │&#10;         └────┬────┘&#10;              │&#10;              │&#10;         ┌────┴────┐&#10;         │  K2     │&#10;         │ Contactor│&#10;         │  Coil   │&#10;         │ 24VDC   │&#10;         │  5W     │&#10;         └────┬────┘&#10;              │&#10;              │&#10;         ┌────┴────┐&#10;         │ DO_1 NO │&#10;         │ %QX0.1  │&#10;         │DO_1 COM │&#10;         └────┬────┘&#10;              │&#10;              ▼&#10;           0V BUS&#10;&#10;         ┌─────────────────┐&#10;         │ Termik Röle     │&#10;         │ (Overload)      │&#10;         │ Ith = 2.5A      │&#10;         │ Trip: 1.6-2.5A  │&#10;         └─────────────────┘&#10;&#10;K2 Kontakları (Ana Güç):&#10;• 3x N/O (250VAC, 9A)&#10;• 1x N/O auxiliary&#10;• 1x N/C auxiliary&#10;&#10;Pompa:&#10;• Güç: 0.75kW&#10;• Akım: 1.8A @ 230VAC" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="980" y="150" width="260" height="360" as="geometry"/>
+        </mxCell>
+
+        <!-- Cutting Oil Pump -->
+        <mxCell id="cuttingoil" value="KESİM YAĞI POMPASI (%QX0.2)&#10;&#10;         +24V (Page 01 X2.3)&#10;              │&#10;         ┌────┴────┐&#10;         │   F8    │&#10;         │   2A    │&#10;         └────┬────┘&#10;              │&#10;              │&#10;         ┌────┴────┐&#10;         │  K3     │&#10;         │ Contactor│&#10;         │  Coil   │&#10;         │ 24VDC   │&#10;         └────┬────┘&#10;              │&#10;              │&#10;         ┌────┴────┐&#10;         │ DO_2 NO │&#10;         │ %QX0.2  │&#10;         │DO_2 COM │&#10;         └────┬────┘&#10;              │&#10;              ▼&#10;           0V BUS&#10;&#10;Pompa Özellikleri:&#10;• Tip: Coolant circulation&#10;• Güç: 0.37kW&#10;• Akım: 0.9A @ 230VAC&#10;• Debi: 20 L/min&#10;&#10;K3 Kontakları:&#10;• 3x N/O (250VAC, 9A)&#10;• Coil: 24VDC, 3W&#10;&#10;Kullanım:&#10;• Kesim sırasında otomatik&#10;• Manuel kontrol mümkün" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="980" y="530" width="260" height="320" as="geometry"/>
+        </mxCell>
+
+        <!-- Blade Spin Control -->
+        <mxCell id="bladespin" value="BLADE SPIN KONTROL (%QX0.3)&#10;&#10;         +24V (Page 01 X2.3)&#10;              │&#10;         ┌────┴────┐&#10;         │   F8    │&#10;         │   2A    │&#10;         └────┬────┘&#10;              │&#10;              │&#10;         ┌────┴────┐&#10;         │  K4     │&#10;         │ Contactor│&#10;         │  Coil   │&#10;         │ 24VDC   │&#10;         └────┬────┘&#10;              │&#10;              │&#10;         ┌────┴────┐&#10;         │ DO_3 NO │&#10;         │ %QX0.3  │&#10;         │DO_3 COM │&#10;         └────┬────┘&#10;              │&#10;              ▼&#10;           0V BUS&#10;&#10;Testere Motoru:&#10;• Güç: 0.55kW&#10;• Hız: 1400 RPM&#10;• Akım: 1.3A @ 230VAC&#10;&#10;K4 Kontakları:&#10;• 3x N/O (250VAC, 9A)&#10;• Coil: 24VDC, 3W&#10;&#10;Fonksiyon:&#10;• Testere dönüş kontrolü&#10;• Kesim öncesi spin-up&#10;• Acil durdurma ile bloke" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="150" width="260" height="320" as="geometry"/>
+        </mxCell>
+
+        <!-- Fuse Distribution -->
+        <mxCell id="fusedist" value="SİGORTA DAĞILIMI (F7-F10)&#10;&#10;┌──────────────────────────────────────────┐&#10;│ +24V (Page 01 X2.3) → Common Bus         │&#10;└─────────────────┬────────────────────────┘&#10;                  │&#10;    ┌─────────────┼─────────────┐&#10;    │             │             │&#10;    ▼             ▼             ▼&#10;┌────────┐  ┌────────┐  ┌────────┐&#10;│  F7    │  │  F8    │  │  F9    │&#10;│  2A    │  │  2A    │  │  2A    │&#10;│ Fast   │  │ Fast   │  │ Fast   │&#10;└───┬────┘  └───┬────┘  └───┬────┘&#10;    │           │           │&#10;    │           │           │&#10;    ▼           ▼           ▼&#10; Valfler     Kontaktörler  Lamba/Buzzer&#10; DO_0        DO_1 (K2)     DO_4 (Light)&#10; DO_6        DO_2 (K3)     DO_5 (Buzzer)&#10;             DO_3 (K4)&#10;&#10;┌──────────────────────────────────────────┐&#10;│ F10 (2A) → Rezerve / Gelecek I/O         │&#10;└──────────────────────────────────────────┘&#10;&#10;Sigorta Tipi:&#10;• 5x20mm fast-blow&#10;• 250VAC rating&#10;• I²t &lt; 0.5 A²s" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="490" width="260" height="320" as="geometry"/>
+        </mxCell>
+
+        <!-- 24VDC Power Distribution -->
+        <mxCell id="powerdist" value="24VDC BESLEME DAĞITIMI&#10;&#10;         PSU (Page 01)&#10;         24VDC / 10A&#10;              │&#10;         ┌────┴────┐&#10;         │  X2.3   │&#10;         │ +24V    │&#10;         └────┬────┘&#10;              │&#10;    ┌─────────┼─────────┬─────────┐&#10;    │         │         │         │&#10;    ▼         ▼         ▼         ▼&#10; ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐&#10; │ F7   │ │ F8   │ │ F9   │ │ F10  │&#10; │ 2A   │ │ 2A   │ │ 2A   │ │ 2A   │&#10; └──┬───┘ └──┬───┘ └──┬───┘ └──┬───┘&#10;    │        │        │        │&#10;    │        │        │        │&#10;    ▼        ▼        ▼        ▼&#10; Valves  Contact. Light   Spare&#10; (DO_0)  (DO_1-3) (DO_4-5)&#10;&#10;Referans:&#10;• Page 01 → PSU ve ana dağıtım&#10;• Page 01 → X2 terminal bloğu&#10;• Page 02 → Safety circuit 24V&#10;&#10;Toplam Akım:&#10;• Valves: 8x 0.5A = 4A&#10;• Contactors: 4x 0.2A = 0.8A&#10;• Light: 0.875A&#10;• Buzzer: 0.1A&#10;• TOTAL: ~5.8A" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="80" y="610" width="280" height="300" as="geometry"/>
+        </mxCell>
+
+        <!-- Inductive Load Protection -->
+        <mxCell id="inductive" value="İNDÜKTİF YÜK KORUMASI&#10;&#10;Flyback Diyot Uygulaması&#10;&#10;         +24V&#10;          │&#10;          │&#10;     ┌────┴────┐&#10;     │ Inductive│&#10;     │   Load   │&#10;     │  (Coil)  │&#10;     └────┬────┘&#10;          │&#10;     ┌────┴────┐&#10;     │  Relay  │&#10;     │ Contact │&#10;     └────┬────┘&#10;          │&#10;          ▼&#10;         0V&#10;&#10;    ┌──────────────────┐&#10;    │  1N4007 Diode    │&#10;    │     ┌───┐        │&#10;    │     │ → │        │&#10;    │     └───┘        │&#10;    │  (ters paralel)  │&#10;    └──────────────────┘&#10;&#10;Diyot Yönü:&#10;• Katot → +24V tarafı&#10;• Anot → 0V tarafı&#10;&#10;Koruma Mekanizması:&#10;• Röle açıldığında&#10;• Indüktif spike oluşur&#10;• Diyot iletimi başlar&#10;• Enerji diyot üzerinden&#10;  boşaltılır&#10;• Voltaj spike önlenir&#10;&#10;Diyot Seçimi:&#10;• 1N4007 (1A, 1000V)&#10;• 1N4148 (200mA, 100V)&#10;• BYV27 (Schottky, fast)" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="400" y="830" width="260" height="260" as="geometry"/>
+        </mxCell>
+
+        <!-- Actuator List Table -->
+        <mxCell id="actuatorlist" value="AKTUATÖR LİSTESİ&#10;&#10;┌──────┬──────────────┬───────────┬──────────┐&#10;│ DO   │ Yük          │ Güç       │ Sigorta  │&#10;├──────┼──────────────┼───────────┼──────────┤&#10;│QX0.0 │ Valf 1       │ 12W (0.5A)│ F7 (2A)  │&#10;│QX0.1 │ Valf 2       │ 12W (0.5A)│ F7 (2A)  │&#10;│QX0.2 │ Valf 3       │ 12W (0.5A)│ F7 (2A)  │&#10;│QX0.3 │ Valf 4       │ 12W (0.5A)│ F7 (2A)  │&#10;│QX0.4 │ Valf 5       │ 12W (0.5A)│ F7 (2A)  │&#10;│QX0.5 │ Valf 6       │ 12W (0.5A)│ F7 (2A)  │&#10;│QX0.6 │ Valf 7       │ 12W (0.5A)│ F7 (2A)  │&#10;│QX0.7 │ Valf 8       │ 12W (0.5A)│ F7 (2A)  │&#10;├──────┼──────────────┼───────────┼──────────┤&#10;│QX0.1 │ Vakum K2     │ 5W (0.2A) │ F8 (2A)  │&#10;│QX0.2 │ Yağ Pompası  │ 3W (0.1A) │ F8 (2A)  │&#10;│QX0.3 │ Blade Spin   │ 3W (0.1A) │ F8 (2A)  │&#10;├──────┼──────────────┼───────────┼──────────┤&#10;│QX0.4 │ Uyarı Lambası│ 21W(0.875A)│ F9 (2A) │&#10;│QX0.5 │ Buzzer       │ 2.4W(0.1A)│ F9 (2A)  │&#10;└──────┴──────────────┴───────────┴──────────┘&#10;&#10;Valf Detayları:&#10;• Tip: 5/2 solenoid valve&#10;• Coil: 24VDC, 12W&#10;• Basınç: 2-8 bar&#10;• Marka: Festo/SMC" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="700" y="850" width="340" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- Contactor Specifications -->
+        <mxCell id="contactorspec" value="KONTAKTÖR SPESİFİKASYONLARI&#10;&#10;┌──────────────────────────────────────┐&#10;│ K2 - Vakum Pompa Kontaktörü          │&#10;├──────────────────────────────────────┤&#10;│ Model: Siemens 3RT1015               │&#10;│ Coil: 24VDC, 5W                      │&#10;│ Kontak: 3x N/O (250VAC, 9A)          │&#10;│ Aux: 1x N/O + 1x N/C                 │&#10;│ Termik: 3RU1106 (1.6-2.5A)           │&#10;└──────────────────────────────────────┘&#10;&#10;┌──────────────────────────────────────┐&#10;│ K3 - Kesim Yağı Pompası              │&#10;├──────────────────────────────────────┤&#10;│ Model: Siemens 3RT1015               │&#10;│ Coil: 24VDC, 3W                      │&#10;│ Kontak: 3x N/O (250VAC, 9A)          │&#10;│ Aux: 1x N/O                          │&#10;└──────────────────────────────────────┘&#10;&#10;┌──────────────────────────────────────┐&#10;│ K4 - Blade Spin Kontaktör            │&#10;├──────────────────────────────────────┤&#10;│ Model: Siemens 3RT1015               │&#10;│ Coil: 24VDC, 3W                      │&#10;│ Kontak: 3x N/O (250VAC, 9A)          │&#10;│ Aux: 1x N/O                          │&#10;└──────────────────────────────────────┘&#10;&#10;Montaj:&#10;• DIN ray (35mm)&#10;• Yan yana montaj&#10;• Etiket: K2, K3, K4" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="830" width="320" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- Cross References -->
+        <mxCell id="crossref" value="SAYFA REFERANSLARI&#10;&#10;Page 01 → +24V (X2.3)&#10;Page 01 → 0V (X2.6)&#10;Page 01 → F7-F10 sigortalar&#10;Page 02 → Safety circuit&#10;Page 03 → NC300 DO_2 (ALARM_LIGHT)&#10;Page 05 → R1-EC0902O modül&#10;Page 08 → Terminal planı&#10;&#10;İlgili Dokümanlar:&#10;• WIRING_REFERENCE.md&#10;  Bölüm 7: EtherCAT&#10;  Bölüm 8: I/O Dağılımı&#10;• Delta R1-EC Manual&#10;  R1-EC0902O specs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="830" width="200" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- Test Points -->
+        <mxCell id="testpoints" value="TEST NOKTALARI&#10;&#10;┌──────────────────────────────────────────┐&#10;│ TP1: +24V_F7 (F7 çıkış) → Multimeter    │&#10;│ TP2: +24V_F8 (F8 çıkış) → Multimeter    │&#10;│ TP3: +24V_F9 (F9 çıkış) → Multimeter    │&#10;│ TP4: +24V_F10 (F10 çıkış) → Multimeter  │&#10;└──────────────────────────────────────────┘&#10;&#10;┌──────────────────────────────────────────┐&#10;│ DO Sinyal Test (R1-EC0902O)              │&#10;├──────────────────────────────────────────┤&#10;│ TP_DO0: Terminal 1 → Oscilloscope        │&#10;│ TP_DO1: Terminal 3 → Oscilloscope        │&#10;│ TP_DO2: Terminal 5 → Oscilloscope        │&#10;│ TP_DO3: Terminal 7 → Oscilloscope        │&#10;│ TP_DO4: Terminal 9 → Oscilloscope        │&#10;│ TP_DO5: Terminal 11 → Oscilloscope       │&#10;└──────────────────────────────────────────┘&#10;&#10;Test Prosedürü:&#10;1. 24V DC ölç (23.5-24.5V)&#10;2. PLC'den DO çıkışını HIGH yap&#10;3. Röle sesini kontrol et&#10;4. Terminal voltajını ölç&#10;5. Yükü kontrol et (lamba, valf, vb.)&#10;6. Response time ölç (&lt; 10ms)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="930" width="300" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- Footer -->
+        <mxCell id="footer7a" value="Rev 4.1 | R1-EC0902O Relay Module | SPST 2A 250VAC | Flyback Protection" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1110" width="1080" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="footer7b" value="Prepared in Codex workspace | For PDF issue / review use" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="1110" width="450" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="footer7c" value="Sheet 7 / 9" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1570" y="1110" width="110" height="28" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

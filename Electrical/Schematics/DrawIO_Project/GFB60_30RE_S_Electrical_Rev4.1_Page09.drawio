@@ -1,0 +1,256 @@
+<mxfile host="app.diagrams.net" modified="2026-04-07T16:30:00Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="page-9" name="09 Pin Planı ve Konnektör Detayları - Rev4.1">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2400" pageHeight="1600" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title Block -->
+        <mxCell id="title" value="GFB60/30RE-S&#10;09 Pin Planı ve Konnektör Detayları&#10;Revizyon 4.1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=26;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="520" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="M12 Sensör, RJ45 EtherCAT, D-Sub 50-pin (Servo CN1), 6-pin Encoder (CN2),&#10;NC300 CN5 I/O, Kablo Renk Kodları, Crimping, Shield Sonlandırma" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="680" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="pageTag9" value="PAGE 09 / WIRING&#10;Rev 4.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#2b5a8a;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="2110" y="30" width="170" height="32" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- SECTION 1: M12 4-pin Sensör Konnektör (Leuze IS 218) -->
+        <!-- ============================================ -->
+        <mxCell id="m12_title" value="1. M12 4-PIN SENSÖR KONEKTÖR&#10;Leuze IS 218 Serisi" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=14;fontStyle=1;fontColor=#2b5a8a;" vertex="1" parent="1">
+          <mxGeometry x="40" y="150" width="280" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- M12 Sensor Side (Male) -->
+        <mxCell id="m12_sensor" value="SENSÖR TARAFI (ERKEK)&#10;&#10;    1&#10;  ┌───┐&#10;4 │ ● │ 2&#10;  │ ● │&#10;  └───┘&#10;    3&#10;&#10;Pin 1: +24V (Brown/Kahverengi)&#10;Pin 2: OUTPUT PNP (White/Beyaz)&#10;Pin 3: 0V (Blue/Mavi)&#10;Pin 4: NO/NC Select (Black/Siyah)&#10;&#10;Konnektör: M12 4-pin A-coded&#10;IP67 koruma" style="text;html=0;strokeColor=#6c8ebf;fillColor=#dae8fc;align=left;verticalAlign=top;fontSize=10;fontFamily=Courier New;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="190" width="240" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- M12 Cable Side (Female) -->
+        <mxCell id="m12_cable" value="KABLO TARAFI (DİŞİ)&#10;&#10;    1&#10;  ┌───┐&#10;4 │ ○ │ 2&#10;  │ ○ │&#10;  └───┘&#10;    3&#10;&#10;Panel Montaj:&#10;1 (+24V)  ──► +24V_SENS (X2:3)&#10;2 (OUT)   ──► DI_X (R1-EC0902D)&#10;3 (0V)    ──► 0V_SENS (X2:7)&#10;4 (NO/NC) ──► +24V veya 0V&#10;&#10;Tork: 0.4 Nm&#10;Kablo: 4x0.34mm² shielded" style="text;html=0;strokeColor=#6c8ebf;fillColor=#ffffff;align=left;verticalAlign=top;fontSize=10;fontFamily=Courier New;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="190" width="240" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- M12 Shield Termination -->
+        <mxCell id="m12_shield" value="SHIELD SONLANDIRMA&#10;&#10;┌──────────────────────────────┐&#10;│  Shield (dış örme)           │&#10;│  ┌────┬────┬────┬────┐      │&#10;│  │ 1  │ 2  │ 3  │ 4  │      │&#10;│  └────┴────┴────┴────┘      │&#10;└──────────────────────────────┘&#10;         │&#10;         ▼&#10;  ┌─────────────┐&#10;  │ 360° Clamp  │&#10;  │   PE Bara   │&#10;  └─────────────┘&#10;&#10;Kablo: ÖFLEX CLASSIC 110 4x0.34&#10;Shield: %85 coverage minimum" style="text;html=0;strokeColor=#0a7a0a;fillColor=#e8f5e9;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="560" y="190" width="260" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- M12 Housing/Locking -->
+        <mxCell id="m12_lock" value="HOUSING &amp; LOCKING&#10;&#10;┌─────────────────┐&#10;│  M12 x 0.75     │◄─ Thread&#10;│  ═══════════    │&#10;│  [█████████]    │◄─ Locking ring&#10;│  ═══════════    │&#10;│  ┌───────────┐  │&#10;│  │ Pin Body  │  │&#10;│  └───────────┘  │&#10;└─────────────────┘&#10;&#10;Locking Tork: 0.4-0.5 Nm&#10;Mating Cycles: >100&#10;IP67/IP68/IP69K" style="text;html=0;strokeColor=#82b366;fillColor=#d5e8d4;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="840" y="190" width="200" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- SECTION 2: RJ45 EtherCAT Pinout -->
+        <!-- ============================================ -->
+        <mxCell id="rj45_title" value="2. RJ45 ETHERCAT PINOUT&#10;CN3/CN6 (Delta ASDA-A3-E)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=14;fontStyle=1;fontColor=#2b5a8a;" vertex="1" parent="1">
+          <mxGeometry x="40" y="420" width="280" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- RJ45 Connector -->
+        <mxCell id="rj45_conn" value="RJ45 CONNECTOR (8P8C)&#10;&#10;  ┌─────────────────┐&#10;  │ 1 2 3 4 5 6 7 8 │  ◄─ Contacts&#10;  ├─────────────────┤&#10;  │ ║ ║ ║ ║ ║ ║ ║ ║ │&#10;  └─────────────────┘&#10;        ▲&#10;        │ Locking clip&#10;&#10;Pin Assignment (EtherCAT):&#10;┌────┬──────────┬─────────────────┐&#10;│Pin │ Sinyal   │ Açıklama        │&#10;├────┼──────────┼─────────────────┤&#10;│ 1  │ TX+      │ Transmit +      │&#10;│ 2  │ TX-      │ Transmit -      │&#10;│ 3  │ RX+      │ Receive +       │&#10;│ 4  │ NC       │ Kullanılmıyor   │&#10;│ 5  │ NC       │ Kullanılmıyor   │&#10;│ 6  │ RX-      │ Receive -       │&#10;│ 7  │ NC       │ Kullanılmıyor   │&#10;│ 8  │ NC       │ Kullanılmıyor   │&#10;└────┴──────────┴─────────────────┘" style="text;html=0;strokeColor=#82b366;fillColor=#d5e8d4;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="460" width="320" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- RJ45 Cable Spec -->
+        <mxCell id="rj45_cable" value="KABLO SPESİFİKASYONU&#10;&#10;Type: CAT6 SF/UTP (Shielded Foiled)&#10;Impedans: 100Ω ±15%&#10;AWG: 23-26 (0.13-0.25mm²)&#10;Pair count: 4 twisted pairs&#10;&#10;Shield:&#10;- Aluminum foil (100% coverage)&#10;- Tinned copper braid (85% min)&#10;- Drain wire included&#10;&#10;Jacket: PUR (endüstriyel)&#10;Çap: 6.0-6.5mm&#10;Bending radius: 8x cable diameter&#10;&#10;Max length: 100m per segment&#10;Cycle time: 1ms @ 100Mbps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="380" y="460" width="280" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- RJ45 Industrial Housing -->
+        <mxCell id="rj45_housing" value="ENDÜSTRİYEL RJ45 HOUSING&#10;&#10;┌──────────────────────────┐&#10;│  ╔══════════════════╗    │&#10;│  ║ [████████████]   ║    │◄─ Metal housing&#10;│  ║  ┌──────────┐    ║    │&#10;│  ║  │ RJ45 Jack │    ║    │&#10;│  ║  └──────────┘    ║    │&#10;│  ╚══════════════════╝    │&#10;│     ▲          ▲         │&#10;│     │          │         │&#10;│   Locking   Mounting     │&#10;│   clip      holes        │&#10;└──────────────────────────┘&#10;&#10;Özellikler:&#10;- Die-cast zinc housing&#10;- Nickel plated&#10;- IP65 protection&#10;- M3 mounting holes&#10;- 360° EMI shielding&#10;- Operating temp: -40°C to +85°C" style="text;html=0;strokeColor=#82b366;fillColor=#e8f5e9;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="680" y="460" width="260" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- SECTION 3: D-Sub 50-pin (Servo CN1) -->
+        <!-- ============================================ -->
+        <mxCell id="dsub50_title" value="3. D-SUB 50-PIN KONEKTÖR&#10;Servo Drive CN1 (Delta ASDA-A3)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=14;fontStyle=1;fontColor=#2b5a8a;" vertex="1" parent="1">
+          <mxGeometry x="40" y="730" width="320" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- D-Sub 50-pin Connector -->
+        <mxCell id="dsub50_conn" value="D-SUB 50-PIN FEMALE&#10;&#10;┌─────────────────────────────────────────┐&#10;│ ═══════════════════════════════════    │◄─ Shell&#10;│ ●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●  │  Row A (25 pins)&#10;│ ●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●  │  Row B (25 pins)&#10;│    ▲                              ▲     │&#10;│    │                              │     │&#10;│  Pin 1                          Pin 50  │&#10;│                                         │&#10;│  [====]                        [====]   │◄─ Screw locks&#10;└─────────────────────────────────────────┘&#10;&#10;Model: 17JE-23500-02 (DDK)&#10;Eşdeğer: DB50F, DDK23500&#10;Contact pitch: 1.27mm&#10;Current rating: 1A per pin&#10;Voltage rating: 50VAC&#10;Insulation resistance: >100MΩ" style="text;html=0;strokeColor=#9673a6;fillColor=#e1d5e7;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="770" width="420" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- D-Sub 50-pin Critical Pins -->
+        <mxCell id="dsub50_pins" value="KRİTİK PIN ASSIGNMENTS&#10;&#10;┌─────┬────────────┬──────────────────────────┐&#10;│ Pin │ Sinyal     │ Açıklama                 │&#10;├─────┼────────────┼──────────────────────────┤&#10;│  6  │ S-ON       │ Servo ON (aktif low)     │&#10;│  7  │ /S-ON      │ Servo ON complement      │&#10;│  9  │ +24V       │ Kontrol gücü             │&#10;│ 11  │ DI_0       │ P-OT (overtravel)        │&#10;│ 12  │ DI_1       │ N-OT (overtravel)        │&#10;│ 13  │ DI_2       │ TLL (torque limit)       │&#10;│ 14  │ DI_3       │ ARST (alarm reset)       │&#10;│ 21  │ V_REF+     │ Analog command +         │&#10;│ 22  │ V_REF-     │ Analog command -         │&#10;│ 23  │ AGND       │ Analog ground            │&#10;│ 29  │ STO1       │ Safe Torque Off CH1      │&#10;│ 30  │ STO2       │ Safe Torque Off CH2      │&#10;│ 31  │ PULSE+     │ Pulse command +          │&#10;│ 32  │ PULSE-     │ Pulse command -          │&#10;│ 33  │ SIGN+      │ Direction command +      │&#10;│ 34  │ SIGN-      │ Direction command -      │&#10;│ 35  │ FG         │ Frame ground             │&#10;│ 36  │ DO_1       │ ALM (alarm output)       │&#10;│ 43  │ STO_COM    │ STO return (0V)          │&#10;│ 44  │ COM+       │ 24V return               │&#10;└─────┴────────────┴──────────────────────────┘" style="text;html=0;strokeColor=#9673a6;fillColor=#ffffff;align=left;verticalAlign=top;fontSize=8;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="480" y="770" width="380" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- D-Sub Shield Termination -->
+        <mxCell id="dsub50_shield" value="SHIELD SONLANDIRMA&#10;&#10;┌─────────────────────────────────┐&#10;│  D-Sub Hood (metal)             │&#10;│  ┌───────────────────────────┐  │&#10;│  │  ┌─────────────────────┐  │  │&#10;│  │  │ Cable shield        │  │  │&#10;│  │  │  ═══════════════    │  │  │&#10;│  │  │  ││││││││││││││││  │  │  │&#10;│  │  └─────────────────────┘  │  │&#10;│  │         │                 │  │&#10;│  │         ▼                 │  │&#10;│  │  ┌─────────────┐          │  │&#10;│  │  │ 360° Clamp  │          │  │&#10;│  │  │ (backshell) │          │  │&#10;│  │  └─────────────┘          │  │&#10;│  └───────────────────────────┘  │&#10;└─────────────────────────────────┘&#10;         │&#10;         ▼&#10;  Connector shell (metal)&#10;         │&#10;         ▼&#10;  Panel ground / PE&#10;&#10;NOT: Pigtail kullanımı YASAK" style="text;html=0;strokeColor=#0a7a0a;fillColor=#e8f5e9;align=left;verticalAlign=top;fontSize=8;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="880" y="770" width="280" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- D-Sub Screw Lock Detail -->
+        <mxCell id="dsub50_lock" value="SCREW LOCK DETAYI&#10;&#10;┌───────────────────────┐&#10;│  ╔═══════════════╗    │&#10;│  ║  ┌─────┐      ║    │&#10;│  ║  │Thread │     ║    │◄─ #4-40 UNC&#10;│  ║  │  ═══  │    ║    │&#10;│  ║  │     │ │    ║    │&#10;│  ║  └─────┘ │    ║    │&#10;│  ║          │    ║    │&#10;│  ╚══════════╪════╝    │&#10;│             ▼         │&#10;│        ┌─────────┐    │&#10;│        │ Panel   │    │&#10;│        │ thread  │    │&#10;│        └─────────┘    │&#10;└───────────────────────┘&#10;&#10;Thread: #4-40 UNC (standart)&#10;Tork: 0.2-0.3 Nm&#10;Material: Steel, nickel plated&#10;Mating cycles: >500" style="text;html=0;strokeColor=#82b366;fillColor=#d5e8d4;align=left;verticalAlign=top;fontSize=8;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="770" width="200" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- SECTION 4: 6-pin Encoder (Servo CN2) -->
+        <!-- ============================================ -->
+        <mxCell id="enc6_title" value="4. 6-PIN ENCODER KONEKTÖR&#10;Servo CN2 - Hirose HR10A-7P-6S" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=14;fontStyle=1;fontColor=#2b5a8a;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1000" width="320" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Hirose 6-pin Connector -->
+        <mxCell id="enc6_conn" value="HIROSE HR10A-7P-6S&#10;&#10;    ┌─────────┐&#10;    │    1    │  ◄─ Key&#10;  ┌─┴─────┬─┴─┐&#10;  │ 2     │ 6 │&#10;  │       ●   │&#10;  │ 3     │ 5 │&#10;  └─┬─────┴─┬─┘&#10;    │   4   │&#10;    └───────┘&#10;&#10;┌────┬──────────┬─────────────────┐&#10;│Pin │ Sinyal   │ Renk            │&#10;├────┼──────────┼─────────────────┤&#10;│ 1  │ +5V      │ Kırmızı (Red)   │&#10;│ 2  │ /A       │ Beyaz/Siyah     │&#10;│ 3  │ A        │ Beyaz           │&#10;│ 4  │ /B       │ Siyah/Beyaz     │&#10;│ 5  │ B        │ Siyah           │&#10;│ 6  │ Z        │ Yeşil           │&#10;└────┴──────────┴─────────────────┘&#10;&#10;Encoder: 24-bit absolute&#10;Resolution: 16,777,216 counts/rev&#10;Interface: BiSS-C / Fanuc" style="text;html=0;strokeColor=#d79b00;fillColor=#ffe6cc;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="1040" width="320" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- Encoder Cable Assembly -->
+        <mxCell id="enc6_cable" value="ENCODER CABLE ASSEMBLY&#10;&#10;┌─────────────────────────────────┐&#10;│  Drive Side          Motor Side │&#10;│  ┌────────┐        ┌────────┐   │&#10;│  │Hirose  │────────│Hirose  │   │&#10;│  │ 7P-6S  │        │ 7R-6S  │   │&#10;│  └────────┘        └────────┘   │&#10;│       │                │        │&#10;│       └──────┬─────────┘        │&#10;│              │                  │&#10;│        6x0.14mm²                │&#10;│        + Shield                 │&#10;│        Length: 5-20m            │&#10;└─────────────────────────────────┘&#10;&#10;Kablo:&#10;- 6x AWG26 (0.14mm²) twisted pairs&#10;- Individual foil shield per pair&#10;- Overall braid shield (85%)&#10;- PUR jacket, flexible&#10;- Çap: 5.5mm&#10;&#10;Connector: HR10A-7P-6S (plug)&#10;           HR10A-7R-6S (receptacle)&#10;Locking: Screw-type (bayonet)" style="text;html=0;strokeColor=#d79b00;fillColor=#fff2cc;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="380" y="1040" width="300" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- SECTION 5: NC300 CN5 50-pin I/O Connector -->
+        <!-- ============================================ -->
+        <mxCell id="nc300cn5_title" value="5. NC300 CN5 50-PIN I/O KONEKTÖR" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=14;fontStyle=1;fontColor=#2b5a8a;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1310" width="320" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- NC300 CN5 Pinout -->
+        <mxCell id="nc300cn5_pins" value="NC300 CN5 PINOUT&#10;&#10;┌─────┬────────────┬──────────────────────────┐&#10;│ Pin │ Sinyal     │ Açıklama                 │&#10;├─────┼────────────┼──────────────────────────┤&#10;│  1  │ +24V_EXT   │ Harici 24V (500mA max)   │&#10;│  2  │ DI_0       │ SERVO_READY              │&#10;│  3  │ DI_1       │ CYCLE_START              │&#10;│  4  │ DI_2       │ CYCLE_STOP               │&#10;│  5  │ DI_3       │ HOME_CMD                 │&#10;│  6  │ DI_4       │ E-STOP_FB                │&#10;│  7  │ DI_5       │ RESERVED                 │&#10;│  8  │ DI_6       │ RESERVED                 │&#10;│  9  │ DI_7       │ RESERVED                 │&#10;│ 10  │ DO_0       │ SYSTEM_READY             │&#10;│ 11  │ DO_1       │ CYCLE_ACTIVE             │&#10;│ 12  │ DO_2       │ ALARM_LIGHT              │&#10;│ 13  │ DO_3       │ RESERVED                 │&#10;│ 14  │ DO_4       │ RESERVED                 │&#10;│ 15  │ DO_5       │ RESERVED                 │&#10;│ 16  │ DO_6       │ RESERVED                 │&#10;│ 17  │ DO_7       │ RESERVED                 │&#10;│ 18  │ GND_I/O    │ I/O Ground               │&#10;│ 19  │ AI_0       │ Analog Input 0           │&#10;│ 20  │ AI_1       │ Analog Input 1           │&#10;│ 21  │ AI_2       │ Analog Input 2           │&#10;│ 22  │ AI_3       │ Analog Input 3           │&#10;│ 27  │ AO_0       │ Analog Output 0          │&#10;│ 28  │ AO_1       │ Analog Output 1          │&#10;│ 31  │ GND_A      │ Analog Ground            │&#10;│ 41-45│ GND      │ Shield Ground            │&#10;└─────┴────────────┴──────────────────────────┘&#10;&#10;Connector: 17JE-23500-02 (DDK)&#10;Cable: 50-pin shielded, 0.5mm²" style="text;html=0;strokeColor=#6c8ebf;fillColor=#dae8fc;align=left;verticalAlign=top;fontSize=8;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1350" width="400" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- SECTION 6: Kablo Renk Kodları -->
+        <!-- ============================================ -->
+        <mxCell id="colorcode_title" value="6. KABLO RENK KODLARI TABLOSU" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=14;fontStyle=1;fontColor=#2b5a8a;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="150" width="280" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- AC Power Colors -->
+        <mxCell id="ac_colors" value="AC GÜÇ (IEC 60446)&#10;&#10;┌────────────┬──────────────┬─────────┐&#10;│ Fonksiyon  │ Renk         │ Kesit   │&#10;├────────────┼──────────────┼─────────┤&#10;│ L1         │ Kahverengi   │ 2.5-6mm²│&#10;│ L2         │ Siyah        │ 2.5-6mm²│&#10;│ L3         │ Gri          │ 2.5-6mm²│&#10;│ N (Neutral)│ Mavi         │ 2.5-6mm²│&#10;│ PE (Earth) │ Yeşil-Sarı   │ 4-10mm² │&#10;└────────────┴──────────────┴─────────┘&#10;&#10;Standart: EN 60445 / IEC 60446&#10;Voltaj: 200-230VAC, 3-faz" style="text;html=0;strokeColor=#000000;fillColor=#f5f5f5;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1200" y="190" width="280" height="160" as="geometry"/>
+        </mxCell>
+
+        <!-- DC Power Colors -->
+        <mxCell id="dc_colors" value="DC GÜÇ&#10;&#10;┌────────────┬──────────────┬─────────┐&#10;│ Fonksiyon  │ Renk         │ Kesit   │&#10;├────────────┼──────────────┼─────────┤&#10;│ +24V       │ Kırmızı      │ 1.0-2.5 │&#10;│ 0V (GND)   │ Siyah        │ 1.0-2.5 │&#10;└────────────┴──────────────┴─────────┘&#10;&#10;Voltaj: 24VDC (±10%)&#10;Akım: 0.5-10A devreye göre" style="text;html=0;strokeColor=#000000;fillColor=#f5f5f5;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1200" y="370" width="280" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Safety & Signal Colors -->
+        <mxCell id="safety_colors" value="SAFETY &amp; SİNYAL&#10;&#10;┌────────────┬──────────────┬─────────┐&#10;│ Fonksiyon  │ Renk         │ Kesit   │&#10;├────────────┼──────────────┼─────────┤&#10;│ Safety     │ Sarı         │ 1.0-1.5 │&#10;│ Sensor +24V│ Mavi         │ 0.5-1.0 │&#10;│ Sensor 0V  │ Mavi/Beyaz   │ 0.5-1.0 │&#10;│ Signal     │ Beyaz        │ 0.5-0.75│&#10;└────────────┴──────────────┴─────────┘&#10;&#10;Safety: EN ISO 13849 PL e&#10;Sensor: M12 4-pin A-coded" style="text;html=0;strokeColor=#000000;fillColor=#f5f5f5;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1200" y="510" width="280" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- Color Swatches -->
+        <mxCell id="swatch_brown" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#8B4513;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1490" y="205" width="40" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="swatch_black" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1a1a1a;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1490" y="230" width="40" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="swatch_gray" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#808080;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1490" y="255" width="40" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="swatch_blue" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#4169E1;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1490" y="280" width="40" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="swatch_greenyellow" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#9ACD32;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1490" y="305" width="40" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="swatch_red" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DC143C;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1490" y="385" width="40" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="swatch_yellow" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFD700;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1490" y="525" width="40" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="swatch_white" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1490" y="635" width="40" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- SECTION 7: Crimping Specifications -->
+        <!-- ============================================ -->
+        <mxCell id="crimping_title" value="7. CRIMPING SPESİFİKASYONLARI" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=14;fontStyle=1;fontColor=#2b5a8a;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="730" width="280" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Ferrule Sizes -->
+        <mxCell id="ferrule_sizes" value="FERRULE BOYUTLARI&#10;&#10;┌──────────┬───────────┬────────────┬─────────┐&#10;│ Kesit    │ AWG       │ Ø A (mm)   │ L (mm)  │&#10;├──────────┼───────────┼────────────┼─────────┤&#10;│ 0.5mm²   │ 20        │ 0.8        │ 10      │&#10;│ 0.75mm²  │ 18        │ 1.0        │ 12      │&#10;│ 1.0mm²   │ 16        │ 1.1        │ 12      │&#10;│ 1.5mm²   │ 14        │ 1.5        │ 15      │&#10;│ 2.5mm²   │ 12        │ 1.8        │ 18      │&#10;│ 4.0mm²   │ 10        │ 2.3        │ 20      │&#10;│ 6.0mm²   │ 8         │ 3.0        │ 25      │&#10;│ 10mm²    │ 6         │ 4.0        │ 28      │&#10;└──────────┴───────────┴────────────┴─────────┘&#10;&#10;Material: Elektrolitik bakır, kalay kaplı&#10;Insulation: Nylon PA6.6 (renk kodlu)&#10;Brand: Phoenix Contact, Weidmüller" style="text;html=0;strokeColor=#000000;fillColor=#ffffff;align=left;verticalAlign=top;fontSize=8;fontFamily=Courier New;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1200" y="770" width="320" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- Crimping Tool Reference -->
+        <mxCell id="crimping_tool" value="CRIMPING TOOL REFERANSI&#10;&#10;┌─────────────────────────────────┐&#10;│  ┌─────────────────────────┐    │&#10;│  │  ╔════╗    ╔════╗       │    │&#10;│  │  ║    ║────║    ║       │    │&#10;│  │  ╚════╝    ╚════╝       │    │&#10;│  │     │        │          │    │&#10;│  │  ┌──┴────────┴──┐       │    │&#10;│  │  │ Crimp Die    │       │    │&#10;│  │  └──────────────┘       │    │&#10;│  └─────────────────────────┘    │&#10;└─────────────────────────────────┘&#10;&#10;Tool Types:&#10;- Ratcheting crimper (0.5-6mm²)&#10;- Hydraulic crimper (10-50mm²)&#10;- Pneumatic crimper (production)&#10;&#10;Recommended Tools:&#10;- Phoenix Contact CRIMPFOX 6&#10;- Weidmüller PZ 6 Roto&#10;- Knipex 97 53 04&#10;&#10;Die set: Ferrule tipine göre&#10;değiştirilebilir (AHX, AHS, etc.)" style="text;html=0;strokeColor=#000000;fillColor=#f5f5f5;align=left;verticalAlign=top;fontSize=8;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="970" width="320" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- Pull-out Force Test -->
+        <mxCell id="pullout_test" value="PULL-OUT FORCE TESTİ&#10;&#10;┌─────────────────────────────────┐&#10;│     ┌─────┐                     │&#10;│     │Weight│                    │&#10;│     └──┬──┘                     │&#10;│        │ F (N)                  │&#10;│        ▼                        │&#10;│     ┌─────┐                     │&#10;│     │Wire │                     │&#10;│     └──┬──┘                     │&#10;│        │                        │&#10;│     ┌──┴──┐                     │&#10;│     │Crimp│                     │&#10;│     └─────┘                     │&#10;└─────────────────────────────────┘&#10;&#10;Minimum Pull-out Force (EN 60352-2):&#10;┌──────────┬──────────────────────┐&#10;│ Kesit    │ Min. Force (N)       │&#10;├──────────┼──────────────────────┤&#10;│ 0.5mm²   │ 80 N                 │&#10;│ 0.75mm²  │ 100 N                │&#10;│ 1.0mm²   │ 120 N                │&#10;│ 1.5mm²   │ 160 N                │&#10;│ 2.5mm²   │ 200 N                │&#10;│ 4.0mm²   │ 280 N                │&#10;│ 6.0mm²   │ 350 N                │&#10;│ 10mm²    │ 500 N                │&#10;└──────────┴──────────────────────┘&#10;&#10;Test prosedürü:&#10;1. Örnek hazırla (5 adet minimum)&#10;2. Tensile test cihazına bağla&#10;3. 10mm/dak hızda çek&#10;4. Kopma kuvvetini kaydet&#10;5. Ortalama değer min. değeri aşmalı" style="text;html=0;strokeColor=#000000;fillColor=#fff2cc;align=left;verticalAlign=top;fontSize=8;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="1190" width="320" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- SECTION 8: Shield Sonlandırma Metotları -->
+        <!-- ============================================ -->
+        <mxCell id="shield_title" value="8. SHIELD SONLANDIRMA METOTLARI" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=14;fontStyle=1;fontColor=#2b5a8a;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="150" width="280" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- 360° Clamp Method -->
+        <mxCell id="shield_360" value="360° CLAMP (ÖNERİLEN)&#10;&#10;┌─────────────────────────────────┐&#10;│  Cable jacket stripped          │&#10;│  ┌───────────────────────────┐  │&#10;│  │  ┌─────────────────────┐  │  │&#10;│  │  │ Foil shield         │  │  │&#10;│  │  │  ═══════════════    │  │  │&#10;│  │  │  ││││││││││││││││  │  │  │&#10;│  │  │  └─────────────────┘  │  │&#10;│  │  │  ╔════════════════╗   │  │&#10;│  │  │  ║ 360° Clamp    ║   │  │&#10;│  │  │  ║ (metal ring)  ║   │  │&#10;│  │  │  ╚════════════════╝   │  │&#10;│  │  └─────────────────────┘  │  │&#10;│  └───────────────────────────┘  │&#10;│         │                       │&#10;│         ▼                       │&#10;│  ┌─────────────┐                │&#10;│  │ Connector   │                │&#10;│  │ backshell   │                │&#10;│  └─────────────┘                │&#10;└─────────────────────────────────┘&#10;&#10;Avantajlar:&#10;- 360° EMI koruması&#10;- Düşük transfer impedansı&#10;- Yüksek frekans koruması&#10;- Mekanik dayanıklılık&#10;&#10;Kullanım: EtherCAT, Encoder, Servo" style="text;html=0;strokeColor=#0a7a0a;fillColor=#e8f5e9;align=left;verticalAlign=top;fontSize=8;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="190" width="280" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- Pigtail Method (FORBIDDEN) -->
+        <mxCell id="shield_pigtail" value="PIGTAIL (YASAK!) ❌&#10;&#10;┌─────────────────────────────────┐&#10;│  ┌───────────────────────────┐  │&#10;│  │  ┌─────────────────────┐  │  │&#10;│  │  │  ═══════════════    │  │  │&#10;│  │  │  ││││││││││││││││  │  │  │&#10;│  │  │  └─────────────────┘  │  │&#10;│  │  │         │             │  │&#10;│  │  │         │ ❌          │  │&#10;│  │  │         │             │  │&#10;│  │  │      ┌──┴──┐          │  │&#10;│  │  │      │Wire │          │  │&#10;│  │  │      └──┬──┘          │  │&#10;│  │  │         │             │  │&#10;│  │  │         ▼             │  │&#10;│  │  │      Terminal         │  │&#10;│  │  └─────────────────────┘  │  │&#10;│  └───────────────────────────┘  │&#10;└─────────────────────────────────┘&#10;&#10;❌ NEDEN YASAK:&#10;- Yüksek empedans (&gt;100mΩ)&#10;- Antenn etkisi (RFI)&#10;- Düşük frekans koruması&#10;- EMC uyumsuzluğu&#10;- Endüstriyel standartlara&#10;  aykırı (EN 61800-3)&#10;&#10;ASLA kullanmayın!" style="text;html=0;strokeColor=#cc0000;fillColor=#f8cecc;align=left;verticalAlign=top;fontSize=8;fontFamily=Courier New;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1600" y="450" width="280" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- Ground Lug Method -->
+        <mxCell id="shield_gndlug" value="GROUND LUG (GÜÇ KABLOLARI)&#10;&#10;┌─────────────────────────────────┐&#10;│  ┌───────────────────────────┐  │&#10;│  │  ┌─────────────────────┐  │  │&#10;│  │  │  ═══════════════    │  │  │&#10;│  │  │  ││││││││││││││││  │  │  │&#10;│  │  │  └─────────────────┘  │  │&#10;│  │  │         │             │  │&#10;│  │  │         ▼             │  │&#10;│  │  │  ┌─────────────┐      │  │&#10;│  │  │  │ Ground Lug  │      │  │&#10;│  │  │  │ (ring term) │      │  │&#10;│  │  │  └──────┬──────┘      │  │&#10;│  │  │         │             │  │&#10;│  │  │         ▼             │  │&#10;│  │  │  ┌─────────────┐      │  │&#10;│  │  │  │ PE Bara     │      │  │&#10;│  │  │  │ (M4/M5/M6)  │      │  │&#10;│  │  │  └─────────────┘      │  │&#10;│  │  └─────────────────────┘  │  │&#10;│  └───────────────────────────┘  │&#10;└─────────────────────────────────┘&#10;&#10;Kullanım: AC güç kabloları&#10;          Motor güç kabloları&#10;          (&gt;4mm² kesit)&#10;&#10;Lug boyutu:&#10;- 4mm²: M4 ring terminal&#10;- 6mm²: M5 ring terminal&#10;- 10mm²: M6 ring terminal&#10;&#10;Tork değerleri:&#10;- M4: 1.2-1.5 Nm&#10;- M5: 2.0-2.5 Nm&#10;- M6: 3.0-3.5 Nm" style="text;html=0;strokeColor=#0a7a0a;fillColor=#e8f5e9;align=left;verticalAlign=top;fontSize=8;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="710" width="280" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- SECTION 9: Cable Assembly Drawings -->
+        <!-- ============================================ -->
+        <mxCell id="cableasm_title" value="9. CABLE ASSEMBLY DRAWINGS" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=14;fontStyle=1;fontColor=#2b5a8a;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="1000" width="280" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Servo Motor Cable Assembly -->
+        <mxCell id="servo_cable_asm" value="SERVO MOTOR CABLE ASSEMBLY&#10;&#10;┌─────────────────────────────────────────────┐&#10;│  Drive Side                  Motor Side     │&#10;│  ┌──────────┐              ┌──────────┐     │&#10;│  │ Terminal │              │ Terminal │     │&#10;│  │ Block P2 │              │ Box      │     │&#10;│  │ R/S/T/PE │              │ U/V/W/PE │     │&#10;│  └────┬─────┘              └─────┬────┘     │&#10;│       │                          │          │&#10;│       └──────────┬───────────────┘          │&#10;│                  │                          │&#10;│        4x4.0mm² + Shield                    │&#10;│        Length: 5-20m                        │&#10;│        Continuous flex rated                │&#10;└─────────────────────────────────────────────┘&#10;&#10;Kablo yapısı:&#10;┌─────────────────────────────────┐&#10;│  ┌───────────────────────────┐  │&#10;│  │ PUR jacket (orange)       │  │&#10;│  │  ┌─────────────────────┐  │  │&#10;│  │  │ Tinned copper braid │  │  │&#10;│  │  │  ═══════════════    │  │  │&#10;│  │  │  ││││││││││││││││  │  │  │&#10;│  │  │  │  ┌───────────┐  │  │  │&#10;│  │  │  │  │ 4x4.0mm²  │  │  │  │&#10;│  │  │  │  │ twisted   │  │  │  │&#10;│  │  │  │  └───────────┘  │  │  │&#10;│  │  │  │                 │  │  │&#10;│  │  │  └─────────────────┘  │  │&#10;│  │  └─────────────────────┘  │  │&#10;│  └───────────────────────────┘  │&#10;└─────────────────────────────────┘&#10;&#10;Çap: ~12mm&#10;Bending radius: 10x cable diameter&#10;Cycle rating: >5 million" style="text;html=0;strokeColor=#d79b00;fillColor=#ffe6cc;align=left;verticalAlign=top;fontSize=8;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="1040" width="320" height="260" as="geometry"/>
+        </mxCell>
+
+        <!-- Encoder Cable Assembly -->
+        <mxCell id="encoder_cable_asm" value="ENCODER CABLE ASSEMBLY&#10;&#10;┌─────────────────────────────────────────────┐&#10;│  Drive Side                  Motor Side     │&#10;│  ┌──────────┐              ┌──────────┐     │&#10;│  │ Hirose   │              │ Hirose   │     │&#10;│  │ 7P-6S    │              │ 7R-6S    │     │&#10;│  │ (plug)   │              │(recept.) │     │&#10;│  └────┬─────┘              └─────┬────┘     │&#10;│       │                          │          │&#10;│       └──────────┬───────────────┘          │&#10;│                  │                          │&#10;│        6x0.14mm² + Shield                   │&#10;│        Length: 5-20m                        │&#10;└─────────────────────────────────────────────┘&#10;&#10;Kablo yapısı:&#10;┌─────────────────────────────────┐&#10;│  ┌───────────────────────────┐  │&#10;│  │ PUR jacket (gray)         │  │&#10;│  │  ┌─────────────────────┐  │  │&#10;│  │  │ Tinned copper braid │  │  │&#10;│  │  │  ┌───────────────┐  │  │  │&#10;│  │  │  │ 6x twisted    │  │  │  │&#10;│  │  │  │ pairs         │  │  │  │&#10;│  │  │  │ (individually │  │  │  │&#10;│  │  │  │  shielded)    │  │  │  │&#10;│  │  │  └───────────────┘  │  │  │&#10;│  │  │                     │  │  │&#10;│  │  └─────────────────────┘  │  │&#10;│  └───────────────────────────┘  │&#10;└─────────────────────────────────┘&#10;&#10;Çap: ~5.5mm&#10;Impedans: 100Ω ±15%&#10;Capacitance: &lt;60pF/m" style="text;html=0;strokeColor=#d79b00;fillColor=#fff2cc;align=left;verticalAlign=top;fontSize=8;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="1320" width="320" height="260" as="geometry"/>
+        </mxCell>
+
+        <!-- EtherCAT Cable Assembly -->
+        <mxCell id="ethercat_cable_asm" value="ETHERCAT CABLE ASSEMBLY&#10;&#10;┌─────────────────────────────────────────────┐&#10;│  NC300/Drive Side        Drive/Module Side  │&#10;│  ┌──────────┐              ┌──────────┐     │&#10;│  │ RJ45     │              │ RJ45     │     │&#10;│  │ (male)   │              │ (male)   │     │&#10;│  │ industrial             │ industrial     │&#10;│  └────┬─────┘              └─────┬────┘     │&#10;│       │                          │          │&#10;│       └──────────┬───────────────┘          │&#10;│                  │                          │&#10;│        CAT6 SF/UTP                          │&#10;│        Length: 1-100m                       │&#10;└─────────────────────────────────────────────┘&#10;&#10;Kablo yapısı:&#10;┌─────────────────────────────────┐&#10;│  ┌───────────────────────────┐  │&#10;│  │ PUR jacket (green)        │  │&#10;│  │  ┌─────────────────────┐  │  │&#10;│  │  │ Tinned copper braid │  │  │&#10;│  │  │  ┌───────────────┐  │  │  │&#10;│  │  │  │ Aluminum foil │  │  │  │&#10;│  │  │  │  ┌─────────┐  │  │  │&#10;│  │  │  │  │ 4x2xAWG │  │  │  │&#10;│  │  │  │  │ 26      │  │  │  │&#10;│  │  │  │  └─────────┘  │  │  │&#10;│  │  │  │               │  │  │&#10;│  │  │  └───────────────┘  │  │  │&#10;│  │  │                     │  │  │&#10;│  │  └─────────────────────┘  │  │&#10;│  └───────────────────────────┘  │&#10;└─────────────────────────────────┘&#10;&#10;Çap: 6.0-6.5mm&#10;Bending radius: 8x cable diameter&#10;Transmission: 100 Mbps&#10;Cycle time: 1ms" style="text;html=0;strokeColor=#82b366;fillColor=#d5e8d4;align=left;verticalAlign=top;fontSize=8;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1940" y="1040" width="320" height="260" as="geometry"/>
+        </mxCell>
+
+        <!-- Cross References -->
+        <mxCell id="crossref9" value="SAYFA REFERANSLARI&#10;&#10;Page 01 → +24V dağıtımı&#10;Page 02 → Safety circuit (STO)&#10;Page 03 → NC300 CN1/CN2/CN3/CN5&#10;Page 04 → Servo CN1/CN2/CN3/CN6&#10;Page 05 → R1-EC I/O modülleri&#10;Page 06 → HMI bağlantıları&#10;Page 07 → Sensör wiring&#10;Page 08 → Terminal planı" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1940" y="1320" width="220" height="160" as="geometry"/>
+        </mxCell>
+
+        <!-- Footer -->
+        <mxCell id="footer9a" value="Rev 4.1 | Connector Pinout, Cable Specs, Shield Termination, Crimping" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1560" width="1200" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="footer9b" value="Prepared in Codex workspace | For PDF issue / review use" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="1560" width="450" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="footer9c" value="Sheet 9 / 9" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="2170" y="1560" width="110" height="28" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

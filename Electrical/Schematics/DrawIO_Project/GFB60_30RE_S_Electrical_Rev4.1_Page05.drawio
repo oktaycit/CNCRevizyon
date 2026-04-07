@@ -1,0 +1,185 @@
+<mxfile host="app.diagrams.net" modified="2026-04-07T17:00:00Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="page-5" name="05 R1-EC I/O Modülleri - Rev4.1">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title Block -->
+        <mxCell id="title" value="GFB60/30RE-S&#10;05 R1-EC I/O Modülleri&#10;Revizyon 4.1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=26;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="420" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="Delta R1-EC01 Bus Coupler, R1-EC0902D DI modülleri (64-channel),&#10;R1-EC0902O DO modülü (32-channel relay) ve I/O adres tablosu" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="620" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="pageTag5" value="PAGE 05 / I/O&#10;Rev 4.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#2b5a8a;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="30" width="170" height="32" as="geometry"/>
+        </mxCell>
+
+        <!-- R1-EC01 Bus Coupler -->
+        <mxCell id="u6" value="U6&#10;DELTA R1-EC01&#10;BUS COUPLER&#10;EtherCAT Slave&#10;Node 6" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="150" width="220" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- R1-EC01 Power -->
+        <mxCell id="u6pwr" value="R1-EC01 POWER&#10;+24V (Page 01 X2:2) → F3 (5A)&#10;0V (Page 01 X2:7) → 0V BUS&#10;FG → PE Bar (2.5mm²)&#10;&#10;Power: 150mA (coupler)&#10;V_IO: Harici 24VDC (sinyal)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="80" y="350" width="220" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- R1-EC01 EtherCAT Ports -->
+        <mxCell id="u6ecat" value="ETHERCAT PORTS&#10;CN3 (IN):&#10;← Page 03 CNC Axis CN6&#10;&#10;CN6 (OUT):&#10;→ Page 03 NC300 CN2 (loop)&#10;&#10;CAT6 Shielded&#10;100 Mbps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="80" y="480" width="220" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- R1-EC0902D #1 (DI - X/Y/Z/ALT Limit & Home) -->
+        <mxCell id="u7" value="U7&#10;R1-EC0902D #1&#10;32-CH DIGITAL INPUT&#10;X/Y/Z/ALT Limit &amp; Home&#10;Opto-izole 500V" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="380" y="150" width="240" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- U7 Terminal Block 1 (DI_0 - DI_15) -->
+        <mxCell id="u7tb1" value="TB1: DI_0 - DI_15&#10;1  DI_0  %IX0.0   X_HOME&#10;2  DI_1  %IX0.1   X_LIMIT_P&#10;3  DI_2  %IX0.2   X_LIMIT_N&#10;4  DI_3  %IX0.3   Y_HOME&#10;5  DI_4  %IX0.4   Y_LIMIT_P&#10;6  DI_5  %IX0.5   Y_LIMIT_N&#10;7  DI_6  %IX0.6   X_ENC_Z&#10;8  DI_7  %IX0.7   Y_ENC_Z&#10;9  DI_8  %IX0.8   Z_HOME&#10;10 DI_9  %IX0.9   Z_LIMIT_P&#10;11 DI_10 %IX0.10  Z_LIMIT_N&#10;12 DI_11 %IX0.11  ALT_HOME&#10;13 DI_12 %IX0.12  ALT_LIMIT_P&#10;14 DI_13 %IX0.13  ALT_LIMIT_N&#10;15 DI_14 %IX0.14  Reserved&#10;16 DI_15 %IX0.15  Reserved&#10;COM: 0V_IO" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#ffffff;strokeColor=#d6b656;align=left;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="380" y="310" width="240" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- R1-EC0902D #2 (DI - Cam, Vakum, Kapı) -->
+        <mxCell id="u8" value="U8&#10;R1-EC0902D #2&#10;32-CH DIGITAL INPUT&#10;Cam, Vakum, Kapı Sensörleri&#10;Opto-izole 500V" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="700" y="150" width="240" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- U8 Terminal Block 1 (DI_0 - DI_15) -->
+        <mxCell id="u8tb1" value="TB1: DI_0 - DI_15&#10;1  DI_0  %IX2.0   GLASS_DETECT&#10;2  DI_1  %IX2.1   VACUUM_FB&#10;3  DI_2  %IX2.2   DOOR_SAFE&#10;4  DI_3  %IX2.3   CLAMP_SENSOR&#10;5  DI_4  %IX2.4   BLADE_GUARD&#10;6  DI_5  %IX2.5   OIL_LEVEL&#10;7  DI_6  %IX2.6   AIR_PRESSURE&#10;8  DI_7  %IX2.7   TEMP_WARNING&#10;9  DI_8  %IX2.8   Reserved&#10;10 DI_9  %IX2.9   Reserved&#10;11 DI_10 %IX2.10  Reserved&#10;12 DI_11 %IX2.11  Reserved&#10;13 DI_12 %IX2.12  Reserved&#10;14 DI_13 %IX2.13  Reserved&#10;15 DI_14 %IX2.14  Reserved&#10;16 DI_15 %IX2.15  Reserved&#10;COM: 0V_IO" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#ffffff;strokeColor=#d6b656;align=left;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="700" y="310" width="240" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- R1-EC0902O (DO - Relay) -->
+        <mxCell id="u9" value="U9&#10;R1-EC0902O&#10;32-CH DIGITAL OUTPUT&#10;Relay (SPST 2A)&#10;250VAC / 30VDC" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1020" y="150" width="240" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- U9 Terminal Block 1 (DO_0 - DO_15) -->
+        <mxCell id="u9tb1" value="TB1: DO_0 - DO_15&#10;1  DO_0 NO  %QX0.0   SERVO_ENABLE&#10;2  DO_0 COM           0V_ACT&#10;3  DO_1 NO  %QX0.1   VACUUM_PUMP&#10;4  DO_1 COM           0V_ACT&#10;5  DO_2 NO  %QX0.2   CUTTING_OIL&#10;6  DO_2 COM           0V_ACT&#10;7  DO_3 NO  %QX0.3   BLADE_SPIN&#10;8  DO_3 COM           0V_ACT&#10;9  DO_4 NO  %QX0.4   WARNING_LIGHT&#10;10 DO_4 COM           0V_ACT&#10;11 DO_5 NO  %QX0.5   BUZZER&#10;12 DO_5 COM           0V_ACT&#10;13 DO_6 NO  %QX0.6   BREAKER_ENABLE&#10;14 DO_6 COM           0V_ACT&#10;15 DO_7 NO  %QX0.7   CLAMP_PRESS&#10;16 DO_7 COM           0V_ACT&#10;17 DO_8 NO  %QX0.8   Reserved&#10;18 DO_8 COM           NC&#10;...&#10;31 DO_15 NO %QX0.15  Reserved&#10;32 DO_15 COM        NC" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#ffffff;strokeColor=#9673a6;align=left;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="310" width="240" height="380" as="geometry"/>
+        </mxCell>
+
+        <!-- I/O Address Table -->
+        <mxCell id="iotable" value="I/O ADRES TABLOSU&#10;&#10;┌──────────┬────────────────────────────────┬──────────────┐&#10;│ Adres    │ Sinyal                         │ Kaynak/Hedef │&#10;├──────────┼────────────────────────────────┼──────────────┤&#10;│ %IX0.0   │ X_HOME                         │ X20:1        │&#10;│ %IX0.1   │ X_LIMIT_P                      │ X20:2        │&#10;│ %IX0.2   │ X_LIMIT_N                      │ X20:3        │&#10;│ %IX0.3   │ Y_HOME                         │ X20:4        │&#10;│ %IX0.4   │ Y_LIMIT_P                      │ X20:5        │&#10;│ %IX0.5   │ Y_LIMIT_N                      │ X20:6        │&#10;│ %IX0.6   │ X_ENCODER_Z                    │ X20:7        │&#10;│ %IX0.7   │ Y_ENCODER_Z                    │ X20:8        │&#10;│ %IX0.8   │ Z_HOME                         │ X20:9        │&#10;│ %IX0.9   │ Z_LIMIT_P                      │ X20:10       │&#10;│ %IX0.10  │ Z_LIMIT_N                      │ X20:11       │&#10;│ %IX0.11  │ ALT_HOME                       │ X20:12       │&#10;│ %IX0.12  │ ALT_LIMIT_P                    │ X20:13       │&#10;│ %IX0.13  │ ALT_LIMIT_N                    │ X20:14       │&#10;│ %IX0.14  │ Reserved                       │ -            │&#10;│ %IX0.15  │ Reserved                       │ -            │&#10;└──────────┴────────────────────────────────┴──────────────┘" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="80" y="620" width="620" height="260" as="geometry"/>
+        </mxCell>
+
+        <!-- I/O Address Table (continued) -->
+        <mxCell id="iotable2" value="I/O ADRES TABLOSU (Devam)&#10;&#10;┌──────────┬────────────────────────────────┬──────────────┐&#10;│ Adres    │ Sinyal                         │ Kaynak/Hedef │&#10;├──────────┼────────────────────────────────┼──────────────┤&#10;│ %IX2.0   │ GLASS_DETECT                   │ X30:1        │&#10;│ %IX2.1   │ VACUUM_FB                      │ X30:2        │&#10;│ %IX2.2   │ DOOR_SAFE                      │ X30:3        │&#10;│ %IX2.3   │ CLAMP_SENSOR                   │ X30:4        │&#10;│ %IX2.4   │ BLADE_GUARD                    │ X30:5        │&#10;│ %IX2.5   │ OIL_LEVEL                      │ X30:6        │&#10;│ %IX2.6   │ AIR_PRESSURE                   │ X30:7        │&#10;│ %IX2.7   │ TEMP_WARNING                   │ X30:8        │&#10;│ %IX2.8   │ Reserved                       │ -            │&#10;│ %IX2.9   │ Reserved                       │ -            │&#10;│ %IX2.10  │ Reserved                       │ -            │&#10;│ %IX2.11  │ Reserved                       │ -            │&#10;│ %IX2.12  │ Reserved                       │ -            │&#10;│ %IX2.13  │ Reserved                       │ -            │&#10;│ %IX2.14  │ Reserved                       │ -            │&#10;│ %IX2.15  │ Reserved                       │ -            │&#10;└──────────┴────────────────────────────────┴──────────────┘" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="720" y="620" width="620" height="260" as="geometry"/>
+        </mxCell>
+
+        <!-- Output Address Table -->
+        <mxCell id="qtable" value="OUTPUT ADRES TABLOSU&#10;&#10;┌──────────┬────────────────────────────────┬──────────────┐&#10;│ Adres    │ Sinyal                         │ Hedef        │&#10;├──────────┼────────────────────────────────┼──────────────┤&#10;│ %QX0.0   │ SERVO_ENABLE                   │ X40:1-2      │&#10;│ %QX0.1   │ VACUUM_PUMP                    │ X40:3-4      │&#10;│ %QX0.2   │ CUTTING_OIL                    │ X40:5-6      │&#10;│ %QX0.3   │ BLADE_SPIN                     │ X40:7-8      │&#10;│ %QX0.4   │ WARNING_LIGHT                  │ X40:9-10     │&#10;│ %QX0.5   │ BUZZER                         │ X40:11-12    │&#10;│ %QX0.6   │ BREAKER_ENABLE                 │ X40:13-14    │&#10;│ %QX0.7   │ CLAMP_PRESS                    │ X40:15-16    │&#10;│ %QX0.8   │ Reserved                       │ -            │&#10;│ %QX0.9   │ Reserved                       │ -            │&#10;│ %QX0.10  │ Reserved                       │ -            │&#10;│ %QX0.11  │ Reserved                       │ -            │&#10;│ %QX0.12  │ Reserved                       │ -            │&#10;│ %QX0.13  │ Reserved                       │ -            │&#10;│ %QX0.14  │ Reserved                       │ -            │&#10;│ %QX0.15  │ Reserved                       │ -            │&#10;└──────────┴────────────────────────────────┴──────────────┘" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="80" y="900" width="620" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- Terminal Block Summary -->
+        <mxCell id="termsum" value="TERMINAL BLOKLARI&#10;&#10;X20 - DI Modül #1 (X/Y/Z/ALT)&#10;X20.1-14  : DI_0 - DI_13 (Limit/Home)&#10;X20.COM   : 0V_IO (ortak)&#10;&#10;X30 - DI Modül #2 (Sensörler)&#10;X30.1-8   : DI_0 - DI_7 (Sensörler)&#10;X30.COM   : 0V_IO (ortak)&#10;&#10;X40 - DO Modül (Röle)&#10;X40.1-32  : DO_0 NO/COM - DO_15 NO/COM&#10;X40.PWR   : +24V_ACT (röle bobin)&#10;&#10;X41 - EtherCAT &amp; Power&#10;X41.1     : ECAT_IN (Page 03)&#10;X41.2     : ECAT_OUT (Page 03)&#10;X41.3     : +24V_R1EC (Page 01 X2:2)&#10;X41.4     : 0V_R1EC (Page 01 X2:7)&#10;X41.5     : +24V_IO (sinyal)&#10;X41.6     : 0V_IO (sinyal)&#10;X41.7     : PE (shield)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="720" y="900" width="280" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- Sensor Wiring Detail -->
+        <mxCell id="sensorwiring" value="SENSÖR BAĞLANTISI (PNP)&#10;&#10;         +24V_IO&#10;           │&#10;           ├───────────────┐&#10;           │               │&#10;      ┌────▼────┐     ┌────▼────┐&#10;      │ Sensör  │     │ Sensör  │&#10;      │  (+)    │     │  (+)    │&#10;      │         │     │         │&#10;      │  (OUT)──┼────►│  (OUT)──┼────► DI_X&#10;      │         │     │         │&#10;      │  (-)    │     │  (-)    │&#10;      └────┬────┘     └────┬────┘&#10;           │               │&#10;           └───────┬───────┘&#10;                   │&#10;                  0V_IO&#10;&#10;Leuze IS 218, Omron E2E&#10;M12 4-pin konnektör" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="720" width="280" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- Relay Output Wiring Detail -->
+        <mxCell id="relaywiring" value="RÖLE ÇIKIŞ BAĞLANTISI&#10;&#10;         +24V_ACT&#10;           │&#10;      ┌────▼────┐&#10;      │ Aktüatör│&#10;      │  (+)    │&#10;      │         │&#10;      │  (-)    │&#10;      └────┬────┘&#10;           │&#10;      ┌────▼────┐&#10;      │ DO_X NO │◄── Röle kontak&#10;      │         │&#10;      │DO_X COM │&#10;      └────┬────┘&#10;           │&#10;          0V_ACT&#10;&#10;Valf, kontaktör, lamba&#10;2A max, 250VAC/30VDC" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="720" width="200" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- Module Specifications -->
+        <mxCell id="u7spec" value="R1-EC0902D SPEC&#10;&#10;32 Channel DI&#10;Voltaj: 24VDC (11-30V)&#10;Akım: 5-10mA/kanal&#10;Lojik 1: 11-30V&#10;Lojik 0: 0-5V&#10;Filtre: 1ms&#10;İzolasyon: 500V&#10;Tepki: &lt; 1ms&#10;LED: Her kanal için&#10;Konnektör: 16-pin x2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;align=left;verticalAlign=top;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="380" y="610" width="140" height="160" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="u8spec" value="R1-EC0902D #2 SPEC&#10;&#10;32 Channel DI&#10;Voltaj: 24VDC (11-30V)&#10;Akım: 5-10mA/kanal&#10;Lojik 1: 11-30V&#10;Lojik 0: 0-5V&#10;Filtre: 1ms&#10;İzolasyon: 500V&#10;Tepki: &lt; 1ms&#10;LED: Her kanal için&#10;Konnektör: 16-pin x2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;align=left;verticalAlign=top;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="700" y="610" width="140" height="160" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="u9spec" value="R1-EC0902O SPEC&#10;&#10;32 Channel DO (Relay)&#10;Tip: SPST NO&#10;Max Voltaj: 250VAC/30VDC&#10;Max Akım: 2A/kanal&#10;Toplam: 8A/modül&#10;Coil: 24VDC&#10;Tepki: &lt; 10ms&#10;Ömür: 100k cycle&#10;LED: Her kanal için" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;align=left;verticalAlign=top;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="710" width="140" height="160" as="geometry"/>
+        </mxCell>
+
+        <!-- EtherCAT Reference -->
+        <mxCell id="ecatref" value="ETHERCAT REFERANS&#10;&#10;Page 03 → R1-EC Coupler&#10;&#10;NC300 CN3 (OUT)&#10;   ↓&#10;X Axis CN3→CN6&#10;   ↓&#10;Y Axis CN3→CN6&#10;   ↓&#10;ALT Axis CN3→CN6&#10;   ↓&#10;Z Axis CN3→CN6&#10;   ↓&#10;CNC Axis CN3→CN6&#10;   ↓&#10;R1-EC IN (CN3) ← U6&#10;   ↓&#10;R1-EC OUT (CN6)&#10;   ↓&#10;NC300 CN2 (IN - loop)&#10;&#10;Cycle Time: 1ms&#10;Node: Auto-increment" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;verticalAlign=top;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="900" width="200" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- Power Reference -->
+        <mxCell id="pwrref" value="BESLEME REFERANS&#10;&#10;Page 01 → Güç Dağıtımı&#10;&#10;PSU +24V&#10;   ↓&#10;X2:2 → F3 (5A) → U6 V+&#10;   ↓&#10;U7 V_IO (24VDC)&#10;   ↓&#10;U8 V_IO (24VDC)&#10;   ↓&#10;U9 V_IO (24VDC)&#10;&#10;PSU 0V&#10;   ↓&#10;X2:7 → U6 GND&#10;   ↓&#10;U7 0V_IO&#10;   ↓&#10;U8 0V_IO&#10;   ↓&#10;U9 0V_IO&#10;&#10;Kablo: 1.5mm²&#10;Renk: Kırmızı (+), Siyah (-)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cc0000;align=left;verticalAlign=top;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="900" width="200" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- Status LEDs -->
+        <mxCell id="ledstatus" value="STATUS LEDs&#10;&#10;R1-EC01 (U6):&#10;PWR (Green): 24V OK&#10;RUN (Green): EtherCAT OK&#10;ERR (Red): Fault&#10;ECAT (Green): Link/Activity&#10;&#10;R1-EC0902D (U7, U8):&#10;DI_0 - DI_31: Her kanal LED&#10;ON: Input active&#10;OFF: Input inactive&#10;&#10;R1-EC0902O (U9):&#10;DO_0 - DO_31: Her kanal LED&#10;ON: Relay energized&#10;OFF: Relay de-energized" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="900" width="200" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- Cross References -->
+        <mxCell id="crossref5" value="SAYFA REFERANSLARI&#10;&#10;Page 01 → +24V_R1EC (F3 5A)&#10;Page 01 → 0V_R1EC&#10;Page 03 → EtherCAT IN (CNC Axis)&#10;Page 03 → EtherCAT OUT (NC300 CN2)&#10;Page 02 → DOOR_SAFE (%IX2.2)&#10;Page 02 → SERVO_ENABLE (%QX0.0)&#10;Page 04 → Servo limit/home sensörleri&#10;Page 07 → WARNING_LIGHT (%QX0.4)&#10;Page 07 → BUZZER (%QX0.5)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="620" width="220" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- Module Bus Connection -->
+        <mxCell id="busconn" value="MODÜL BUS BAĞLANTISI&#10;&#10;U6 R1-EC01&#10;   │ (backplane)&#10;   ├─► U7 R1-EC0902D #1&#10;   │      - Process data: %IX0.0-%IX1.15&#10;   │&#10;   ├─► U8 R1-EC0902D #2&#10;   │      - Process data: %IX2.0-%IX3.15&#10;   │&#10;   └─► U9 R1-EC0902O&#10;          - Process data: %QX0.0-%QX1.15&#10;&#10;Process data update: 1ms&#10;Configuration: ESI dosyası" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;verticalAlign=top;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="380" y="790" width="260" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- Connections -->
+        <mxCell id="e5_1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="u6" target="u7">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5_2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="u7" target="u8">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5_3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="u8" target="u9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5_4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#82b366;dashed=1;" edge="1" parent="1" source="u6" target="u6pwr">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5_5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#82b366;dashed=1;" edge="1" parent="1" source="u6pwr" target="u6ecat">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5_6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#d6b656;dashed=1;" edge="1" parent="1" source="u7" target="u7tb1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5_7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#d6b656;dashed=1;" edge="1" parent="1" source="u8" target="u8tb1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5_8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#9673a6;dashed=1;" edge="1" parent="1" source="u9" target="u9tb1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Labels -->
+        <mxCell id="l5_1" value="Bus Coupler" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="140" y="148" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="l5_2" value="DI Modül #1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="148" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="l5_3" value="DI Modül #2" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="148" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="l5_4" value="DO Modül" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="148" width="100" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- Footer -->
+        <mxCell id="footer5a" value="Rev 4.1 | Delta R1-EC EtherCAT I/O | 64 DI + 32 DO Relay | Cycle Time: 1ms" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1110" width="1080" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="footer5b" value="Prepared in Codex workspace | For PDF issue / review use" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="1110" width="450" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="footer5c" value="Sheet 5 / 9" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1570" y="1110" width="110" height="28" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

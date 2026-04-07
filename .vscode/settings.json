@@ -8,5 +8,18 @@
     "*.fcstd": "xml",
     "*.step": "text",
     "*.stp": "text"
-  }
+  },
+  "//": "=== Qwen Code Companion - AI Model Settings ===",
+  "cline.apiProvider": "openai-compatible",
+  "cline.apiEndpoint": "https://coding-intl.dashscope.aliyuncs.com/v1",
+  "cline.apiKey": "sk-sp-1dfff295506a4cbba9c3745dd54e5796",
+  "cline.modelId": "qwen3.5-plus",
+  "//": "Model seçim stratejileri:",
+  "// - qwen3.5-plus: Genel kullanım (hızlı)",
+  "// - qwen3-max-2026-01-23: Karmaşık analizler",
+  "// - qwen3-coder-plus: Kod yazma",
+  "// - qwen3-coder-next: İleri düzey kod",
+  "cline.enableParallelToolCalls": true,
+  "cline.maxTokens": 4096,
+  "cline.temperature": 0.7
 }

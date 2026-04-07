@@ -1,0 +1,139 @@
+<mxfile host="app.diagrams.net" modified="2026-04-07T16:00:00Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="page-3" name="03 NC300 ve EtherCAT - Rev4.1">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Title Block -->
+        <mxCell id="title" value="GFB60/30RE-S&#10;03 NC300 ve EtherCAT Omurgası&#10;Revizyon 4.1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=26;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="480" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="Delta NC300 CNC Controller, EtherCAT network topolojisi, HMI bağlantısı&#10;ve I/O dağıtımı (5 eksen + R1-EC modüller)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="620" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="pageTag3" value="PAGE 03 / CONTROL&#10;Rev 4.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#2b5a8a;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="30" width="170" height="32" as="geometry"/>
+        </mxCell>
+
+        <!-- U1 NC300 Controller -->
+        <mxCell id="u1" value="U1&#10;DELTA NC300&#10;CNC CONTROLLER&#10;EtherCAT Master&#10;5 Axis + 1 Spindle" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="150" width="280" height="400" as="geometry"/>
+        </mxCell>
+
+        <!-- NC300 Power Input -->
+        <mxCell id="u1pwr" value="NC300 POWER&#10;+24V (Page 01 X2:1) → F2 (4A)&#10;0V (Page 01 X2:6) → 0V BUS&#10;FG → PE Bar (2.5mm²)&#10;&#10;Power Consumption: 2A max&#10;Sigorta: F2 4A fast-blow" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="100" y="580" width="280" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- CN1 EtherCAT OUT -->
+        <mxCell id="cn1" value="CN1&#10;EtherCAT OUT&#10;RJ45&#10;&#10;1 TX+ → X Axis CN3:1&#10;2 TX- → X Axis CN3:2&#10;3 RX+ ← X Axis CN3:3&#10;6 RX- ← X Axis CN3:6&#10;&#10;CAT6 Shielded&#10;Max 100m" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="450" y="150" width="180" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- CN2 EtherCAT IN (Loop) -->
+        <mxCell id="cn2" value="CN2&#10;EtherCAT IN&#10;RJ45 (Loop Back)&#10;&#10;1 TX+ ← CNC Axis CN6:1&#10;2 TX- ← CNC Axis CN6:2&#10;3 RX+ → CNC Axis CN6:3&#10;6 RX- → CNC Axis CN6:6&#10;&#10;Ring topology&#10;Redundancy" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="450" y="310" width="180" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- CN3 HMI Ethernet -->
+        <mxCell id="cn3" value="CN3&#10;HMI Ethernet&#10;RJ45&#10;&#10;TCP/IP:&#10;NC300: 192.168.1.10&#10;HMI: 192.168.1.11&#10;Subnet: 255.255.255.0&#10;&#10;Protocol: Delta TCP&#10;Port: 3001" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="450" y="470" width="180" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- CN5 50-pin I/O -->
+        <mxCell id="cn5" value="CN5&#10;50-pin D-Sub I/O&#10;&#10;DI_0: SERVO_READY&#10;DI_1: CYCLE_START&#10;DI_2: CYCLE_STOP&#10;DI_3: HOME_CMD&#10;DI_4: E-STOP_FB (Page 02)&#10;&#10;DO_0: SYSTEM_READY&#10;DO_1: CYCLE_ACTIVE&#10;DO_2: ALARM_LIGHT&#10;&#10;+24V_EXT: 500mA max&#10;GND_I/O: Signal ground" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="700" y="150" width="220" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- CN5 Pin Detail -->
+        <mxCell id="cn5detail" value="CN5 PINOUT DETAIL&#10;&#10;Pin 1: +24V_EXT (500mA)&#10;Pin 2-9: DI_0 - DI_7&#10;Pin 10-17: DO_0 - DO_7&#10;Pin 18: GND_I/O&#10;Pin 19-26: AI_0 - AI_3&#10;Pin 27-30: AO_0 - AO_1&#10;Pin 31: GND_A&#10;Pin 41-45: GND (Shield)&#10;&#10;Connector: 17JE-23500-02 (DDK)&#10;Cable: Shielded, 0.5mm²" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="700" y="450" width="240" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- EtherCAT Topology Diagram -->
+        <mxCell id="ecattopo" value="ETHERCAT TOPOLOGY&#10;&#10;        ┌─────────────┐&#10;        │   NC300     │&#10;        │  (Master)   │&#10;        └──────┬──────┘&#10;               │ CN1 (OUT)&#10;               ▼&#10;        ┌─────────────┐&#10;   ┌───►│  X Axis     │───┐&#10;   │    │  (Node 1)   │   │&#10;   │    └─────────────┘   │&#10;   │                      │&#10;   │    ┌─────────────┐   │&#10;   │    │  Y Axis     │   │&#10;   └───►│  (Node 2)   │◄──┘&#10;        └─────────────┘&#10;               │&#10;               ▼&#10;        ┌─────────────┐&#10;        │  ALT Axis   │&#10;        │  (Node 3)   │&#10;        └─────────────┘&#10;               │&#10;               ▼&#10;        ┌─────────────┐&#10;        │   Z Axis    │&#10;        │  (Node 4)   │&#10;        └─────────────┘&#10;               │&#10;               ▼&#10;        ┌─────────────┐&#10;        │  CNC Axis   │&#10;        │  (Node 5)   │&#10;        └──────┬──────┘&#10;               │ CN6 (OUT)&#10;               ▼&#10;        ┌─────────────┐&#10;        │   R1-EC     │&#10;        │  (Node 6)   │&#10;        └──────┬──────┘&#10;               │&#10;               ▼&#10;        ┌─────────────┐&#10;        │   NC300     │&#10;        │  CN2 (IN)   │&#10;        └─────────────┘&#10;&#10;Cycle Time: 1ms&#10;Address: Auto-increment" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="150" width="280" height="520" as="geometry"/>
+        </mxCell>
+
+        <!-- Node Address Table -->
+        <mxCell id="nodetable" value="NODE ADDRESS TABLE&#10;&#10;┌──────┬──────────────┬─────────────┐&#10;│ Node │   Device     │  Model      │&#10;├──────┼──────────────┼─────────────┤&#10;│  0   │ NC300 Master │ NC300-E     │&#10;│  1   │ X Axis       │ ASD-A3-4523 │&#10;│  2   │ Y Axis       │ ASD-A3-2023 │&#10;│  3   │ ALT Axis     │ ASD-A3-2023 │&#10;│  4   │ Z Axis       │ ASD-A3-1023 │&#10;│  5   │ CNC Axis     │ ASD-A3-1523 │&#10;│  6   │ R1-EC Coupler│ R1-EC01     │&#10;└──────┴──────────────┴─────────────┘&#10;&#10;Auto-increment addressing&#10;Physical layer scan" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="150" width="260" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- Network Specifications -->
+        <mxCell id="netspec" value="NETWORK SPECIFICATIONS&#10;&#10;EtherCAT:&#10;- Cycle Time: 1ms&#10;- Baud Rate: 100 Mbps&#10;- Cable: CAT6 SF/UTP&#10;- Connector: RJ45 (industrial)&#10;- Max segment: 100m&#10;- Topology: Daisy-chain&#10;&#10;HMI Ethernet:&#10;- IP: 192.168.1.x&#10;- Protocol: Modbus TCP&#10;- Update Rate: 100ms&#10;- Cable: CAT5e/CAT6" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="370" width="260" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- Grounding Details -->
+        <mxCell id="gnd1" value="GROUNDING DETAILS&#10;&#10;NC300 FG:&#10;- Kablo: 2.5mm²&#10;- Direnç: &lt; 100Ω&#10;- Bağlantı: Direkt PE bar&#10;- Daisy-chain YASAK&#10;&#10;EtherCAT Shield:&#10;- 360° clamp&#10;- RJ45 shell ground&#10;- Both ends grounded" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0a7a0a;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="570" width="260" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- Status LEDs -->
+        <mxCell id="leds" value="NC300 STATUS LEDs&#10;&#10;POWER (Green):&#10;- ON: 24VDC OK&#10;- OFF: Power fault&#10;&#10;RUN (Green):&#10;- ON: Normal operation&#10;- Blink: Program running&#10;- OFF: Stop/Emergency&#10;&#10;ERR (Red):&#10;- ON: Error detected&#10;- OFF: Normal&#10;&#10;ETHERCAT (Green/Red):&#10;- Green: Link OK&#10;- Blink: Activity&#10;- Red: Communication fault" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="720" width="280" height="160" as="geometry"/>
+        </mxCell>
+
+        <!-- Cross References -->
+        <mxCell id="crossref" value="SAYFA REFERANSLARI&#10;&#10;Page 01 → NC300 +24V (F2 4A)&#10;Page 01 → +24V_EXT (CN5 pin 1)&#10;Page 02 → E-STOP_FB (DI_4)&#10;Page 02 → SAFE_FB → DI_4&#10;Page 04 → Servo CN3/CN6&#10;Page 05 → R1-EC EtherCAT&#10;Page 07 → ALARM_LIGHT (DO_2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="450" y="650" width="220" height="160" as="geometry"/>
+        </mxCell>
+
+        <!-- Cable Schedule -->
+        <mxCell id="cablesch" value="CABLE SCHEDULE&#10;&#10;CN1 → X Axis CN3:&#10;- Type: CAT6 SF/UTP&#10;- Length: 5m&#10;- Shield: Both ends&#10;&#10;CN3 → HMI:&#10;- Type: CAT5e UTP&#10;- Length: 3m&#10;- Standard RJ45&#10;&#10;CN5 → Terminal:&#10;- Type: 50-pin shielded&#10;- Length: 2m&#10;- D-Sub female" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="700" y="650" width="220" height="160" as="geometry"/>
+        </mxCell>
+
+        <!-- Connections -->
+        <mxCell id="e3_1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="u1" target="cn1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3_2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="u1" target="cn2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3_3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="u1" target="cn3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3_4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#9673a6;" edge="1" parent="1" source="u1" target="cn5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3_5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#6c8ebf;dashed=1;" edge="1" parent="1" source="u1" target="u1pwr">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3_6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#9673a6;dashed=1;" edge="1" parent="1" source="cn5" target="cn5detail">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Labels -->
+        <mxCell id="l3_1" value="NC300 Controller" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="180" y="148" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="l3_2" value="EtherCAT OUT&#10;to Axis 1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="148" width="80" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="l3_3" value="EtherCAT IN&#10;from Axis 5" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="308" width="80" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="l3_4" value="HMI Ethernet&#10;192.168.1.x" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="468" width="80" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="l3_5" value="50-pin I/O&#10;DI/DO" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="760" y="148" width="80" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- Footer -->
+        <mxCell id="footer3a" value="Rev 4.1 | Delta NC300 EtherCAT Master | Cycle Time: 1ms | 5 Axis + R1-EC" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1110" width="1080" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="footer3b" value="Prepared in Codex workspace | For PDF issue / review use" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="1110" width="450" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="footer3c" value="Sheet 3 / 9" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1570" y="1110" width="110" height="28" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -11,6 +11,7 @@
 LiSEC GFB-60/30RE cam kesme makinesinin tam revizyonu. Delta Electronics EtherCAT tabanlı ASDA-A3-E servo sistemleri, NC300 CNC kontrolör ve R1-EC uzak I/O modülleri ile modernize edilmiş, cam ve lamine kesim yetenekli endüstriyel sistem.
 
 ### 1.1 Makine Özellikleri
+
 | Özellik | Değer |
 |---------|-------|
 | Model | LiSEC GFB-60/30RE |
@@ -27,6 +28,7 @@ LiSEC GFB-60/30RE cam kesme makinesinin tam revizyonu. Delta Electronics EtherCA
 ## 2. Teknik Çözümler
 
 ### 2.1 Kontrol Mimarisi
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │              Delta NC300 (EtherCAT Master)                      │
@@ -74,12 +76,14 @@ LiSEC GFB-60/30RE cam kesme makinesinin tam revizyonu. Delta Electronics EtherCA
 | C | ASD-A3-1523-E | ECMA-E11315 | 1.5kW | IP67 |
 
 ### 2.3 Güvenlik Sistemi (STO)
+
 - **Pilz PNOZ X2.8P** güvenlik rölesi
 - **STO (Safe Torque Off)** donanımsal güvenlik
 - SIL 3, PL e, Cat. 4 sertifikalı
 - Tüm sürücülere ortak STO hattı
 
 ### 2.4 Sensör Sistemi
+
 - **Leuze IS 218 Series** indüktif sensörler (M18, IP67)
 - 8 adet limit/home sensörü
 - Cam tozu ortamına dayanıklı
@@ -150,6 +154,7 @@ CNCRevizyon/
 ## 4. Tamamlanan Çalışmalar
 
 ### 4.1 Dokümantasyon
+
 - [x] README.md (GFB-60/30RE, EtherCAT mimarisi)
 - [x] Delta ASDA-A3-E servo entegrasyon kılavuzu
 - [x] NC300 programlama kılavuzu (G-kod, E-Cam, PLC)
@@ -159,6 +164,7 @@ CNCRevizyon/
 - [x] Proje klasör yapısı oluşturuldu
 
 ### 4.2 Teknik Spesifikasyonlar
+
 - [x] EtherCAT mimarisi tanımlandı (100μs cycle)
 - [x] Servo motor seçimi yapıldı (ECMA-L/E/C serisi)
 - [x] R1-EC uzak I/O konfigürasyonu
@@ -172,11 +178,12 @@ CNCRevizyon/
 ## 5. Devam Eden / Gelecek Çalışmalar
 
 ### 5.1 CAD Modelleme (FreeCAD)
+
 - [ ] FreeCAD kurulumu ve Assembly4 eklentisi
 - [ ] ECMA-L11845 (4.5kW) motor modeli - yüksek atalet flanş
 - [ ] ECMA-C11010 (1kW frenli) Z ekseni montajı
 - [ ] ECMA-E11320 (2kW) Y/Alt motor modelleri
-- [ ] R1-EC modül kutu yerleşimi
+- [x] R1-EC modül kutu yerleşimi
 - [ ] Leuze IS 218 sensör montaj braketleri
 - [ ] HIWIN HGH25 lineer ray modelleri
 - [ ] Ana şase modellemesi
@@ -185,8 +192,13 @@ CNCRevizyon/
 - [ ] Assembly4 ile ana montaj
 - [ ] Hareket simülasyonu
 - [ ] TechDraw teknik çizimler
+- [x] **DOP-110CS HMI montaj modeli** (286x226x58mm, cutout: 271x211mm)
+- [x] **Operatör terminal kutusu** (400x500x250mm, IP65 koruma)
+- [x] **R1-EC DIN ray montaj plakası** (350x200x5mm)
+- [x] **IP65 kablo giriş rakorları ve havalandırma filtreleri**
 
 ### 5.2 Elektrik Tasarımı
+
 - [ ] Tek hat şeması (Single Line Diagram)
 - [ ] EtherCAT kablolama şeması
 - [ ] STO güvenlik devresi çizimi
@@ -196,6 +208,7 @@ CNCRevizyon/
 - [ ] Topraklama planı
 
 ### 5.3 Yazılım Geliştirme
+
 - [ ] ISPSoft proje oluşturma
 - [ ] EtherCAT konfigürasyon dosyası
 - [ ] Eksen parametre ayarları
@@ -207,6 +220,7 @@ CNCRevizyon/
 - [ ] Alarm ve hata yönetimi
 
 ### 5.4 Test ve Komisyon
+
 - [ ] EtherCAT başlangıç testi
 - [ ] Servo auto-tuning
 - [ ] Limit switch testi
@@ -221,6 +235,7 @@ CNCRevizyon/
 ## 6. Malzeme Listesi (BOM)
 
 ### 6.1 Kontrol ve Sürücü Sistemi
+
 | No | Ürün | Model | Miktar |
 |----|------|-------|--------|
 | 1 | Delta NC300 | NC300-XXX | 1 |
@@ -231,6 +246,7 @@ CNCRevizyon/
 | 6 | Delta Servo Sürücü 1.5kW | ASD-A3-1523-E | 1 |
 
 ### 6.2 Servo Motorlar
+
 | No | Ürün | Model | Miktar | Eksen |
 |----|------|-------|--------|-------|
 | 1 | Servo Motor 4.5kW | ECMA-L11845 | 1 | X |
@@ -239,6 +255,7 @@ CNCRevizyon/
 | 4 | Servo Motor 1.5kW IP67 | ECMA-E11315 | 1 | C |
 
 ### 6.3 Uzak I/O Sistemi
+
 | No | Ürün | Model | Miktar |
 |----|------|-------|--------|
 | 1 | R1-EC Bus Coupler | R1-EC | 1 |
@@ -246,12 +263,14 @@ CNCRevizyon/
 | 3 | R1-EC Dijital Çıkış | R1-EC0902O (16 DO) | 3 |
 
 ### 6.4 Konveyör Sürücüsü
+
 | No | Ürün | Model | Miktar |
 |----|------|-------|--------|
 | 1 | Delta MS300 | MS300-xxx | 1 |
 | 2 | EtherCAT Kart | CMM-EC01 | 1 |
 
 ### 6.5 Sensörler ve Güvenlik
+
 | No | Ürün | Model | Miktar |
 |----|------|-------|--------|
 | 1 | Indüktif Sensör | Leuze IS 218 MM | 8 |
@@ -261,6 +280,7 @@ CNCRevizyon/
 | 5 | Sensör Kablosu | 4x0.34mm² Shielded | 50 m |
 
 ### 6.6 Kablolama
+
 | No | Ürün | Özellik | Miktar |
 |----|------|---------|--------|
 | 1 | EtherCAT Kablo | CAT5e STP | 20 m |
@@ -304,6 +324,7 @@ CNCRevizyon/
 ## 9. Kritik Teknik Parametreler
 
 ### 9.1 EtherCAT Konfigürasyonu
+
 ```
 Cycle Time: 100 μs
 Sync Mode: DC (Distributed Clock)
@@ -312,6 +333,7 @@ PDO Mapping: Standard CoE
 ```
 
 ### 9.2 Servo Parametreleri
+
 ```
 Encoder Çözünürlüğü: 24-bit (16,777,216 pulse/rev)
 Auto-tuning: Mode II (Real-time)
@@ -319,6 +341,7 @@ Following Error Limit: 5.0 mm (X), 3.0 mm (Y/Z)
 ```
 
 ### 9.3 E-Cam Senkronizasyonu
+
 ```
 Master Axis: Y (Üst)
 Slave Axis: Alt (Alt)
@@ -331,7 +354,7 @@ Cycle Time: 100 μs
 ## 10. Sonraki Adımlar
 
 1. **FreeCAD modellemeye başlama**
-   - FreeCAD v1.0 kurulumu (https://github.com/FreeCAD/FreeCAD-Bundle/releases)
+   - FreeCAD v1.0 kurulumu (<https://github.com/FreeCAD/FreeCAD-Bundle/releases>)
    - Assembly4 eklentisi kurulumu (Addon Manager)
    - Delta ECMA motor datasheet'lerini indir
    - Leuze IS 218 sensör ölçülerini al
@@ -359,20 +382,23 @@ Cycle Time: 100 μs
 ## 11. Kaynaklar
 
 ### 11.1 Delta Elektronik
-- **Delta Türkiye:** https://www.delta-automation.com/tr/
-- **NC300:** https://www.delta-automation.com/tr/products/industrial-automation/plc-based-control
-- **ASDA-A3-E:** https://www.delta-automation.com/tr/products/industrial-automation/servo-systems
+
+- **Delta Türkiye:** <https://www.delta-automation.com/tr/>
+- **NC300:** <https://www.delta-automation.com/tr/products/industrial-automation/plc-based-control>
+- **ASDA-A3-E:** <https://www.delta-automation.com/tr/products/industrial-automation/servo-systems>
 - **ISPSoft:** Delta web sitesinden indirilebilir
 
 ### 11.2 Leuze Electronics
-- **IS 218 Serisi:** https://www.leuze.com/en-de/products/sensors/inductive-sensors
+
+- **IS 218 Serisi:** <https://www.leuze.com/en-de/products/sensors/inductive-sensors>
 
 ### 11.3 FreeCAD
-- **FreeCAD Resmi:** https://www.freecad.org/
-- **Dokümantasyon:** https://wiki.freecad.org/
-- **Türkçe Kaynaklar:** https://wiki.freecad.org/Manual:Türkçe
-- **Forum:** https://forum.freecad.org/
-- **Video Eğitim:** https://www.youtube.com/c/FreeCAD
+
+- **FreeCAD Resmi:** <https://www.freecad.org/>
+- **Dokümantasyon:** <https://wiki.freecad.org/>
+- **Türkçe Kaynaklar:** <https://wiki.freecad.org/Manual:Türkçe>
+- **Forum:** <https://forum.freecad.org/>
+- **Video Eğitim:** <https://www.youtube.com/c/FreeCAD>
 
 ---
 

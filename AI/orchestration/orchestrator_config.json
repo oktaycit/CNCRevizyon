@@ -1,26 +1,122 @@
 {
   "api_key": "sk-sp-1dfff295506a4cbba9c3745dd54e5796",
   "api_endpoint": "https://coding-intl.dashscope.aliyuncs.com/v1",
+  "lite_plan_optimized": true,
+  "max_concurrent_requests": 3,
+  "rate_limit_per_minute": 60,
   "models": [
     {
       "model_id": "qwen3.5-plus",
+      "name": "Qwen 3.5 Plus",
+      "description": "Hızlı, genel amaçlı - Günlük görevler",
       "temperature": 0.7,
       "max_tokens": 2048,
-      "system_prompt": "Sen yardımsever bir AI asistansısın."
+      "system_prompt": "Sen endüstriyel otomasyon uzmanı yardımsever bir AI asistansısın.",
+      "use_case": "general",
+      "priority": 1,
+      "enabled": true
     },
     {
       "model_id": "qwen3-max-2026-01-23",
-      "temperature": 0.7,
-      "max_tokens": 2048,
-      "system_prompt": "Sen yardımsever bir AI asistansısın."
+      "name": "Qwen 3 Max",
+      "description": "Karmaşık analiz ve problem çözme",
+      "temperature": 0.5,
+      "max_tokens": 4096,
+      "system_prompt": "Sen karmaşık teknik analizler yapan, detaylı çözümler üreten kıdemli bir otomasyon mühendisisin.",
+      "use_case": "complex",
+      "priority": 2,
+      "enabled": true
     },
     {
       "model_id": "qwen3-coder-plus",
+      "name": "Qwen 3 Coder",
+      "description": "Kod yazma, debug, optimizasyon",
+      "temperature": 0.2,
+      "max_tokens": 8192,
+      "system_prompt": "Sen endüstriyel otomasyon, CNC, PLC, FreeCAD ve Python konularında uzman bir yazılım mühendisisin. Kod yazarken açık, yorumlu ve best-practice uygularsın.",
+      "use_case": "coding",
+      "priority": 3,
+      "enabled": true
+    },
+    {
+      "model_id": "qwen3-coder-next",
+      "name": "Qwen 3 Coder Next",
+      "description": "İleri düzey kod üretimi",
       "temperature": 0.3,
       "max_tokens": 4096,
-      "system_prompt": "Sen uzman bir yazılım geliştirme asistanısın. Kod yazma ve açıklama konusunda uzmansın."
+      "system_prompt": "Sen ileri düzey kod üretimi yapan, modern tasarım desenleri uygulayan bir AI geliştiricisin.",
+      "use_case": "advanced_coding",
+      "priority": 4,
+      "enabled": true
+    },
+    {
+      "model_id": "glm-4.7",
+      "name": "GLM 4.7 (Zhipu)",
+      "description": "Alternatif model - Çapraz doğrulama",
+      "temperature": 0.6,
+      "max_tokens": 2048,
+      "system_prompt": "Sen çok yönlü bir AI asistansısın. Teknik konularda pratik çözümler sunarsın.",
+      "use_case": "validation",
+      "priority": 5,
+      "enabled": true
+    },
+    {
+      "model_id": "kimi-k2.5",
+      "name": "Kimi K2.5 (MiniMax)",
+      "description": "Uzun bağlam penceresi - Dokümantasyon",
+      "temperature": 0.5,
+      "max_tokens": 4096,
+      "system_prompt": "Sen uzun dokümanları analiz eden, özetleyen ve teknik dokümantasyon hazırlayan bir AI asistansısın.",
+      "use_case": "documentation",
+      "priority": 6,
+      "enabled": true
     }
   ],
-  "default_mode": "parallel",
-  "timeout_seconds": 60
+  "task_routing": {
+    "general_question": [
+      "qwen3.5-plus"
+    ],
+    "code_generation": [
+      "qwen3-coder-plus",
+      "qwen3-coder-next"
+    ],
+    "debug": [
+      "qwen3-coder-plus",
+      "qwen3-max-2026-01-23"
+    ],
+    "optimization": [
+      "qwen3-coder-plus",
+      "qwen3-max-2026-01-23"
+    ],
+    "design": [
+      "qwen3.5-plus",
+      "qwen3-max-2026-01-23"
+    ],
+    "documentation": [
+      "kimi-k2.5",
+      "qwen3.5-plus"
+    ],
+    "complex_analysis": [
+      "qwen3-max-2026-01-23",
+      "qwen3.5-plus"
+    ],
+    "validation": [
+      "glm-4.7",
+      "kimi-k2.5"
+    ]
+  },
+  "parallel_settings": {
+    "default_mode": "parallel",
+    "max_parallel_models": 3,
+    "timeout_seconds": 90,
+    "retry_on_failure": true,
+    "max_retries": 2,
+    "fallback_model": "qwen3.5-plus"
+  },
+  "aggregation_methods": {
+    "code": "select_best",
+    "analysis": "concat",
+    "documentation": "merge",
+    "validation": "compare"
+  }
 }

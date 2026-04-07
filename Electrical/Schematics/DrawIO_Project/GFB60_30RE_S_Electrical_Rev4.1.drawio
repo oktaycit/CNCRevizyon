@@ -1,0 +1,230 @@
+<mxfile host="app.diagrams.net" modified="2026-04-07T12:00:00Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="page-1" name="01 Ana Guc ve 24VDC - Rev4.1">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Title Block -->
+        <mxCell id="title" value="GFB60/30RE-S&#10;01 Ana Güç ve 24VDC Dağıtımı&#10;Revizyon 4.1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=26;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="420" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="EMC filtre, faz kontrol, parafudr ve güncellenmiş kablo kesitleri ile&#10;Delta NC300 ve GFB orijinal standartlarına uygun güç dağıtım omurgası" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="720" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="pageTag1" value="PAGE 01 / POWER&#10;Rev 4.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontColor=#4b3863;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="30" width="150" height="32" as="geometry"/>
+        </mxCell>
+
+        <!-- X1 AC Input Terminal -->
+        <mxCell id="x1" value="X1&#10;AC GİRİŞ&#10;L1&#10;L2&#10;L3&#10;N&#10;PE" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="60" y="170" width="110" height="180" as="geometry"/>
+        </mxCell>
+        
+        <!-- F0 Surge Arrester (NEW) -->
+        <mxCell id="f0" value="F0&#10;PARAFUDR&#10;Phoenix VAL-MS&#10;400/3+1&#10;L1/L2/L3/N → PE" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="230" y="170" width="140" height="180" as="geometry"/>
+        </mxCell>
+        
+        <!-- EMC Filter (NEW) -->
+        <mxCell id="emc1" value="EMC1&#10;EMC FİLTRE&#10;Delta EMI-F400V-10A&#10;L1/L2/L3/N&#10;→&#10;L1'/L2'/L3'/N'" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="430" y="170" width="160" height="180" as="geometry"/>
+        </mxCell>
+        
+        <!-- Q1 Main Breaker -->
+        <mxCell id="q1" value="Q1&#10;ANA ŞALTER&#10;32A / 3P&#10;MCB" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="650" y="190" width="120" height="120" as="geometry"/>
+        </mxCell>
+        
+        <!-- F1 Main Fuse -->
+        <mxCell id="f1" value="F1&#10;ANA SİGORTA&#10;3A (Kontrol)" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="830" y="190" width="120" height="120" as="geometry"/>
+        </mxCell>
+        
+        <!-- K1 Main Contactor -->
+        <mxCell id="k1" value="K1&#10;ANA KONTAKTÖR&#10;24VDC Coil&#10;3P 40A" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="180" width="140" height="140" as="geometry"/>
+        </mxCell>
+        
+        <!-- PS1 24VDC Power Supply -->
+        <mxCell id="ps1" value="PS1&#10;24VDC POWER SUPPLY&#10;Delta VFD-24V-20A&#10;20A / 480W" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="180" width="150" height="140" as="geometry"/>
+        </mxCell>
+        
+        <!-- F2-F6 DC Distribution Fuses -->
+        <mxCell id="f2f6" value="F2-F6&#10;DC DAĞITIM SİGORTALARI&#10;F2: 4A → NC300&#10;F3: 5A → R1-EC&#10;F4: 3A → SENSORS&#10;F5: 2A → SAFETY&#10;F6: 2A → HMI" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1430" y="150" width="180" height="200" as="geometry"/>
+        </mxCell>
+        
+        <!-- X2 24V Distribution Terminal -->
+        <mxCell id="x2" value="X2&#10;24V DAĞITIM TERMINALİ&#10;1 +24V_NC300 → Page 03&#10;2 +24V_R1EC → Page 05&#10;3 +24V_SENS → Page 06&#10;4 +24V_SAFETY → Page 02&#10;5 +24V_HMI&#10;6 0V_COMMON&#10;7 0V_SENS&#10;8 PE_SHIELD" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="120" width="230" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- FK1 Phase Monitor (NEW) -->
+        <mxCell id="fk1" value="FK1&#10;FAZ KONTROL RÖLESİ&#10;Pilz PNOZ EF Phase&#10;L1/L2/L3/N Monitor&#10;Alarm: NC/NO&#10;→ NC300 DI" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="650" y="350" width="180" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- K1 Coil Circuit -->
+        <mxCell id="k1coil" value="K1 COIL DEVRESİ&#10;A1 ← +24V_SAFETY (Page 02)&#10;A2 → Safety Relay K10 (13-14)&#10;13-14 AUX → PSU ON Confirm&#10;Coil: 24VDC, 1.2W" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="350" width="200" height="120" as="geometry"/>
+        </mxCell>
+        
+        <!-- PS1 Terminal Details -->
+        <mxCell id="ps1map" value="PS1 TERMINALS&#10;L/N → from K1 output&#10;PE → Panel PE bar&#10;+V / -V → F2-F6 bank&#10;ADJ → 24.2V target&#10;OK LED → NC300 DI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="350" width="190" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Power Bars -->
+        <mxCell id="busL1" value="L1 BUS&#10;10mm²" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#666666;fontColor=#666666;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="60" y="480" width="140" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="busL2" value="L2 BUS&#10;10mm²" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#666666;fontColor=#666666;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="60" y="520" width="140" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="busL3" value="L3 BUS&#10;10mm²" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#666666;fontColor=#666666;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="60" y="560" width="140" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="bus24" value="+24V BUS&#10;4mm²" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#cc0000;fontColor=#cc0000;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="60" y="620" width="140" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="bus0v" value="0V BUS&#10;4mm²" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#222222;fontColor=#222222;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="60" y="670" width="140" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="buspe" value="PE / SHIELD BAR&#10;10mm²" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#0a7a0a;fontColor=#0a7a0a;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="60" y="720" width="180" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Cable Notes (UPDATED) -->
+        <mxCell id="note1" value="KABLO KESİTLERİ (REV 4.1)&#10;AC Ana Giriş: 10 mm² (32A)&#10;AC Servo X: 6 mm² (25A)&#10;AC Servo Y/ALT: 4 mm² (16A)&#10;AC Servo Z/CNC: 2.5 mm² (10A)&#10;24VDC Ana: 4 mm² (20A)&#10;24VDC Branch: 2.5 mm² (5A)&#10;Kontrol/I-O: 0.5-1.5 mm²&#10;PE: Min 10 mm²" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="60" y="780" width="280" height="160" as="geometry"/>
+        </mxCell>
+        
+        <!-- EMC Notes -->
+        <mxCell id="noteEmc" value="EMC NOTLARI&#10;- Filtre gövde topraklaması&#10;- PE bar'a direkt bağlantı&#10;- Kablo ekranı 360° clamp&#10;- Giriş/çıkış kabloları ayrı&#10;Minimum mesafe: 50mm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="360" y="780" width="220" height="120" as="geometry"/>
+        </mxCell>
+        
+        <!-- Page References -->
+        <mxCell id="note2" value="SAYFA REFERANSLARI&#10;Page 02 → Safety 24V + K1 coil&#10;Page 03 → NC300 besleme&#10;Page 04 → Servo güç (X/Y/ALT/Z/CNC)&#10;Page 05 → R1-EC besleme&#10;Page 06 → Sensor 24V&#10;Page 07 → Aktüatör 24V" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="450" width="230" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- Connections -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#666666;" edge="1" parent="1" source="x1" target="f0">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#666666;" edge="1" parent="1" source="f0" target="emc1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#666666;" edge="1" parent="1" source="emc1" target="q1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#666666;" edge="1" parent="1" source="q1" target="f1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#666666;" edge="1" parent="1" source="f1" target="k1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#666666;" edge="1" parent="1" source="k1" target="ps1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#cc0000;" edge="1" parent="1" source="ps1" target="f2f6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#cc0000;" edge="1" parent="1" source="f2f6" target="x2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- FK1 Connections -->
+        <mxCell id="eFk1_1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#666666;dashed=1;" edge="1" parent="1" source="q1" target="fk1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eFk1_2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#666666;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Labels -->
+        <mxCell id="el1" value="3F AC&#10;10mm²" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="140" y="168" width="52" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="el2" value="Surge Protection&#10;L1/L2/L3/N → PE" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="280" y="168" width="80" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="el3" value="EMC Filtered&#10;10mm²" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="168" width="70" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="el4" value="Protected&#10;10mm²" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="700" y="168" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="el5" value="Switched&#10;10mm²" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="880" y="168" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="el6" value="To PSU&#10;10mm²" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="168" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="el7" value="+24V Dist&#10;4mm²" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="168" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="el8" value="Field Power&#10;2.5mm²" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1590" y="168" width="68" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- Distribution Header -->
+        <mxCell id="thead1" value="DAĞITIM ÖZETİ" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6c8ebf;strokeColor=#6c8ebf;fontColor=#ffffff;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="424" width="230" height="24" as="geometry"/>
+        </mxCell>
+        <mxCell id="thead1b" value="SAHA NOTLARI" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d6b656;strokeColor=#d6b656;fontColor=#ffffff;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="60" y="756" width="520" height="24" as="geometry"/>
+        </mxCell>
+
+        <!-- X1 Pin Map -->
+        <mxCell id="x1map" value="X1 PIN MAP&#10;1 L1 → F0:L1 → EMC1:L1 → Q1:1&#10;2 L2 → F0:L2 → EMC1:L2 → Q1:3&#10;3 L3 → F0:L3 → EMC1:L3 → Q1:5&#10;4 N → F0:N → EMC1:N → PS1:N&#10;5 PE → PE BAR (10mm²)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="60" y="380" width="200" height="110" as="geometry"/>
+        </mxCell>
+        
+        <!-- F0 Surge Arrester Detail -->
+        <mxCell id="f0detail" value="F0 PARAFUDR&#10;Phoenix Contact VAL-MS 400/3+1&#10;Tip: Surge arrester&#10;Uc: 400VAC&#10;In: 20kA (8/20μs)&#10;Koruma: L1/L2/L3/N → PE&#10;Montaj: DIN ray, 35mm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="230" y="380" width="200" height="110" as="geometry"/>
+        </mxCell>
+        
+        <!-- EMC1 Filter Detail -->
+        <mxCell id="emc1detail" value="EMC1 FİLTRE&#10;Delta EMI-F400V-10A&#10;Tip: 3-faz EMC filtre&#10;Un: 400VAC, 50/60Hz&#10;In: 10A&#10;Leakage: &lt;1mA&#10;Zemin: DIN ray + PE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="430" y="380" width="200" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- Fuse Map -->
+        <mxCell id="fusemap" value="FUSE MAP&#10;F2 4A → NC300 (Page 03)&#10;F3 5A → R1-EC (Page 05)&#10;F4 3A → Sensors (Page 06)&#10;F5 2A → Safety (Page 02)&#10;F6 2A → HMI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1430" y="380" width="180" height="110" as="geometry"/>
+        </mxCell>
+        
+        <!-- Distribution Bus Detail -->
+        <mxCell id="distbus1" value="DAĞITIM BARASI DETAY&#10;+24V_NC300 → Page 03 X30:1 (2A)&#10;+24V_R1EC → Page 05 X50:+24V (5A)&#10;+24V_SENS → Field connectors (3A)&#10;+24V_SAFETY → Page 02 X10:5 (2A)&#10;+24V_HMI → HMI panel (2A)&#10;Toplam: 14A &lt; 20A PSU" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="570" width="230" height="140" as="geometry"/>
+        </mxCell>
+        
+        <!-- PE Bar Detail -->
+        <mxCell id="pebar1" value="PE BAR DETAY&#10;Panel PE stud (10mm²)&#10;F0 PE terminal&#10;EMC1 chassis&#10;PS1 chassis&#10;Servo shields&#10;EtherCAT shields&#10;Sensor shield drain" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0a7a0a;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="280" y="520" width="220" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend1" value="RENK LEJANTI&#10;Gri: AC güç (3-faz)&#10;Mavi: 24VDC / kontrol&#10;Kırmızı: +24V DC&#10;Siyah: 0V DC&#10;Yeşil: PE / shield&#10;Sarı: Safety circuit&#10;Turuncu: EMC koruma" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="600" y="780" width="240" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- Footer -->
+        <mxCell id="footer1a" value="Rev 4.1 | Draw.io electrical package | Source: GFB60/30RE-S reference docs + Delta NC300" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1110" width="1080" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="footer1b" value="Prepared in Codex workspace | For PDF issue / review use" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="1110" width="450" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="footer1c" value="Sheet 1 / 9" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1570" y="1110" width="110" height="28" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
