@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DXF Import - Cam Kesme Programı</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }</style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">🪟 Cam Kesme Programı</h1>
+                <span class="subtitle">LiSEC GFB-60/30RE</span>
+            </div>
+            <div class="header-center">
+                <nav class="nav-tabs">
+                    <a href="/" class="nav-tab">Ana Sayfa</a>
+                    <a href="/orders" class="nav-tab">Siparişler</a>
+                    <a href="/visualization" class="nav-tab">Yerleşim</a>
+                    <a href="/gcode" class="nav-tab">G-Code</a>
+                    <a href="/lamine" class="nav-tab">Lamine</a>
+                    <a href="/shapes" class="nav-tab">⬡ Şekilli</a>
+                    <a href="/dxf" class="nav-tab active">📐 DXF Import</a>
+                    <a href="/blades" class="nav-tab">🔪 Bıçak</a>
+                    <a href="/settings" class="nav-tab">⚙️ Ayarlar</a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <div class="machine-status">
+                    <span class="status-indicator idle"></span>
+                    <span class="status-text">Hazır</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content dxf-main">
+            
+            <!-- Upload Panel -->
+            <section class="panel upload-panel">
+                <h2 class="panel-title">📂 DXF Dosya Yükle</h2>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📐</div>
+                    <div class="upload-text">
+                        <h3>DXF Dosyası Sürükle Bırak</h3>
+                        <p>veya tıklayarak seç</p>
+                    </div>
+                    <div class="upload-hint">
+                        Desteklenen: LINE, ARC, CIRCLE, POLYLINE<br>
+                        Formatlar: .dxf (R12 ve üzeri)
+                    </div>
+                    <input type="file" id="dxfFileInput" accept=".dxf" style="display: none;" />
+                </div>
+                
+                <div class="upload-options">
+                    <div class="form-group">
+                        <label>Birim</label>
+                        <select id="dxfUnits">
+                            <option value="mm">Milimetre (mm)</option>
+                            <option value="cm">Santimetre (cm)</option>
+                            <option value="m">Metre (m)</option>
+                            <option value="inch">İnç (inch)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Scale (Ölçek)</label>
+                        <input type="number" id="dxfScale" value="1.0" step="0.1" min="0.1" />
+                    </div>
+                </div>
+                
+                <div class="upload-actions">
+                    <button class="btn primary" onclick="parseDXF()" id="parseBtn" disabled>
+                        🔍 Parse Et
+                    </button>
+                    <button class="btn" onclick="clearDXF()">
+                        🗑️ Temizle
+                    </button>
+                </div>
+            </section>
+            
+            <!-- File Info Panel -->
+            <section class="panel file-info-panel">
+                <h2 class="panel-title">📄 Dosya Bilgisi</h2>
+                
+                <div class="file-info" id="fileInfo">
+                    <div class="empty-state">
+                        <span>Dosya yüklenmedi</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Layers Panel -->
+            <section class="panel layers-panel">
+                <h2 class="panel-title">📑 Katmanlar (Layers)</h2>
+                
+                <div class="layers-list" id="layersList">
+                    <div class="empty-state">
+                        <span>Katman yok</span>
+                    </div>
+                </div>
+                
+                <div class="layer-actions">
+                    <label class="checkbox-option">
+                        <input type="checkbox" id="selectAllLayers" checked onchange="toggleAllLayers()" />
+                        Tüm katmanları seç
+                    </label>
+                </div>
+            </section>
+            
+            <!-- Preview Panel -->
+            <section class="panel preview-panel">
+                <h2 class="panel-title">👁️ Önizleme</h2>
+                
+                <div class="preview-toolbar">
+                    <button class="btn small" onclick="zoomIn()">🔍+</button>
+                    <button class="btn small" onclick="zoomOut()">🔍-</button>
+                    <button class="btn small" onclick="resetZoom()">↺</button>
+                    <button class="btn small" onclick="fitToScreen()">⊡ Fit</button>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="dxfCanvas" width="600" height="400"></canvas>
+                </div>
+                
+                <div class="preview-stats" id="previewStats">
+                    <div class="stat-row">
+                        <span class="label">Şekiller:</span>
+                        <span class="value" id="shapeCount">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">Toplam Uzunluk:</span>
+                        <span class="value" id="totalLength">0 mm</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Shapes List Panel -->
+            <section class="panel shapes-list-panel">
+                <h2 class="panel-title">📋 Şekiller</h2>
+                
+                <div class="list-header">
+                    <span id="shapesCountText">0 şekil</span>
+                    <button class="btn small primary" onclick="importToShapes()" id="importBtn" disabled>
+                        ➕ Şekillere Aktar
+                    </button>
+                </div>
+                
+                <div class="shapes-list" id="shapesList">
+                    <div class="empty-state">
+                        <span>Henüz şekil yok</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Import Options Panel -->
+            <section class="panel import-options-panel">
+                <h2 class="panel-title">⚙️ Import Ayarları</h2>
+                
+                <div class="import-options">
+                    <div class="form-group">
+                        <label>Şekil Yerleşimi</label>
+                        <select id="importPlacement">
+                            <option value="manual">Manuel seçecek</option>
+                            <option value="auto">Otomatik yerleştir</option>
+                            <option value="origin">Orijine (0,0) yerleştir</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>X Offset (mm)</label>
+                        <input type="number" id="importOffsetX" value="100" />
+                    </div>
+                    <div class="form-group">
+                        <label>Y Offset (mm)</label>
+                        <input type="number" id="importOffsetY" value="100" />
+                    </div>
+                    <div class="form-group">
+                        <label>Grinding Allowance</label>
+                        <select id="importGrinding">
+                            <option value="none">Yok</option>
+                            <option value="grinding">Kaba Taşlama (+4mm)</option>
+                            <option value="fine_grinding">İnce Taşlama (+2mm)</option>
+                            <option value="polishing">Parlatma (+3mm)</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+        
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span>Glass Cutting Program - DXF Import</span>
+            <span id="currentTime"></span>
+        </footer>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">DXF parse ediliyor...</div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/dxf.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initDXFUpload();
+            updateTime();
+            setInterval(updateTime, 1000);
+        });
+    </script>
+</body>
+</html>

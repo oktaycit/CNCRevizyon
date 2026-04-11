@@ -29,13 +29,14 @@
                     <a href="/visualization" class="nav-tab">Yerleşim</a>
                     <a href="/gcode" class="nav-tab">G-Code</a>
                     <a href="/lamine" class="nav-tab">Lamine</a>
+                    <a href="/shapes" class="nav-tab">⬡ Şekilli</a>
                     <a href="/settings" class="nav-tab">⚙️ Ayarlar</a>
                 </nav>
             </div>
             <div class="header-right">
                 <div class="machine-status" id="machineStatus">
-                    <span class="status-indicator idle"></span>
-                    <span class="status-text">Hazır</span>
+                    <span class="status-indicator idle" id="wsStatusIndicator"></span>
+                    <span class="status-text" id="wsStatusText">Connecting...</span>
                 </div>
             </div>
         </header>
@@ -191,14 +192,26 @@
         <div class="loading-text">Optimizasyon çalışıyor...</div>
     </div>
 
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="/static/js/app.js"></script>
+    <script src="/static/js/websocket.js"></script>
     <script>
-        // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
             updateStats();
             updateTime();
             setInterval(updateTime, 1000);
-            addLogEntry('Web arayüzü yüklendi');
+
+            // Initialize WebSocket
+            initWebSocket();
+
+            // Listen for machine status updates
+            ws.on('machine_status', (data) => {
+                console.log('Machine status:', data);
+            });
+
+            ws.on('alarm', (data) => {
+                console.log('Alarm:', data);
+            });
         });
     </script>
 </body>

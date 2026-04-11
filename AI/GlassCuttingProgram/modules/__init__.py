@@ -76,6 +76,52 @@ from .herofis_connector import (
     GLASS_TYPE_MAPPINGS
 )
 
+from .blade_management import (
+    BladeManager,
+    Blade,
+    BladeType,
+    BladeStatus,
+    GrindingAllowance
+)
+
+from .dxf_import import (
+    DXFParser,
+    DXFShape,
+    DXFImportResult,
+    DXFToShapeConverter
+)
+
+from .auth import (
+    AuthManager,
+    User
+)
+
+from .reports import (
+    ReportGenerator,
+    AnalyticsEngine,
+    ReportData
+)
+
+from .batch_processing import (
+    BatchOptimizer,
+    CuttingQueue,
+    GlassSheet,
+    CuttingOrder,
+    CuttingJob,
+    SheetStatus,
+    OrderPriority
+)
+
+from .websocket_server import (
+    WebSocketManager,
+    WebSocketMessage,
+    MessageType,
+    MachineStatus,
+    MachinePosition,
+    ws_manager,
+    init_socketio
+)
+
 __all__ = [
     'NestingOptimizer',
     'NestingAlgorithm',
@@ -118,7 +164,35 @@ __all__ = [
     'HerofisOrder',
     'ImportResult',
     'HEROFIS_COLUMN_MAPPINGS',
-    'GLASS_TYPE_MAPPINGS'
+    'GLASS_TYPE_MAPPINGS',
+    'BladeManager',
+    'Blade',
+    'BladeType',
+    'BladeStatus',
+    'GrindingAllowance',
+    'DXFParser',
+    'DXFShape',
+    'DXFImportResult',
+    'DXFToShapeConverter',
+    'AuthManager',
+    'User',
+    'ReportGenerator',
+    'AnalyticsEngine',
+    'ReportData',
+    'BatchOptimizer',
+    'CuttingQueue',
+    'GlassSheet',
+    'CuttingOrder',
+    'CuttingJob',
+    'SheetStatus',
+    'OrderPriority',
+    'WebSocketManager',
+    'WebSocketMessage',
+    'MessageType',
+    'MachineStatus',
+    'MachinePosition',
+    'ws_manager',
+    'init_socketio'
 ]
 
-__version__ = '1.1.0'
+__version__ = '1.5.0'

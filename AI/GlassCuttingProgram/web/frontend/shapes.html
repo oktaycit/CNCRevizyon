@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Şekilli Kesim - Cam Kesme Programı</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }</style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">🪟 Cam Kesme Programı</h1>
+                <span class="subtitle">LiSEC GFB-60/30RE</span>
+            </div>
+            <div class="header-center">
+                <nav class="nav-tabs">
+                    <a href="/" class="nav-tab">Ana Sayfa</a>
+                    <a href="/orders" class="nav-tab">Siparişler</a>
+                    <a href="/visualization" class="nav-tab">Yerleşim</a>
+                    <a href="/gcode" class="nav-tab">G-Code</a>
+                    <a href="/lamine" class="nav-tab">Lamine</a>
+                    <a href="/shapes" class="nav-tab active">⬡ Şekilli</a>
+                    <a href="/settings" class="nav-tab">⚙️ Ayarlar</a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <div class="machine-status">
+                    <span class="status-indicator idle"></span>
+                    <span class="status-text">Hazır</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Offline Banner -->
+        <div class="offline-banner" id="offlineBanner" style="display: none;">
+            <span class="offline-icon">📡</span>
+            <span>Offline Mode - Local algoritmalar çalışıyor</span>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content shapes-main">
+            
+            <!-- Shape Selection -->
+            <section class="panel shape-select-panel">
+                <h2 class="panel-title">⬡ Şekil Seçimi</h2>
+                
+                <div class="shape-buttons">
+                    <button class="shape-btn" onclick="selectShape('circle')">
+                        ⭕ Daire
+                    </button>
+                    <button class="shape-btn" onclick="selectShape('polygon')">
+                        ⬡ Çokgen
+                    </button>
+                    <button class="shape-btn" onclick="selectShape('arc')">
+                        ◡ Yay
+                    </button>
+                    <button class="shape-btn" onclick="selectShape('custom')">
+                        ✏️ Özel
+                    </button>
+                </div>
+                
+                <div class="shape-preview" id="shapePreview">
+                    <canvas id="previewCanvas" width="300" height="300"></canvas>
+                </div>
+            </section>
+            
+            <!-- Shape Parameters -->
+            <section class="panel shape-params-panel">
+                <h2 class="panel-title">📐 Şekil Parametreleri</h2>
+                
+                <form id="shapeForm" class="shape-form">
+                    <!-- Circle Params -->
+                    <div class="param-group" id="circleParams" style="display: none;">
+                        <div class="form-group">
+                            <label>Merkez X (mm)</label>
+                            <input type="number" id="circleX" value="3000" />
+                        </div>
+                        <div class="form-group">
+                            <label>Merkez Y (mm)</label>
+                            <input type="number" id="circleY" value="1500" />
+                        </div>
+                        <div class="form-group">
+                            <label>Yarıçap (mm)</label>
+                            <input type="number" id="circleRadius" value="500" min="50" />
+                        </div>
+                    </div>
+                    
+                    <!-- Polygon Params -->
+                    <div class="param-group" id="polygonParams" style="display: none;">
+                        <div class="form-group">
+                            <label>Merkez X (mm)</label>
+                            <input type="number" id="polyX" value="1500" />
+                        </div>
+                        <div class="form-group">
+                            <label>Merkez Y (mm)</label>
+                            <input type="number" id="polyY" value="1500" />
+                        </div>
+                        <div class="form-group">
+                            <label>Yarıçap (mm)</label>
+                            <input type="number" id="polyRadius" value="400" min="50" />
+                        </div>
+                        <div class="form-group">
+                            <label>Köşe Sayısı</label>
+                            <select id="polySides">
+                                <option value="3">Üçgen (3)</option>
+                                <option value="4">Dörtgen (4)</option>
+                                <option value="5">Beşgen (5)</option>
+                                <option value="6" selected>Altıgen (6)</option>
+                                <option value="8">Sekizgen (8)</option>
+                                <option value="12">Onikigen (12)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Arc Params -->
+                    <div class="param-group" id="arcParams" style="display: none;">
+                        <div class="form-group">
+                            <label>Merkez X (mm)</label>
+                            <input type="number" id="arcX" value="3000" />
+                        </div>
+                        <div class="form-group">
+                            <label>Merkez Y (mm)</label>
+                            <input type="number" id="arcY" value="2500" />
+                        </div>
+                        <div class="form-group">
+                            <label>Yarıçap (mm)</label>
+                            <input type="number" id="arcRadius" value="600" min="50" />
+                        </div>
+                        <div class="form-group">
+                            <label>Başlangıç Açısı (°)</label>
+                            <input type="number" id="arcStart" value="0" min="0" max="360" />
+                        </div>
+                        <div class="form-group">
+                            <label>Bitiş Açısı (°)</label>
+                            <input type="number" id="arcEnd" value="90" min="0" max="360" />
+                        </div>
+                        <div class="form-group">
+                            <label>Yön</label>
+                            <select id="arcDirection">
+                                <option value="cw">Saat Yönü (CW)</option>
+                                <option value="ccw">Saat Ters (CCW)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Custom Points -->
+                    <div class="param-group" id="customParams" style="display: none;">
+                        <div class="form-group">
+                            <label>Nokta Ekle</label>
+                            <div class="input-row">
+                                <input type="number" id="customDx" placeholder="dX (mm)" />
+                                <input type="number" id="customDy" placeholder="dY (mm)" />
+                                <button type="button" class="btn small" onclick="addCustomPoint()">+</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Noktalar</label>
+                            <div class="points-list" id="customPointsList"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Baz X (mm)</label>
+                            <input type="number" id="customBaseX" value="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>Baz Y (mm)</label>
+                            <input type="number" id="customBaseY" value="0" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn primary" onclick="generateShape()">
+                            ✨ Şekil Oluştur
+                        </button>
+                        <button type="button" class="btn" onclick="clearShape()">
+                            🗑️ Temizle
+                        </button>
+                    </div>
+                </form>
+            </section>
+            
+            <!-- Generated Shapes -->
+            <section class="panel shapes-list-panel">
+                <h2 class="panel-title">📋 Oluşturulan Şekiller</h2>
+                
+                <div class="shapes-list" id="shapesList">
+                    <div class="empty-state">
+                        <span>Henüz şekil oluşturulmadı</span>
+                    </div>
+                </div>
+                
+                <div class="shapes-actions">
+                    <button class="btn primary" onclick="generateGcodeForShapes()">
+                        📄 G-Code Oluştur
+                    </button>
+                    <button class="btn" onclick="downloadGcode()">
+                        ⬇️ İndir
+                    </button>
+                </div>
+            </section>
+            
+            <!-- Shape Canvas -->
+            <section class="panel shape-canvas-panel">
+                <h2 class="panel-title">🎨 Şekil Önizleme</h2>
+                
+                <div class="canvas-container">
+                    <canvas id="shapeCanvas" width="600" height="400"></canvas>
+                    <div class="canvas-controls">
+                        <button class="btn small" onclick="zoomInShape()">🔍+</button>
+                        <button class="btn small" onclick="zoomOutShape()">🔍-</button>
+                        <button class="btn small" onclick="resetShapeZoom()">↺</button>
+                    </div>
+                </div>
+                
+                <div class="shape-stats" id="shapeStats">
+                    <div class="stat-row">
+                        <span class="label">Toplam Şekil:</span>
+                        <span class="value" id="totalShapes">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">Toplam Kesim Yolu:</span>
+                        <span class="value" id="totalPerimeter">0 mm</span>
+                    </div>
+                </div>
+            </section>
+        
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span>Glass Cutting Program v1.0 - Shape Cutting</span>
+            <span id="currentTime"></span>
+        </footer>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Şekil oluşturuluyor...</div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/shapes.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            updateTime();
+            setInterval(updateTime, 1000);
+            initShapeCanvas();
+        });
+    </script>
+</body>
+</html>

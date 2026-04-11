@@ -40,7 +40,12 @@ from modules import (
     LaminatedGlassCalculator, LaminatedGlassSpec, FilmType,
     DefectHandler, Defect, DefectType,
     HMIInterface, HMIOrderEntry,
-    HerofisConnector, HerofisOrder, ImportResult
+    BladeManager, BladeType,
+    DXFParser, DXFToShapeConverter,
+    AuthManager,
+    ReportGenerator, AnalyticsEngine,
+    BatchOptimizer, CuttingQueue, GlassSheet, CuttingOrder, OrderPriority,
+    WebSocketManager, MachineStatus, MachinePosition, ws_manager, init_socketio
 )
 
 # Create Flask app
@@ -49,6 +54,9 @@ app = Flask(__name__,
             static_folder=str(MODULES_PATH / 'web' / 'frontend' / 'static'))
 
 CORS(app)
+
+# Initialize SocketIO
+socketio = init_socketio(app)
 
 # Configuration
 MACHINE_WIDTH = 6000  # mm
@@ -69,6 +77,20 @@ machine_status: Dict = {
 # Initialize orchestrator
 orchestrator = GlassCuttingOrchestrator(MACHINE_WIDTH, MACHINE_HEIGHT)
 
+# Initialize blade manager
+blade_manager = BladeManager(str(MODULES_PATH / 'data' / 'blades'))
+
+# Initialize auth manager
+auth_manager = AuthManager(str(MODULES_PATH / 'data' / 'auth'))
+
+# Initialize report generator
+report_generator = ReportGenerator(str(MODULES_PATH / 'output' / 'reports'))
+analytics_engine = AnalyticsEngine()
+
+# Initialize batch optimizer
+batch_optimizer = BatchOptimizer()
+cutting_queue = CuttingQueue(str(MODULES_PATH / 'data' / 'queue'))
+
 
 # ==================== HTML Routes ====================
 
@@ -76,6 +98,12 @@ orchestrator = GlassCuttingOrchestrator(MACHINE_WIDTH, MACHINE_HEIGHT)
 def index():
     """Main page"""
     return render_template('index.html')
+
+
+@app.route('/login')
+def login_page():
+    """Login page"""
+    return render_template('login.html')
 
 
 @app.route('/orders')
@@ -106,6 +134,48 @@ def lamine_page():
 def settings_page():
     """AI Models & API Settings page"""
     return render_template('settings.html')
+
+
+@app.route('/shapes')
+def shapes_page():
+    """Shape cutting page"""
+    return render_template('shapes.html')
+
+
+@app.route('/blades')
+def blades_page():
+    """Blade management page"""
+    return render_template('blades.html')
+
+
+@app.route('/dxf')
+def dxf_page():
+    """DXF import page"""
+    return render_template('dxf.html')
+
+
+@app.route('/reports')
+def reports_page():
+    """Reports page"""
+    return render_template('reports.html')
+
+
+@app.route('/batch')
+def batch_page():
+    """Batch processing page"""
+    return render_template('batch.html')
+
+
+@app.route('/queue')
+def queue_page():
+    """Cutting queue page"""
+    return render_template('queue.html')
+
+
+@app.route('/test_api')
+def test_api_page():
+    """API Test Page for debugging"""
+    return send_file(MODULES_PATH / 'web' / 'test_api.html')
 
 
 # ==================== API Routes ====================
@@ -723,195 +793,768 @@ def reset_settings():
     return jsonify({"success": True, "settings": defaults, "message": "Reset to defaults"})
 
 
-# ==================== Herofis Integration ====================
+# ==================== Blade Management API ====================
 
-# Initialize Herofis connector
-herofis_connector = HerofisConnector(str(MODULES_PATH / 'data' / 'herofis'))
-
-
-@app.route('/api/herofis/import', methods=['POST'])
-def herofis_import():
-    """Import orders from Herofis CSV file"""
-    # Check if file was uploaded
-    if 'file' in request.files:
-        file = request.files['file']
-        if file.filename == '':
-            return jsonify({"success": False, "error": "No file selected"}), 400
-        
-        # Save uploaded file temporarily
-        import tempfile
-        with tempfile.NamedTemporaryFile(mode='wb', suffix='.csv', delete=False) as tmp:
-            file.save(tmp.name)
-            tmp_path = tmp.name
-        
-        # Import CSV
-        result = herofis_connector.import_csv(tmp_path, encoding='auto', delimiter='auto')
-        
-        # Clean up temp file
-        os.unlink(tmp_path)
-        
-        if result.success:
-            # Convert to GlassOrders and add to current orders
-            glass_orders = herofis_connector.convert_to_glass_orders(result.orders)
-            
-            global current_orders
-            for go in glass_orders:
-                order = GlassOrder(
-                    order_id=go['order_id'],
-                    width=float(go['width']),
-                    height=float(go['height']),
-                    quantity=int(go['quantity']),
-                    thickness=float(go['thickness']),
-                    glass_type=go.get('glass_type', 'float'),
-                    priority=int(go.get('priority', 1)),
-                    rotate_allowed=go.get('rotate_allowed', True)
-                )
-                current_orders.append(order)
-            
-            return jsonify({
-                "success": True,
-                "imported": result.imported_rows,
-                "skipped": result.skipped_rows,
-                "total_orders": len(current_orders),
-                "orders_preview": glass_orders[:10],
-                "errors": result.errors[:5]
-            })
-        else:
-            return jsonify({"success": False, "errors": result.errors}), 400
-    
-    # If no file, check for file_path in JSON body
-    data = request.get_json()
-    if data and 'file_path' in data:
-        result = herofis_connector.import_csv(data['file_path'])
-        
-        if result.success:
-            glass_orders = herofis_connector.convert_to_glass_orders(result.orders)
-            
-            global current_orders
-            for go in glass_orders:
-                order = GlassOrder(
-                    order_id=go['order_id'],
-                    width=float(go['width']),
-                    height=float(go['height']),
-                    quantity=int(go['quantity']),
-                    thickness=float(go['thickness']),
-                    glass_type=go.get('glass_type', 'float'),
-                    priority=int(go.get('priority', 1)),
-                    rotate_allowed=go.get('rotate_allowed', True)
-                )
-                current_orders.append(order)
-            
-            return jsonify({
-                "success": True,
-                "imported": result.imported_rows,
-                "skipped": result.skipped_rows,
-                "total_orders": len(current_orders),
-                "orders_preview": glass_orders[:10]
-            })
-        else:
-            return jsonify({"success": False, "errors": result.errors}), 400
-    
-    return jsonify({"success": False, "error": "No file or file_path provided"}), 400
-
-
-@app.route('/api/herofis/sample', methods=['GET'])
-def herofis_sample():
-    """Create and return a sample Herofis CSV file"""
-    sample_path = herofis_connector.create_sample_csv()
-    
-    return send_file(sample_path, as_attachment=True, download_name='sample_herofis_import.csv')
-
-
-@app.route('/api/herofis/history', methods=['GET'])
-def herofis_history():
-    """Get import history"""
-    history = herofis_connector.get_import_history(20)
+@app.route('/api/blades', methods=['GET'])
+def get_blades():
+    """Get all blades"""
+    blades = {bid: b.to_dict() for bid, b in blade_manager.blades.items()}
+    active = blade_manager.get_active_blade()
+    alerts = blade_manager.get_blade_alerts()
+    stats = blade_manager.get_statistics()
     
     return jsonify({
         "success": True,
-        "history": history,
-        "total_imports": len(history)
+        "blades": blades,
+        "active_blade": active.to_dict() if active else None,
+        "active_blade_id": blade_manager.active_blade_id,
+        "alerts": alerts,
+        "statistics": stats
     })
 
 
-@app.route('/api/herofis/columns', methods=['GET'])
-def herofis_columns():
-    """Get supported column mappings for CSV import"""
-    from modules import HEROFIS_COLUMN_MAPPINGS
+@app.route('/api/blades/install', methods=['POST'])
+def install_blade():
+    """Install new blade"""
+    data = request.get_json()
+    
+    blade = blade_manager.install_blade(
+        blade_id=data.get('blade_id', f'BLADE-{len(blade_manager.blades)+1:03d}'),
+        blade_type=BladeType(data.get('blade_type', 'standard')),
+        total_life=float(data.get('total_life', 5000)),
+        spin_interval=float(data.get('spin_interval', 1000))
+    )
     
     return jsonify({
         "success": True,
-        "column_mappings": {k: v for k, v in HEROFIS_COLUMN_MAPPINGS.items()},
-        "glass_types": ["float", "laminated", "tempered", "low_e", "reflective", "tinted"],
-        "priorities": {"1": "High/Urgent", "2": "Normal", "3": "Low"},
-        "film_types": ["PVB", "EVA", "SGP"]
+        "blade": blade.to_dict(),
+        "message": "Bıçak takıldı"
     })
 
 
-@app.route('/api/herofis/preview', methods=['POST'])
-def herofis_preview():
-    """Preview CSV import without adding orders"""
-    data = request.get_json()
+@app.route('/api/blades/spin', methods=['POST'])
+def spin_blade():
+    """Spin active blade"""
+    success = blade_manager.spin_active_blade()
     
-    if 'file_path' not in data:
-        return jsonify({"success": False, "error": "file_path required"}), 400
-    
-    result = herofis_connector.import_csv(data['file_path'])
-    
-    preview_orders = []
-    for order in result.orders[:20]:
-        preview_orders.append({
-            "siparis_no": order.siparis_no,
-            "musteri": order.musteri,
-            "en": order.en,
-            "boy": order.boy,
-            "kalınlık": order.kalınlık,
-            "cam_tipi": order.cam_tipi,
-            "adet": order.adet,
-            "öncelik": order.öncelik,
-            "notlar": order.notlar
+    if success:
+        return jsonify({
+            "success": True,
+            "message": "Bıçak döndürüldü"
         })
-    
-    return jsonify({
-        "success": result.success,
-        "preview": preview_orders,
-        "total_rows": result.total_rows,
-        "importable": result.imported_rows,
-        "errors": result.errors
-    })
+    else:
+        return jsonify({
+            "success": False,
+            "error": "Bıçak döndürmeye hazır değil"
+        }), 400
 
 
-@app.route('/api/herofis/save', methods=['POST'])
-def herofis_save_orders():
-    """Save imported orders to JSON file"""
+@app.route('/api/blades/replace', methods=['POST'])
+def replace_blade():
+    """Replace active blade"""
     data = request.get_json()
     
-    orders_data = data.get('orders', [])
-    if not orders_data:
-        return jsonify({"success": False, "error": "No orders to save"}), 400
-    
-    # Convert back to HerofisOrder objects
-    herofis_orders = []
-    for od in orders_data:
-        herofis_orders.append(HerofisOrder(
-            siparis_no=od.get('order_id', 'UNKNOWN'),
-            en=float(od.get('width', 0)),
-            boy=float(od.get('height', 0)),
-            kalınlık=float(od.get('thickness', 4)),
-            cam_tipi=od.get('glass_type', 'float'),
-            adet=int(od.get('quantity', 1)),
-            öncelik=int(od.get('priority', 2)),
-            musteri=od.get('customer', ''),
-            notlar=od.get('notes', '')
-        ))
-    
-    output_path = herofis_connector.save_orders_json(herofis_orders)
+    blade = blade_manager.replace_blade(
+        new_blade_id=data.get('new_blade_id'),
+        blade_type=BladeType(data.get('blade_type', 'standard'))
+    )
     
     return jsonify({
         "success": True,
-        "saved_path": output_path,
-        "total_orders": len(herofis_orders)
+        "blade": blade.to_dict(),
+        "message": "Bıçak değiştirildi"
     })
+
+
+@app.route('/api/blades/grinding/calculate', methods=['POST'])
+def calculate_grinding():
+    """Calculate dimensions with grinding allowance"""
+    data = request.get_json()
+    
+    result = blade_manager.calculate_with_grinding(
+        width=float(data.get('width', 0)),
+        height=float(data.get('height', 0)),
+        allowance_type=data.get('allowance_type', 'none')
+    )
+    
+    return jsonify({
+        "success": True,
+        "result": result
+    })
+
+
+@app.route('/api/blades/grinding/allowances', methods=['GET'])
+def get_grinding_allowances():
+    """Get available grinding allowances"""
+    allowances = {
+        key: {
+            "type": v.allowance_type,
+            "x_allowance": v.x_allowance,
+            "y_allowance": v.y_allowance,
+            "total_x": v.total_x_addition,
+            "total_y": v.total_y_addition,
+            "description": v.description
+        }
+        for key, v in blade_manager.GRINDING_ALLOWANCES.items()
+    }
+    
+    return jsonify({
+        "success": True,
+        "allowances": allowances
+    })
+
+
+# ==================== Authentication API ====================
+
+@app.route('/api/auth/login', methods=['POST'])
+def api_login():
+    """User login"""
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({"success": False, "error": "Invalid request"}), 400
+    
+    username = data.get('username')
+    password = data.get('password')
+    
+    if not username or not password:
+        return jsonify({"success": False, "error": "Username and password required"}), 400
+    
+    # Authenticate
+    result = auth_manager.authenticate(username, password)
+    
+    if result:
+        return jsonify({
+            "success": True,
+            "access_token": result['access_token'],
+            "refresh_token": result['refresh_token'],
+            "user": result['user']
+        })
+    else:
+        return jsonify({
+            "success": False,
+            "error": "Invalid username or password"
+        }), 401
+
+
+@app.route('/api/auth/logout', methods=['POST'])
+def api_logout():
+    """User logout"""
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    
+    if token:
+        auth_manager.logout(token)
+    
+    return jsonify({"success": True, "message": "Logged out"})
+
+
+@app.route('/api/auth/register', methods=['POST'])
+def api_register():
+    """Register new user (admin only)"""
+    # TODO: Add admin check
+    data = request.get_json()
+    
+    username = data.get('username')
+    password = data.get('password')
+    email = data.get('email', '')
+    role = data.get('role', 'operator')
+    
+    if not username or not password:
+        return jsonify({"success": False, "error": "Username and password required"}), 400
+    
+    user = auth_manager.create_user(username, password, email, role)
+    
+    if user:
+        return jsonify({
+            "success": True,
+            "user": user.to_dict(),
+            "message": "User created"
+        })
+    else:
+        return jsonify({
+            "success": False,
+            "error": "Username already exists"
+        }), 400
+
+
+@app.route('/api/auth/me', methods=['GET'])
+def api_get_current_user():
+    """Get current user info"""
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    
+    if not token:
+        return jsonify({"success": False, "error": "No token provided"}), 401
+    
+    user_info = auth_manager.verify_token(token)
+    
+    if user_info:
+        return jsonify({
+            "success": True,
+            "user": user_info
+        })
+    else:
+        return jsonify({
+            "success": False,
+            "error": "Invalid or expired token"
+        }), 401
+
+
+@app.route('/api/auth/refresh', methods=['POST'])
+def api_refresh_token():
+    """Refresh access token"""
+    data = request.get_json()
+    refresh_token = data.get('refresh_token')
+    
+    if not refresh_token:
+        return jsonify({"success": False, "error": "Refresh token required"}), 400
+    
+    result = auth_manager.refresh_access_token(refresh_token)
+    
+    if result:
+        return jsonify({
+            "success": True,
+            "access_token": result['access_token'],
+            "expires_in": result['expires_in']
+        })
+    else:
+        return jsonify({
+            "success": False,
+            "error": "Invalid refresh token"
+        }), 401
+
+
+@app.route('/api/auth/users', methods=['GET'])
+def api_get_users():
+    """Get all users (admin only)"""
+    # TODO: Add admin check
+    users = [auth_manager.get_user(uid).to_dict() for uid in auth_manager.users.keys()]
+    
+    return jsonify({
+        "success": True,
+        "users": users,
+        "total": len(users)
+    })
+
+
+@app.route('/api/auth/statistics', methods=['GET'])
+def api_auth_statistics():
+    """Get authentication statistics"""
+    stats = auth_manager.get_statistics()
+    
+    return jsonify({
+        "success": True,
+        "statistics": stats
+    })
+
+
+# ==================== DXF Import API ====================
+
+@app.route('/api/dxf/parse', methods=['POST'])
+def parse_dxf():
+    """Parse DXF file"""
+    if 'file' not in request.files:
+        return jsonify({"success": False, "error": "Dosya yok"}), 400
+    
+    file = request.files['file']
+    units = request.form.get('units', 'mm')
+    scale = float(request.form.get('scale', 1.0))
+    
+    # Save file temporarily
+    import tempfile
+    with tempfile.NamedTemporaryFile(suffix='.dxf', delete=False) as tmp:
+        file.save(tmp.name)
+        tmp_path = tmp.name
+    
+    try:
+        # Parse DXF
+        parser = DXFParser(scale=scale, units=units)
+        result = parser.parse(tmp_path)
+        
+        if result.success:
+            # Convert shapes to serializable format
+            shapes = []
+            for shape in result.shapes:
+                shapes.append({
+                    'shape_id': shape.shape_id,
+                    'shape_type': shape.shape_type,
+                    'layer': shape.layer,
+                    'points': shape.points,
+                    'parameters': shape.parameters,
+                    'bounding_box': shape.bounding_box,
+                    'perimeter': shape.perimeter
+                })
+            
+            return jsonify({
+                "success": True,
+                "shapes": shapes,
+                "total_shapes": result.total_shapes,
+                "layers": result.layers,
+                "file_info": result.file_info,
+                "errors": result.errors
+            })
+        else:
+            return jsonify({
+                "success": False,
+                "error": "Parse başarısız",
+                "errors": result.errors
+            }), 400
+            
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+    finally:
+        # Clean up temp file
+        import os
+        os.unlink(tmp_path)
+
+
+@app.route('/api/dxf/import', methods=['POST'])
+def import_dxf_shapes():
+    """Import DXF shapes to program"""
+    data = request.get_json()
+    
+    shapes = data.get('shapes', [])
+    placement = data.get('placement', 'manual')
+    offset_x = data.get('offset_x', 100)
+    offset_y = data.get('offset_y', 100)
+    grinding = data.get('grinding_allowance', 'none')
+    
+    # Convert DXF shapes to program shapes
+    converter = DXFToShapeConverter()
+    program_shapes = converter.convert(shapes, base_x=offset_x, base_y=offset_y)
+    
+    # Apply grinding allowance if needed
+    if grinding != 'none':
+        blade_mgr = BladeManager()
+        for shape in program_shapes:
+            bbox = shape['bounding_box']
+            width = bbox[2] - bbox[0]
+            height = bbox[3] - bbox[1]
+            
+            adjusted = blade_mgr.calculate_with_grinding(width, height, grinding)
+            shape['adjusted_dimensions'] = adjusted
+    
+    # TODO: Save to database or add to current shapes
+    # For now, just return success
+    
+    return jsonify({
+        "success": True,
+        "imported_count": len(program_shapes),
+        "shapes": program_shapes,
+        "message": f"{len(program_shapes)} şekil aktarıldı"
+    })
+
+
+# ==================== Reports API ====================
+
+@app.route('/api/reports/generate', methods=['POST'])
+def api_generate_report():
+    """Generate report"""
+    data = request.get_json()
+    
+    report_type = data.get('type', 'daily')
+    start_date = data.get('start_date')
+    end_date = data.get('end_date')
+    
+    # TODO: Get actual data from database
+    # For now, use sample data
+    sample_data = {
+        'total_orders': 25,
+        'completed_orders': 23,
+        'total_cuts': 150,
+        'avg_utilization': 0.87,
+        'total_waste': 2500000,
+        'total_time': 480,
+        'orders': [
+            {'order_id': 'ORD-001', 'glass_type': 'float', 'width': 500, 'height': 400, 'utilization': 0.92, 'status': 'completed'},
+            {'order_id': 'ORD-002', 'glass_type': 'laminated', 'width': 600, 'height': 400, 'utilization': 0.85, 'status': 'completed'}
+        ]
+    }
+    
+    if report_type == 'daily':
+        from datetime import datetime
+        date = datetime.fromisoformat(start_date) if start_date else datetime.now()
+        report = report_generator.generate_daily_report(date, sample_data)
+    elif report_type == 'weekly':
+        from datetime import datetime
+        start = datetime.fromisoformat(start_date) if start_date else datetime.now()
+        report = report_generator.generate_weekly_report(start, sample_data)
+    elif report_type == 'monthly':
+        from datetime import datetime
+        now = datetime.now()
+        report = report_generator.generate_monthly_report(now.year, now.month, sample_data)
+    else:
+        report = report_generator.generate_daily_report(datetime.now(), sample_data)
+    
+    return jsonify({
+        "success": True,
+        "report": {
+            "type": report.report_type,
+            "title": report.title,
+            "summary": report.summary,
+            "data": report.data
+        }
+    })
+
+
+@app.route('/api/reports/export/<format>', methods=['POST'])
+def api_export_report(format):
+    """Export report to specified format"""
+    data = request.get_json()
+    
+    report_type = data.get('type', 'daily')
+    
+    # Generate report
+    from datetime import datetime
+    sample_data = {
+        'total_orders': 25,
+        'completed_orders': 23,
+        'avg_utilization': 0.87
+    }
+    report = report_generator.generate_daily_report(datetime.now(), sample_data)
+    
+    try:
+        if format == 'pdf':
+            if not REPORTLAB_AVAILABLE:
+                return jsonify({"success": False, "error": "reportlab not installed"}), 400
+            filepath = report_generator.export_to_pdf(report)
+        elif format == 'excel':
+            if not OPENPYXL_AVAILABLE:
+                return jsonify({"success": False, "error": "openpyxl not installed"}), 400
+            filepath = report_generator.export_to_excel(report)
+        elif format == 'json':
+            filepath = report_generator.generate_json_report(report)
+        else:
+            return jsonify({"success": False, "error": "Invalid format"}), 400
+        
+        return jsonify({
+            "success": True,
+            "filepath": filepath,
+            "download_url": f"/api/reports/download/{Path(filepath).name}"
+        })
+        
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route('/api/reports/download/<filename>', methods=['GET'])
+def api_download_report(filename):
+    """Download report file"""
+    from flask import send_file
+    filepath = MODULES_PATH / 'output' / 'reports' / filename
+    
+    if filepath.exists():
+        return send_file(str(filepath), as_attachment=True)
+    else:
+        return jsonify({"success": False, "error": "File not found"}), 404
+
+
+@app.route('/api/analytics/utilization', methods=['GET'])
+def api_utilization_analytics():
+    """Get utilization analytics"""
+    # TODO: Get from database
+    sample_history = [
+        {'utilization': 0.92, 'waste_area': 100000, 'cutting_time': 30},
+        {'utilization': 0.85, 'waste_area': 150000, 'cutting_time': 45}
+    ]
+    
+    stats = analytics_engine.calculate_utilization_stats(sample_history)
+    
+    return jsonify({
+        "success": True,
+        "statistics": stats
+    })
+
+
+@app.route('/api/analytics/waste', methods=['GET'])
+def api_waste_analytics():
+    """Get waste analytics"""
+    # TODO: Get from database
+    sample_history = [
+        {'utilization': 0.92, 'waste_area': 100000},
+        {'utilization': 0.85, 'waste_area': 150000}
+    ]
+    
+    stats = analytics_engine.calculate_waste_stats(sample_history)
+    
+    return jsonify({
+        "success": True,
+        "statistics": stats
+    })
+
+
+# ==================== Batch Processing API ====================
+
+@app.route('/api/batch/sheets', methods=['GET'])
+def api_get_sheets():
+    """Get all sheets"""
+    sheets = [s.to_dict() for s in batch_optimizer.sheets]
+    return jsonify({
+        "success": True,
+        "sheets": sheets,
+        "total": len(sheets)
+    })
+
+
+@app.route('/api/batch/sheets', methods=['POST'])
+def api_add_sheet():
+    """Add new sheet"""
+    data = request.get_json()
+    
+    sheet = GlassSheet(
+        sheet_id=data.get('sheet_id', f'SHEET-{len(batch_optimizer.sheets)+1:03d}'),
+        width=float(data.get('width', 6000)),
+        height=float(data.get('height', 3000)),
+        thickness=float(data.get('thickness', 4)),
+        glass_type=data.get('glass_type', 'float'),
+        status=SheetStatus.AVAILABLE
+    )
+    
+    batch_optimizer.add_sheet(sheet)
+    
+    return jsonify({
+        "success": True,
+        "sheet": sheet.to_dict(),
+        "message": "Levha eklendi"
+    })
+
+
+@app.route('/api/batch/orders', methods=['GET'])
+def api_get_orders():
+    """Get all orders"""
+    orders = [o.to_dict() for o in batch_optimizer.orders]
+    return jsonify({
+        "success": True,
+        "orders": orders,
+        "total": len(orders)
+    })
+
+
+@app.route('/api/batch/orders', methods=['POST'])
+def api_add_order():
+    """Add new order"""
+    data = request.get_json()
+    
+    order = CuttingOrder(
+        order_id=data.get('order_id', f'ORD-{len(batch_optimizer.orders)+1:03d}'),
+        width=float(data.get('width', 500)),
+        height=float(data.get('height', 400)),
+        quantity=int(data.get('quantity', 1)),
+        thickness=float(data.get('thickness', 4)),
+        glass_type=data.get('glass_type', 'float'),
+        priority=OrderPriority(int(data.get('priority', 2))),
+        rotate_allowed=data.get('rotate_allowed', True)
+    )
+    
+    batch_optimizer.add_order(order)
+    
+    return jsonify({
+        "success": True,
+        "order": order.to_dict(),
+        "message": "Sipariş eklendi"
+    })
+
+
+@app.route('/api/batch/optimize', methods=['POST'])
+def api_optimize_batch():
+    """Run batch optimization"""
+    data = request.get_json()
+    
+    strategy = data.get('strategy', 'efficiency')
+    use_remnants = data.get('use_remnants', True)
+    
+    jobs = batch_optimizer.optimize_batch(strategy=strategy)
+    
+    # Add to queue if requested
+    if data.get('auto_queue', True):
+        for job in jobs:
+            cutting_queue.add_job(job)
+    
+    return jsonify({
+        "success": True,
+        "jobs": [j.to_dict() for j in jobs],
+        "statistics": batch_optimizer.get_statistics(),
+        "message": f"{len(jobs)} iş oluşturuldu"
+    })
+
+
+@app.route('/api/batch/statistics', methods=['GET'])
+def api_batch_statistics():
+    """Get batch statistics"""
+    stats = batch_optimizer.get_statistics()
+    return jsonify({
+        "success": True,
+        "statistics": stats
+    })
+
+
+@app.route('/api/queue/status', methods=['GET'])
+def api_queue_status():
+    """Get queue status"""
+    status = cutting_queue.get_queue_status()
+    return jsonify({
+        "success": True,
+        "status": status
+    })
+
+
+@app.route('/api/queue/start', methods=['POST'])
+def api_queue_start():
+    """Start next job in queue"""
+    job = cutting_queue.start_next_job()
+    
+    if job:
+        return jsonify({
+            "success": True,
+            "job": job.to_dict(),
+            "message": f"İş başlatıldı: {job.job_id}"
+        })
+    else:
+        return jsonify({
+            "success": False,
+            "error": "Kuyruk boş"
+        }), 400
+
+
+@app.route('/api/queue/complete', methods=['POST'])
+def api_queue_complete():
+    """Complete current job"""
+    data = request.get_json()
+    actual_time = data.get('actual_time')
+    
+    cutting_queue.complete_job(actual_time)
+    
+    return jsonify({
+        "success": True,
+        "message": "İş tamamlandı"
+    })
+
+
+# ==================== WebSocket API ====================
+
+@socketio.on('connect')
+def handle_connect():
+    """Handle client connection"""
+    from flask import request
+    print(f"Client connected: {request.sid}")
+    emit('status', {'message': 'Connected', 'sid': request.sid})
+    
+    # Send current machine status
+    emit('machine_status', ws_manager.machine_status.to_dict())
+
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    """Handle client disconnection"""
+    from flask import request
+    print(f"Client disconnected: {request.sid}")
+
+
+@socketio.on('subscribe')
+def handle_subscribe(data):
+    """Subscribe to channel"""
+    from flask_socketio import join_room
+    from flask import request
+    channel = data.get('channel')
+    if channel:
+        join_room(channel)
+        print(f"Client {request.sid} joined {channel}")
+        emit('subscribed', {'channel': channel})
+
+
+@socketio.on('unsubscribe')
+def handle_unsubscribe(data):
+    """Unsubscribe from channel"""
+    from flask_socketio import leave_room
+    from flask import request
+    channel = data.get('channel')
+    if channel:
+        leave_room(channel)
+        print(f"Client {request.sid} left {channel}")
+
+
+@socketio.on('simulate_position')
+def handle_simulate_position(data):
+    """Simulate machine position updates"""
+    import random
+    import time
+    
+    for i in range(10):
+        position = {
+            'x': random.uniform(0, 6000),
+            'y': random.uniform(0, 3000),
+            'z': random.uniform(0, 100),
+            'velocity': random.uniform(0, 80000)
+        }
+        emit('position_update', position)
+        ws_manager.update_position(**position)
+        time.sleep(0.5)
+
+
+@socketio.on('start_cutting')
+def handle_start_cutting(data):
+    """Start cutting simulation"""
+    import random
+    import time
+    
+    # Update machine status
+    ws_manager.update_status('running', cutting_speed=1000)
+    emit('machine_status', ws_manager.machine_status.to_dict())
+    
+    # Simulate progress
+    for progress in range(0, 101, 5):
+        ws_manager.update_progress(progress)
+        emit('progress_update', {'progress': progress})
+        time.sleep(0.3)
+    
+    # Complete
+    ws_manager.update_status('idle')
+    emit('machine_status', ws_manager.machine_status.to_dict())
+    emit('cut_complete', {
+        'order_id': data.get('order_id'),
+        'actual_time': 30
+    })
+
+
+@app.route('/api/ws/status', methods=['GET'])
+def api_ws_status():
+    """Get WebSocket status"""
+    return jsonify({
+        "success": True,
+        "connected": ws_manager is not None,
+        "clients": len(ws_manager.clients) if ws_manager else 0,
+        "rooms": list(ws_manager.rooms.keys()) if ws_manager else [],
+        "machine_status": ws_manager.machine_status.to_dict() if ws_manager else {}
+    })
+
+
+@app.route('/api/ws/simulate', methods=['POST'])
+def api_ws_simulate():
+    """Simulate machine data"""
+    data = request.get_json()
+    action = data.get('action')
+    
+    if action == 'position':
+        import random
+        ws_manager.update_position(
+            x=random.uniform(0, 6000),
+            y=random.uniform(0, 3000),
+            z=random.uniform(0, 100)
+        )
+    elif action == 'status':
+        ws_manager.update_status(data.get('status', 'running'))
+    elif action == 'progress':
+        ws_manager.update_progress(data.get('progress', 50))
+    elif action == 'alarm':
+        ws_manager.send_alarm(
+            alarm_code=data.get('code', 100),
+            message_text=data.get('message', 'Test alarm'),
+            severity=data.get('severity', 'warning')
+        )
+    
+    return jsonify({"success": True})
 
 
 # ==================== Static Files ====================
@@ -941,11 +1584,13 @@ if __name__ == '__main__':
     print("Glass Cutting Web Interface")
     print("LiSEC GFB-60/30RE")
     print("=" * 60)
-    print("\nStarting Flask server...")
+    print("\nStarting Flask-SocketIO server...")
     print(f"Module path: {MODULES_PATH}")
     print(f"Template folder: {app.template_folder}")
     print(f"Static folder: {app.static_folder}")
-    print("\nOpen browser: http://localhost:5001")
+    print("\n🌐 HTTP: http://localhost:5001")
+    print("⚡ WebSocket: ws://localhost:5001/socket.io/")
     print("=" * 60)
 
-    app.run(host='0.0.0.0', port=5001, debug=True, threaded=True)
+    # Use socketio.run instead of app.run for WebSocket support
+    socketio.run(app, host='0.0.0.0', port=5001, debug=True, allow_unsafe_werkzeug=True)

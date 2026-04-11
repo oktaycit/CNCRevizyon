@@ -37,6 +37,31 @@ class CutType(Enum):
     SHAPE = "shape"
     HOLE = "hole"
     LINE = "line"
+    ARC = "arc"
+    CIRCLE = "circle"
+    POLYGON = "polygon"
+
+
+@dataclass
+class ShapePoint:
+    """Point in a shape"""
+    x: float
+    y: float
+    cut_type: str = "linear"  # linear, arc_cw, arc_ccw
+    arc_radius: Optional[float] = None
+    arc_center_x: Optional[float] = None
+    arc_center_y: Optional[float] = None
+
+
+@dataclass
+class ShapeDefinition:
+    """Shape definition for non-rectangular cuts"""
+    shape_id: str
+    shape_type: str  # rectangle, circle, polygon, arc
+    base_x: float
+    base_y: float
+    points: List[ShapePoint]
+    parameters: Dict = field(default_factory=dict)  # radius, width, height, etc.
 
 
 @dataclass

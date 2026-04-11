@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1a1a2e; color: #eee; }
+        button { padding: 10px 20px; margin: 5px; background: #3b82f6; color: white; border: none; cursor: pointer; }
+        button:hover { background: #2563eb; }
+        pre { background: #333; padding: 10px; border-radius: 4px; }
+        .result { margin: 10px 0; }
+        .success { color: #22c55e; }
+        .error { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <h1>🧪 API Test Page</h1>
+    
+    <h2>1. Add Order</h2>
+    <button onclick="addOrder()">Add Test Order</button>
+    <div id="addResult" class="result"></div>
+    
+    <h2>2. Get Orders</h2>
+    <button onclick="getOrders()">Get Orders</button>
+    <div id="getOrdersResult" class="result"></div>
+    
+    <h2>3. Optimize (Local)</h2>
+    <button onclick="optimize()">Run Optimization</button>
+    <div id="optimizeResult" class="result"></div>
+    
+    <h2>4. Get G-Code</h2>
+    <button onclick="getGcode()">Get G-Code</button>
+    <div id="gcodeResult" class="result"></div>
+    
+    <h2>5. Get Settings</h2>
+    <button onclick="getSettings()">Get Settings</button>
+    <div id="settingsResult" class="result"></div>
+    
+    <h2>6. Save Settings</h2>
+    <button onclick="saveSettings()">Save Settings</button>
+    <div id="saveSettingsResult" class="result"></div>
+    
+    <script>
+        const API_BASE = '/api';
+        
+        async function addOrder() {
+            try {
+                const response = await fetch(`${API_BASE}/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        order_id: 'TEST-' + Date.now(),
+                        width: 500,
+                        height: 400,
+                        quantity: 2,
+                        thickness: 4,
+                        glass_type: 'float',
+                        priority: 1,
+                        rotate_allowed: true
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('addResult').innerHTML = 
+                    `<pre class="${data.success ? 'success' : 'error'}">${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                document.getElementById('addResult').innerHTML = 
+                    `<pre class="error">Error: ${error.message}</pre>`;
+            }
+        }
+        
+        async function getOrders() {
+            try {
+                const response = await fetch(`${API_BASE}/orders`);
+                const data = await response.json();
+                document.getElementById('getOrdersResult').innerHTML = 
+                    `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                document.getElementById('getOrdersResult').innerHTML = 
+                    `<pre class="error">Error: ${error.message}</pre>`;
+            }
+        }
+        
+        async function optimize() {
+            try {
+                const response = await fetch(`${API_BASE}/optimize/local`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+                const data = await response.json();
+                document.getElementById('optimizeResult').innerHTML = 
+                    `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                document.getElementById('optimizeResult').innerHTML = 
+                    `<pre class="error">Error: ${error.message}</pre>`;
+            }
+        }
+        
+        async function getGcode() {
+            try {
+                const response = await fetch(`${API_BASE}/gcode`);
+                const data = await response.json();
+                document.getElementById('gcodeResult').innerHTML = 
+                    `<pre>${data.success ? data.gcode.substring(0, 500) + '...' : JSON.stringify(data)}</pre>`;
+            } catch (error) {
+                document.getElementById('gcodeResult').innerHTML = 
+                    `<pre class="error">Error: ${error.message}</pre>`;
+            }
+        }
+        
+        async function getSettings() {
+            try {
+                const response = await fetch(`${API_BASE}/settings`);
+                const data = await response.json();
+                document.getElementById('settingsResult').innerHTML = 
+                    `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                document.getElementById('settingsResult').innerHTML = 
+                    `<pre class="error">Error: ${error.message}</pre>`;
+            }
+        }
+        
+        async function saveSettings() {
+            try {
+                const response = await fetch(`${API_BASE}/settings`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        api_key: '',
+                        api_endpoint: 'https://coding-intl.dashscope.aliyuncs.com/v1',
+                        mode: 'offline',
+                        models: [
+                            { model_id: 'qwen3.5-plus', enabled: true, temperature: 0.7, max_tokens: 2048 }
+                        ]
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('saveSettingsResult').innerHTML = 
+                    `<pre class="${data.success ? 'success' : 'error'}">${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                document.getElementById('saveSettingsResult').innerHTML = 
+                    `<pre class="error">Error: ${error.message}</pre>`;
+            }
+        }
+    </script>
+</body>
+</html>

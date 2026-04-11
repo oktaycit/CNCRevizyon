@@ -9,6 +9,7 @@
 
 // API Base URL
 const API_BASE = '/api';
+window.API_BASE = API_BASE;  // Make global for other scripts
 
 // Current state
 let currentOrders = [];
@@ -128,8 +129,11 @@ async function updateStats() {
         const orderCount = currentOrders.length;
         const partsCount = currentOrders.reduce((sum, o) => sum + o.quantity, 0);
 
-        document.getElementById('orderCount')?.textContent = orderCount;
-        document.getElementById('partsCount')?.textContent = partsCount;
+        const orderCountEl = document.getElementById('orderCount');
+        if (orderCountEl) orderCountEl.textContent = orderCount;
+
+        const partsCountEl = document.getElementById('partsCount');
+        if (partsCountEl) partsCountEl.textContent = partsCount;
 
         // Update order count text
         const orderCountText = document.getElementById('orderCountText');
@@ -155,16 +159,29 @@ async function updateStats() {
 function updateVisualizationStats() {
     if (!currentResult) return;
 
-    document.getElementById('placedCount')?.textContent = currentResult.placed_parts?.length || 0;
-    document.getElementById('utilizationRate')?.textContent =
+    const placedCount = document.getElementById('placedCount');
+    if (placedCount) placedCount.textContent = currentResult.placed_parts?.length || 0;
+
+    const utilizationRate = document.getElementById('utilizationRate');
+    if (utilizationRate) utilizationRate.textContent =
         `${(currentResult.utilization * 100).toFixed(1)}%`;
-    document.getElementById('wasteArea')?.textContent =
+
+    const wasteArea = document.getElementById('wasteArea');
+    if (wasteArea) wasteArea.textContent =
         `${(currentResult.waste_area / 1000000).toFixed(2)} m²`;
-    document.getElementById('cutCount')?.textContent = currentResult.total_cuts || 0;
-    document.getElementById('totalDistance')?.textContent = '-';
-    document.getElementById('estimatedTime')?.textContent =
+
+    const cutCount = document.getElementById('cutCount');
+    if (cutCount) cutCount.textContent = currentResult.total_cuts || 0;
+
+    const totalDistance = document.getElementById('totalDistance');
+    if (totalDistance) totalDistance.textContent = '-';
+
+    const estimatedTime = document.getElementById('estimatedTime');
+    if (estimatedTime) estimatedTime.textContent =
         `${currentResult.estimated_time?.toFixed(1)} dk`;
-    document.getElementById('algorithmUsed')?.textContent = 'Guillotine BestFit';
+
+    const algorithmUsed = document.getElementById('algorithmUsed');
+    if (algorithmUsed) algorithmUsed.textContent = 'Guillotine BestFit';
 }
 
 // ==================== Order Functions ====================
@@ -327,10 +344,17 @@ function renderOrderList() {
 }
 
 function clearForm() {
-    document.getElementById('orderId')?.value = '';
-    document.getElementById('width')?.value = 500;
-    document.getElementById('height')?.value = 400;
-    document.getElementById('quantity')?.value = 1;
+    const orderId = document.getElementById('orderId');
+    if (orderId) orderId.value = '';
+
+    const width = document.getElementById('width');
+    if (width) width.value = 500;
+
+    const height = document.getElementById('height');
+    if (height) height.value = 400;
+
+    const quantity = document.getElementById('quantity');
+    if (quantity) quantity.value = 1;
 }
 
 // ==================== Optimization Functions ====================
@@ -361,9 +385,12 @@ async function runOptimization() {
             currentResult = result.result;
 
             // Update stats
-            document.getElementById('utilization')?.textContent =
+            const utilizationEl = document.getElementById('utilization');
+            if (utilizationEl) utilizationEl.textContent =
                 `${(currentResult.utilization * 100).toFixed(1)}%`;
-            document.getElementById('estimatedTime')?.textContent =
+
+            const estimatedTimeEl = document.getElementById('estimatedTime');
+            if (estimatedTimeEl) estimatedTimeEl.textContent =
                 `${currentResult.estimated_time?.toFixed(1)}`;
 
             // Show offline message if needed
@@ -449,9 +476,14 @@ async function loadGcodeContent(filename) {
         if (result.success) {
             currentGcode = result.content;
 
-            document.getElementById('currentFile')?.textContent = filename;
-            document.getElementById('fileLines')?.textContent = `${result.lines} satır`;
-            document.getElementById('gcodeContent')?.textContent = result.content;
+            const currentFile = document.getElementById('currentFile');
+            if (currentFile) currentFile.textContent = filename;
+
+            const fileLines = document.getElementById('fileLines');
+            if (fileLines) fileLines.textContent = `${result.lines} satır`;
+
+            const gcodeContent = document.getElementById('gcodeContent');
+            if (gcodeContent) gcodeContent.textContent = result.content;
 
             addLogEntry(`G-Code loaded: ${filename}`);
         }
@@ -470,8 +502,12 @@ async function getGcode() {
 
         if (result.success) {
             currentGcode = result.gcode;
-            document.getElementById('gcodeContent')?.textContent = result.gcode;
-            document.getElementById('fileLines')?.textContent = `${result.lines} satır`;
+
+            const gcodeContent = document.getElementById('gcodeContent');
+            if (gcodeContent) gcodeContent.textContent = result.gcode;
+
+            const fileLines = document.getElementById('fileLines');
+            if (fileLines) fileLines.textContent = `${result.lines} satır`;
         }
 
     } catch (error) {
@@ -778,3 +814,25 @@ function renderHerofisHistory(history) {
         </div>
     `).join('');
 }
+
+// ==================== Global Functions (for onclick handlers) ====================
+// These functions need to be global for HTML onclick attributes
+
+window.loadOrders = loadOrders;
+window.loadSampleOrders = loadSampleOrders;
+window.addOrder = addOrder;
+window.deleteOrder = deleteOrder;
+window.clearAllOrders = clearAllOrders;
+window.runOptimization = runOptimization;
+window.runNestingOnly = runNestingOnly;
+window.getGcode = getGcode;
+window.downloadGcode = downloadGcode;
+window.copyGcode = copyGcode;
+window.validateGcode = validateGcode;
+window.goToVisualization = goToVisualization;
+window.viewGcode = viewGcode;
+window.updateTime = updateTime;
+window.showToast = showToast;
+window.showLoading = showLoading;
+window.hideLoading = hideLoading;
+window.addLogEntry = addLogEntry;

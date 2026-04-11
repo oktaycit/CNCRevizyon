@@ -74,19 +74,19 @@ let currentSettings = {};
 function initSettings() {
     // Load from localStorage
     loadSettings();
-    
+
     // Apply to UI
     applySettingsToUI();
-    
+
     // Update preview
     updateConfigPreview();
-    
+
     // Check API status
     checkApiStatus();
-    
+
     // Setup event listeners
     setupEventListeners();
-    
+
     addLogEntry('Settings initialized');
 }
 
@@ -94,7 +94,7 @@ function initSettings() {
 
 function loadSettings() {
     const stored = localStorage.getItem('glassCuttingSettings');
-    
+
     if (stored) {
         try {
             currentSettings = JSON.parse(stored);
@@ -107,7 +107,7 @@ function loadSettings() {
         currentSettings = DEFAULT_SETTINGS;
         showToast('Varsayılan ayalar yüklenildi', 'success');
     }
-    
+
     applySettingsToUI();
     updateConfigPreview();
 }
@@ -115,15 +115,15 @@ function loadSettings() {
 function saveSettings() {
     // Gather from UI
     gatherSettingsFromUI();
-    
+
     // Save to localStorage
     localStorage.setItem('glassCuttingSettings', JSON.stringify(currentSettings));
-    
+
     // Save to backend (if online)
     if (navigator.onLine) {
         saveToBackend();
     }
-    
+
     updateConfigPreview();
     showToast('Ayalar kaydedildi!', 'success');
     addLogEntry('Settings saved');
@@ -136,11 +136,11 @@ async function saveToBackend() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(currentSettings)
         });
-        
+
         const result = await response.json();
-        
+
         if (result.success) {
-            showToast('Ayalar backend'e kaydedildi', 'success');
+            showToast('Ayarlar backend\'e kaydedildi', 'success');
         }
     } catch (error) {
         console.log('Backend save failed (offline):', error);
@@ -149,13 +149,13 @@ async function saveToBackend() {
 
 function resetToDefaults() {
     if (!confirm('Varsayılan ayalara dönmek istediğinize emin misiniz?')) return;
-    
+
     currentSettings = DEFAULT_SETTINGS;
     localStorage.setItem('glassCuttingSettings', JSON.stringify(currentSettings));
-    
+
     applySettingsToUI();
     updateConfigPreview();
-    
+
     showToast('Varsayılan ayalar uygulandı', 'warning');
     addLogEntry('Settings reset to defaults');
 }
@@ -166,33 +166,33 @@ function applySettingsToUI() {
     // API Key
     document.getElementById('apiKey').value = currentSettings.api_key || '';
     document.getElementById('apiEndpoint').value = currentSettings.api_endpoint || DEFAULT_SETTINGS.api_endpoint;
-    
+
     // Mode
     setModeUI(currentSettings.mode || 'offline');
-    
+
     // Models
     currentSettings.models.forEach(model => {
         const toggle = document.querySelector(`[data-model-toggle="${model.model_id}"]`);
         if (toggle) toggle.checked = model.enabled;
-        
+
         const item = document.querySelector(`[data-model="${model.model_id}"]`);
         if (item) {
             const tempInput = item.querySelector('[data-param="temperature"]');
             const tokensInput = item.querySelector('[data-param="max_tokens"]');
             const useCaseSelect = item.querySelector('[data-param="use_case"]');
-            
+
             if (tempInput) tempInput.value = model.temperature;
             if (tokensInput) tokensInput.value = model.max_tokens;
             if (useCaseSelect) useCaseSelect.value = model.use_case;
         }
     });
-    
+
     // Routing
     Object.entries(currentSettings.routing || {}).forEach(([key, value]) => {
         const select = document.querySelector(`[data-routing="${key}"]`);
         if (select) select.value = value;
     });
-    
+
     // Parallel
     document.getElementById('maxParallel').value = currentSettings.parallel?.max_parallel || 3;
     document.getElementById('timeout').value = currentSettings.parallel?.timeout || 90;
@@ -204,7 +204,7 @@ function gatherSettingsFromUI() {
     currentSettings.api_key = document.getElementById('apiKey').value;
     currentSettings.api_endpoint = document.getElementById('apiEndpoint').value;
     currentSettings.mode = document.querySelector('.mode-btn.active').classList.contains('online') ? 'online' : 'offline';
-    
+
     // Models
     currentSettings.models = [];
     document.querySelectorAll('.model-config-item').forEach(item => {
@@ -213,7 +213,7 @@ function gatherSettingsFromUI() {
         const tempInput = item.querySelector('[data-param="temperature"]');
         const tokensInput = item.querySelector('[data-param="max_tokens"]');
         const useCaseSelect = item.querySelector('[data-param="use_case"]');
-        
+
         currentSettings.models.push({
             model_id: modelId,
             enabled: toggle ? toggle.checked : true,
@@ -222,13 +222,13 @@ function gatherSettingsFromUI() {
             use_case: useCaseSelect ? useCaseSelect.value : 'general'
         });
     });
-    
+
     // Routing
     currentSettings.routing = {};
     document.querySelectorAll('[data-routing]').forEach(select => {
         currentSettings.routing[select.dataset.routing] = select.value;
     });
-    
+
     // Parallel
     currentSettings.parallel = {
         max_parallel: parseInt(document.getElementById('maxParallel').value),
@@ -243,14 +243,14 @@ function gatherSettingsFromUI() {
 function setMode(mode) {
     currentSettings.mode = mode;
     setModeUI(mode);
-    
+
     // Update connection status
     if (mode === 'online') {
         testApiConnection();
     } else {
         updateConnectionStatus('offline', 'Offline (Local algorithms)');
     }
-    
+
     showToast(`Mod: ${mode === 'online' ? 'Online (AI)' : 'Offline (Local)'}`, 'success');
     addLogEntry(`Mode changed to ${mode}`);
 }
@@ -258,7 +258,7 @@ function setMode(mode) {
 function setModeUI(mode) {
     const offlineBtn = document.querySelector('.mode-btn.offline');
     const onlineBtn = document.querySelector('.mode-btn.online');
-    
+
     if (mode === 'online') {
         offlineBtn.classList.remove('active');
         onlineBtn.classList.add('active');
@@ -273,22 +273,22 @@ function setModeUI(mode) {
 async function testApiConnection() {
     const apiKey = document.getElementById('apiKey').value;
     const endpoint = document.getElementById('apiEndpoint').value;
-    
+
     if (!apiKey) {
         showToast('API Key gerekli!', 'error');
         updateConnectionStatus('error', 'API Key gerekli');
         return;
     }
-    
+
     if (!apiKey.startsWith('sk-')) {
         showToast('API Key formatı hatalı (sk- ile başlamalı)', 'error');
         updateConnectionStatus('error', 'Key format hatası');
         return;
     }
-    
+
     showLoading();
     updateConnectionStatus('testing', 'Testing...');
-    
+
     try {
         // Test via backend
         const response = await fetch('/api/settings/test', {
@@ -296,9 +296,9 @@ async function testApiConnection() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ api_key: apiKey, api_endpoint: endpoint })
         });
-        
+
         const result = await response.json();
-        
+
         if (result.success) {
             updateConnectionStatus('connected', 'Bağlantı başarılı!');
             document.getElementById('rateLimit').textContent = result.rate_limit || '60 req/min';
@@ -310,18 +310,18 @@ async function testApiConnection() {
             showToast('API hatası: ' + result.error, 'error');
             addLogEntry('API connection test: FAILED');
         }
-        
+
     } catch (error) {
         updateConnectionStatus('error', 'Network hatası');
         showToast('Test hatası: ' + error.message, 'error');
     }
-    
+
     hideLoading();
 }
 
 function checkApiStatus() {
     const apiKey = currentSettings.api_key;
-    
+
     if (apiKey && apiKey.startsWith('sk-')) {
         updateConnectionStatus('ready', 'Ready to connect');
     } else {
@@ -333,7 +333,7 @@ function updateConnectionStatus(status, message) {
     const indicator = document.getElementById('connectionStatus');
     const text = document.getElementById('connectionText');
     const apiStatus = document.getElementById('apiStatus');
-    
+
     // Update indicator color
     indicator.className = 'status-indicator';
     switch (status) {
@@ -353,7 +353,7 @@ function updateConnectionStatus(status, message) {
         default:
             indicator.classList.add('idle');
     }
-    
+
     text.textContent = message;
     apiStatus.textContent = message;
 }
@@ -369,16 +369,16 @@ function toggleApiKeyVisibility() {
 
 function exportSettings() {
     gatherSettingsFromUI();
-    
+
     const json = JSON.stringify(currentSettings, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-    
+
     const a = document.createElement('a');
     a.href = url;
     a.download = 'glass_cutting_settings.json';
     a.click();
-    
+
     URL.revokeObjectURL(url);
     showToast('Settings exported', 'success');
 }
@@ -394,19 +394,19 @@ function closeModal() {
 function doImport() {
     const textarea = document.getElementById('importTextarea');
     const json = textarea.value;
-    
+
     try {
         const imported = JSON.parse(json);
         currentSettings = imported;
-        
+
         localStorage.setItem('glassCuttingSettings', JSON.stringify(currentSettings));
         applySettingsToUI();
         updateConfigPreview();
-        
+
         closeModal();
         showToast('Settings imported successfully', 'success');
         addLogEntry('Settings imported from JSON');
-        
+
     } catch (error) {
         showToast('Import hatası: ' + error.message, 'error');
     }
@@ -430,17 +430,17 @@ function setupEventListeners() {
             item.classList.toggle('disabled', !toggle.checked);
         });
     });
-    
+
     // Parameter inputs
     document.querySelectorAll('[data-param]').forEach(input => {
         input.addEventListener('change', updateConfigPreview);
     });
-    
+
     // Routing selects
     document.querySelectorAll('[data-routing]').forEach(select => {
         select.addEventListener('change', updateConfigPreview);
     });
-    
+
     // Parallel inputs
     ['maxParallel', 'timeout', 'retryCount', 'fallbackEnabled'].forEach(id => {
         document.getElementById(id)?.addEventListener('change', updateConfigPreview);
@@ -462,7 +462,8 @@ function getEnabledModels() {
 }
 
 function getRoutingForTask(task) {
-    return currentSettings.routing?.[task] || 'local';
+    const routing = currentSettings.routing || {};
+    return routing[task] || 'local';
 }
 
 // Export for other scripts
@@ -474,3 +475,18 @@ window.glassCuttingSettings = {
     save: saveSettings,
     load: loadSettings
 };
+
+// ==================== Global Functions (for onclick handlers) ====================
+window.initSettings = initSettings;
+window.loadSettings = loadSettings;
+window.saveSettings = saveSettings;
+window.resetToDefaults = resetToDefaults;
+window.setMode = setMode;
+window.testApiConnection = testApiConnection;
+window.toggleApiKeyVisibility = toggleApiKeyVisibility;
+window.exportSettings = exportSettings;
+window.importSettings = importSettings;
+window.closeModal = closeModal;
+window.doImport = doImport;
+window.updateConfigPreview = updateConfigPreview;
+window.checkApiStatus = checkApiStatus;

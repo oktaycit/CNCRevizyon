@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bıçak Yönetimi - Cam Kesme Programı</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }</style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">🪟 Cam Kesme Programı</h1>
+                <span class="subtitle">LiSEC GFB-60/30RE</span>
+            </div>
+            <div class="header-center">
+                <nav class="nav-tabs">
+                    <a href="/" class="nav-tab">Ana Sayfa</a>
+                    <a href="/orders" class="nav-tab">Siparişler</a>
+                    <a href="/visualization" class="nav-tab">Yerleşim</a>
+                    <a href="/gcode" class="nav-tab">G-Code</a>
+                    <a href="/lamine" class="nav-tab">Lamine</a>
+                    <a href="/shapes" class="nav-tab">⬡ Şekilli</a>
+                    <a href="/blades" class="nav-tab active">🔪 Bıçak</a>
+                    <a href="/settings" class="nav-tab">⚙️ Ayarlar</a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <div class="machine-status" id="machineStatus">
+                    <span class="status-indicator idle"></span>
+                    <span class="status-text">Hazır</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content blades-main">
+            
+            <!-- Active Blade Panel -->
+            <section class="panel active-blade-panel">
+                <h2 class="panel-title">🔪 Aktif Bıçak</h2>
+                
+                <div class="blade-info" id="activeBladeInfo">
+                    <div class="blade-status-indicator" id="bladeStatusIndicator">
+                        <span class="status-dot new"></span>
+                        <span class="status-text">Yeni</span>
+                    </div>
+                    
+                    <div class="blade-details">
+                        <div class="detail-row">
+                            <span class="label">Bıçak ID:</span>
+                            <span class="value" id="bladeId">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Tip:</span>
+                            <span class="value" id="bladeType">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Ömür:</span>
+                            <span class="value" id="bladeLife">0 / 0 m</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Kalan:</span>
+                            <span class="value" id="bladeRemaining">0 m</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Spin:</span>
+                            <span class="value" id="bladeSpin">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="blade-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="bladeLifeProgress" style="width: 100%"></div>
+                        </div>
+                        <div class="progress-text" id="bladeLifePercent">100%</div>
+                    </div>
+                    
+                    <div class="blade-actions">
+                        <button class="btn warning" id="spinBtn" onclick="spinBlade()" disabled>
+                            🔄 Döndür (Spin)
+                        </button>
+                        <button class="btn danger" onclick="showReplaceModal()">
+                            🔄 Bıçak Değiştir
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Alerts Panel -->
+            <section class="panel alerts-panel">
+                <h2 class="panel-title">🔔 Uyarılar</h2>
+                
+                <div class="alerts-list" id="alertsList">
+                    <div class="empty-state">
+                        <span>Uyarı yok</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Grinding Allowance Panel -->
+            <section class="panel grinding-panel">
+                <h2 class="panel-title">🔧 Taşlama/Tıraşlama Payı</h2>
+                
+                <div class="grinding-config">
+                    <div class="form-group">
+                        <label>Kenar İşlemi Tipi</label>
+                        <select id="grindingType" onchange="updateGrindingPreview()">
+                            <option value="none">İşlem Yok</option>
+                            <option value="grinding">Kaba Taşlama (+4mm)</option>
+                            <option value="fine_grinding">İnce Taşlama (+2mm)</option>
+                            <option value="polishing">Parlatma (+3mm)</option>
+                            <option value="bevelling">Pah Kırma (+6mm)</option>
+                            <option value="edge_sealing">Kenar Contası (+1mm)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="grinding-preview">
+                        <h4>Örnek: 500x400mm Cam</h4>
+                        <div class="preview-compare">
+                            <div class="preview-original">
+                                <div class="preview-box" style="width: 100px; height: 80px;">
+                                    <span>500x400</span>
+                                </div>
+                                <span>Orijinal</span>
+                            </div>
+                            <div class="preview-arrow">➜</div>
+                            <div class="preview-cutting">
+                                <div class="preview-box larger" id="previewCuttingBox" style="width: 100px; height: 80px;">
+                                    <span id="previewCuttingSize">500x400</span>
+                                </div>
+                                <span>Kesim</span>
+                            </div>
+                        </div>
+                        <div class="preview-info">
+                            <div class="info-row">
+                                <span>X İlavesi:</span>
+                                <span id="xAddition">+0mm</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Y İlavesi:</span>
+                                <span id="yAddition">+0mm</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Blade List Panel -->
+            <section class="panel blade-list-panel">
+                <h2 class="panel-title">📋 Bıçak Listesi</h2>
+                
+                <div class="list-header">
+                    <span id="bladeCountText">0 bıçak</span>
+                    <button class="btn small primary" onclick="showInstallModal()">
+                        ➕ Yeni Bıçak
+                    </button>
+                </div>
+                
+                <div class="blade-list" id="bladeList">
+                    <div class="empty-state">
+                        <span>Henüz bıçak yok</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Statistics Panel -->
+            <section class="panel stats-panel">
+                <h2 class="panel-title">📊 İstatistikler</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalBlades">0</div>
+                        <div class="stat-label">Toplam Bıçak</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="activeBlades">0</div>
+                        <div class="stat-label">Aktif</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="expiredBlades">0</div>
+                        <div class="stat-label">Süresi Dolmuş</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalCuts">0</div>
+                        <div class="stat-label">Kesim</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalLength">0m</div>
+                        <div class="stat-label">Toplam Kesim</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgCut">0m</div>
+                        <div class="stat-label">Ortalama</div>
+                    </div>
+                </div>
+            </section>
+        
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span>Glass Cutting Program - Blade Management</span>
+            <span id="currentTime"></span>
+        </footer>
+    </div>
+
+    <!-- Install Blade Modal -->
+    <div class="modal-overlay" id="installModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔪 Yeni Bıçak Tak</h2>
+                <button class="modal-close" onclick="closeInstallModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Bıçak ID</label>
+                    <input type="text" id="newBladeId" placeholder="BLADE-001" />
+                </div>
+                <div class="form-group">
+                    <label>Bıçak Tipi</label>
+                    <select id="newBladeType">
+                        <option value="standard">Standart (Normal Cam)</option>
+                        <option value="laminated">Lamine Cam</option>
+                        <option value="tempered">Temperli Cam</option>
+                        <option value="diamond">Elmas Uç (Sert Cam)</option>
+                        <option value="carbide">Karbür Uç</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Toplam Ömür (m)</label>
+                    <input type="number" id="bladeTotalLife" value="5000" min="1000" max="10000" step="500" />
+                </div>
+                <div class="form-group">
+                    <label>Spin Aralığı (m)</label>
+                    <input type="number" id="bladeSpinInterval" value="1000" min="500" max="2000" step="100" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" onclick="installBlade()">Tak</button>
+                <button class="btn" onclick="closeInstallModal()">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Replace Blade Modal -->
+    <div class="modal-overlay" id="replaceModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔄 Bıçak Değiştir</h2>
+                <button class="modal-close" onclick="closeReplaceModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <p>Mevcut bıçağı değiştirmek istediğinize emin misiniz?</p>
+                <div class="form-group">
+                    <label>Yeni Bıçak ID</label>
+                    <input type="text" id="replaceBladeId" placeholder="BLADE-002" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn danger" onclick="replaceBlade()">Değiştir</button>
+                <button class="btn" onclick="closeReplaceModal()">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/blades.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBladeData();
+            updateTime();
+            setInterval(updateTime, 1000);
+            setInterval(loadBladeData, 30000); // Auto-refresh every 30s
+        });
+    </script>
+</body>
+</html>

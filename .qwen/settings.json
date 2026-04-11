@@ -8,7 +8,8 @@
       "Bash(curl *)",
       "WebFetch(herofis.com)",
       "Bash(python *)",
-      "Bash(cp *)"
+      "Bash(cp *)",
+      "Bash(pkill *)"
     ]
   },
   "$version": 3

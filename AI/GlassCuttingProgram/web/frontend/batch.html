@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Processing - Cam Kesme Programı</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }</style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">🪟 Cam Kesme Programı</h1>
+                <span class="subtitle">LiSEC GFB-60/30RE</span>
+            </div>
+            <div class="header-center">
+                <nav class="nav-tabs">
+                    <a href="/" class="nav-tab">Ana Sayfa</a>
+                    <a href="/orders" class="nav-tab">Siparişler</a>
+                    <a href="/batch" class="nav-tab active">📦 Batch</a>
+                    <a href="/queue" class="nav-tab">📋 Kuyruk</a>
+                    <a href="/reports" class="nav-tab">📊 Raporlar</a>
+                    <a href="/settings" class="nav-tab">⚙️ Ayarlar</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content batch-main">
+            
+            <!-- Sheets Panel -->
+            <section class="panel sheets-panel">
+                <h2 class="panel-title">📦 Levhalar</h2>
+                
+                <div class="panel-actions">
+                    <button class="btn primary small" onclick="showAddSheetModal()">
+                        ➕ Levha Ekle
+                    </button>
+                </div>
+                
+                <div class="sheets-list" id="sheetsList">
+                    <div class="empty-state">
+                        <span>Levha yok</span>
+                    </div>
+                </div>
+                
+                <div class="sheets-summary">
+                    <div class="summary-item">
+                        <span class="label">Toplam:</span>
+                        <span class="value" id="totalSheets">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Kullanılan:</span>
+                        <span class="value" id="usedSheets">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Artıklar:</span>
+                        <span class="value" id="remnantsCount">0</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Orders Panel -->
+            <section class="panel orders-panel">
+                <h2 class="panel-title">📋 Siparişler</h2>
+                
+                <div class="panel-actions">
+                    <button class="btn primary small" onclick="showAddOrderModal()">
+                        ➕ Sipariş Ekle
+                    </button>
+                </div>
+                
+                <div class="orders-list" id="ordersList">
+                    <div class="empty-state">
+                        <span>Sipariş yok</span>
+                    </div>
+                </div>
+                
+                <div class="orders-summary">
+                    <div class="summary-item">
+                        <span class="label">Toplam:</span>
+                        <span class="value" id="totalOrders">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Tamamlanan:</span>
+                        <span class="value" id="completedOrders">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Bekleyen:</span>
+                        <span class="value" id="pendingOrders">0</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Optimization Panel -->
+            <section class="panel optimize-panel">
+                <h2 class="panel-title">⚡ Optimizasyon</h2>
+                
+                <div class="optimization-settings">
+                    <div class="form-group">
+                        <label>Strateji</label>
+                        <select id="optStrategy">
+                            <option value="efficiency">Maksimum Verimlilik</option>
+                            <option value="speed">Minimum Levha</option>
+                            <option value="balanced">Dengeli</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="useRemnants" checked />
+                            Artıkları Kullan
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="autoQueue" checked />
+                            Otomatik Kuyruğa Ekle
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="optimization-actions">
+                    <button class="btn primary large" onclick="runOptimization()">
+                        ⚡ Optimizasyonu Çalıştır
+                    </button>
+                </div>
+                
+                <div class="optimization-results" id="optimizationResults">
+                    <div class="empty-state">
+                        <span>Optimizasyon çalıştırılmadı</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Jobs Panel -->
+            <section class="panel jobs-panel">
+                <h2 class="panel-title">📋 İşler</h2>
+                
+                <div class="jobs-list" id="jobsList">
+                    <div class="empty-state">
+                        <span>İş yok</span>
+                    </div>
+                </div>
+                
+                <div class="jobs-summary">
+                    <div class="summary-item">
+                        <span class="label">Toplam İş:</span>
+                        <span class="value" id="totalJobs">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Est. Süre:</span>
+                        <span class="value" id="estimatedTime">0 dk</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Ort. Verim:</span>
+                        <span class="value" id="avgUtilization">0%</span>
+                    </div>
+                </div>
+            </section>
+        
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span>Glass Cutting Program - Batch Processing</span>
+            <span id="currentTime"></span>
+        </footer>
+    </div>
+
+    <!-- Add Sheet Modal -->
+    <div class="modal-overlay" id="addSheetModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📦 Levha Ekle</h2>
+                <button class="modal-close" onclick="closeAddSheetModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Levha ID</label>
+                    <input type="text" id="sheetId" placeholder="SHEET-001" />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Genişlik (mm)</label>
+                        <input type="number" id="sheetWidth" value="6000" />
+                    </div>
+                    <div class="form-group">
+                        <label>Yükseklik (mm)</label>
+                        <input type="number" id="sheetHeight" value="3000" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Kalınlık (mm)</label>
+                        <select id="sheetThickness">
+                            <option value="2">2 mm</option>
+                            <option value="3">3 mm</option>
+                            <option value="4" selected>4 mm</option>
+                            <option value="5">5 mm</option>
+                            <option value="6">6 mm</option>
+                            <option value="8">8 mm</option>
+                            <option value="10">10 mm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Cam Tipi</label>
+                        <select id="sheetGlassType">
+                            <option value="float">Float</option>
+                            <option value="laminated">Lamine</option>
+                            <option value="tempered">Temperli</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" onclick="addSheet()">Ekle</button>
+                <button class="btn" onclick="closeAddSheetModal()">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/batch.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBatchData();
+            updateTime();
+            setInterval(updateTime, 1000);
+            setInterval(loadBatchData, 30000); // Auto-refresh every 30s
+        });
+    </script>
+</body>
+</html>

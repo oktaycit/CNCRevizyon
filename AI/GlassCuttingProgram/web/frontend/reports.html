@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raporlar - Cam Kesme Programı</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }</style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">🪟 Cam Kesme Programı</h1>
+                <span class="subtitle">LiSEC GFB-60/30RE</span>
+            </div>
+            <div class="header-center">
+                <nav class="nav-tabs">
+                    <a href="/" class="nav-tab">Ana Sayfa</a>
+                    <a href="/orders" class="nav-tab">Siparişler</a>
+                    <a href="/visualization" class="nav-tab">Yerleşim</a>
+                    <a href="/gcode" class="nav-tab">G-Code</a>
+                    <a href="/lamine" class="nav-tab">Lamine</a>
+                    <a href="/shapes" class="nav-tab">⬡ Şekilli</a>
+                    <a href="/dxf" class="nav-tab">📐 DXF</a>
+                    <a href="/blades" class="nav-tab">🔪 Bıçak</a>
+                    <a href="/reports" class="nav-tab active">📊 Raporlar</a>
+                    <a href="/settings" class="nav-tab">⚙️ Ayarlar</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content reports-main">
+            
+            <!-- Report Type Selection -->
+            <section class="panel report-type-panel">
+                <h2 class="panel-title">📊 Rapor Tipi Seç</h2>
+                
+                <div class="report-types">
+                    <button class="report-type-btn active" onclick="selectReportType('daily')">
+                        📅 Günlük
+                    </button>
+                    <button class="report-type-btn" onclick="selectReportType('weekly')">
+                        📆 Haftalık
+                    </button>
+                    <button class="report-type-btn" onclick="selectReportType('monthly')">
+                        📆 Aylık
+                    </button>
+                    <button class="report-type-btn" onclick="selectReportType('waste')">
+                        ♻️ Fire Analizi
+                    </button>
+                    <button class="report-type-btn" onclick="selectReportType('orders')">
+                        📋 Sipariş Durumu
+                    </button>
+                </div>
+                
+                <div class="date-selection">
+                    <div class="form-group">
+                        <label>Başlangıç</label>
+                        <input type="date" id="startDate" />
+                    </div>
+                    <div class="form-group">
+                        <label>Bitiş</label>
+                        <input type="date" id="endDate" />
+                    </div>
+                </div>
+                
+                <div class="report-actions">
+                    <button class="btn primary" onclick="generateReport()">
+                        📊 Rapor Oluştur
+                    </button>
+                </div>
+            </section>
+            
+            <!-- Export Options -->
+            <section class="panel export-panel">
+                <h2 class="panel-title">💾 Dışa Aktar</h2>
+                
+                <div class="export-options">
+                    <button class="export-btn" onclick="exportReport('pdf')">
+                        <span class="export-icon">📄</span>
+                        <span>PDF</span>
+                    </button>
+                    <button class="export-btn" onclick="exportReport('excel')">
+                        <span class="export-icon">📊</span>
+                        <span>Excel</span>
+                    </button>
+                    <button class="export-btn" onclick="exportReport('json')">
+                        <span class="export-icon">📝</span>
+                        <span>JSON</span>
+                    </button>
+                </div>
+            </section>
+            
+            <!-- Report Preview -->
+            <section class="panel preview-panel">
+                <h2 class="panel-title">👁️ Önizleme</h2>
+                
+                <div class="report-summary" id="reportSummary">
+                    <div class="empty-state">
+                        <span>Rapor oluşturulmadı</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Charts Panel -->
+            <section class="panel charts-panel">
+                <h2 class="panel-title">📈 Grafikler</h2>
+                
+                <div class="chart-container">
+                    <canvas id="utilizationChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="wasteChart"></canvas>
+                </div>
+            </section>
+            
+            <!-- Report History -->
+            <section class="panel history-panel">
+                <h2 class="panel-title">📚 Rapor Geçmişi</h2>
+                
+                <div class="report-history" id="reportHistory">
+                    <div class="empty-state">
+                        <span>Geçmiş yok</span>
+                    </div>
+                </div>
+            </section>
+        
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span>Glass Cutting Program - Reports & Analytics</span>
+            <span id="currentTime"></span>
+        </footer>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Rapor oluşturuluyor...</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/reports.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initReports();
+            updateTime();
+            setInterval(updateTime, 1000);
+        });
+    </script>
+</body>
+</html>

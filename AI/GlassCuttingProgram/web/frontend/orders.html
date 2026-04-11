@@ -281,12 +281,15 @@
             loadOrders();
             updateTime();
             setInterval(updateTime, 1000);
-        });
 
-        // Form submit handler
-        document.getElementById('orderForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await addOrder();
+            // Form submit handler (inside DOMContentLoaded)
+            const orderForm = document.getElementById('orderForm');
+            if (orderForm) {
+                orderForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await addOrder();
+                });
+            }
         });
     </script>
 </body>

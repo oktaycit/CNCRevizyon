@@ -9,11 +9,34 @@ const SHEET_HEIGHT = 3000;  // mm
 
 let canvas = null;
 let ctx = null;
-let scale = 7.5;  // px per mm (800px / 6000mm ≈ 0.13, inverted for display)
+let scale = 7.5;  // px per mm
 let showGrid = true;
 let showDefects = false;
 let placedParts = [];
 let defects = [];
+// currentOrders is global from app.js
+
+// Shared utility functions (from app.js)
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+
+function showLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) overlay.classList.add('active');
+}
+
+function hideLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) overlay.classList.remove('active');
+}
 
 // Colors
 const COLORS = {
@@ -159,7 +182,7 @@ function drawPart(part, index) {
 
     // Draw dimensions
     ctx.font = '8px Inter';
-    const dimText = `${Math.round(w/scale)}x${Math.round(h/scale)}`;
+    const dimText = `${Math.round(w / scale)}x${Math.round(h / scale)}`;
     ctx.fillText(dimText, x + 2, y + h - 5);
 
     // Draw rotation indicator
@@ -315,10 +338,15 @@ async function refreshVisualizationStats() {
             drawNesting(placedParts);
 
             // Update stats
-            document.getElementById('placedCount')?.textContent = placedParts.length;
-            document.getElementById('utilizationRate')?.textContent =
+            const placedCount = document.getElementById('placedCount');
+            if (placedCount) placedCount.textContent = placedParts.length;
+
+            const utilizationRate = document.getElementById('utilizationRate');
+            if (utilizationRate) utilizationRate.textContent =
                 `${(result.utilization * 100).toFixed(1)}%`;
-            document.getElementById('algorithmUsed')?.textContent = result.algorithm;
+
+            const algorithmUsed = document.getElementById('algorithmUsed');
+            if (algorithmUsed) algorithmUsed.textContent = result.algorithm;
         }
 
     } catch (error) {
@@ -374,3 +402,60 @@ document.addEventListener('DOMContentLoaded', () => {
     setupMouseEvents();
     refreshVisualizationStats();
 });
+
+// ==================== Global Functions (for onclick handlers) ====================
+window.zoomIn = zoomIn;
+window.zoomOut = zoomOut;
+window.resetZoom = resetZoom;
+window.toggleGrid = toggleGrid;
+window.toggleDefects = toggleDefects;
+window.redraw = redraw;
+window.refreshVisualization = refreshVisualization;
+window.runNestingOnly = runNestingOnly;
+window.runPathOptimization = runPathOptimization;
+window.exportImage = exportImage;
+window.drawNesting = drawNesting;
+window.initCanvas = initCanvas;
+
+// These functions are in app.js, but we need local versions for visualization page
+// API_BASE from app.js (window.API_BASE)
+const API_BASE_LOCAL = window.API_BASE || '/api';
+
+async function runNestingOnly() {
+    if (!currentOrders || currentOrders.length === 0) {
+        // Try to load from API
+        try {
+            const response = await fetch('/api/orders');
+            const data = await response.json();
+            currentOrders = data.orders || [];
+        } catch (e) {
+            showToast('Sipariş yok', 'warning');
+            return;
+        }
+    }
+
+    showLoading();
+
+    try {
+        const response = await fetch(`${API_BASE_LOCAL}/optimize/nesting`, {
+            method: 'POST'
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            placedParts = result.placed_parts;
+            drawNesting(placedParts);
+
+            showToast('Nesting tamamlandı', 'success');
+        }
+    } catch (error) {
+        showToast('Hata: ' + error.message, 'error');
+    }
+
+    hideLoading();
+}
+
+function runPathOptimization() {
+    showToast('Yol optimizasyonu (TSP 2-opt)', 'warning');
+}
