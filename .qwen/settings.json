@@ -9,7 +9,8 @@
       "WebFetch(herofis.com)",
       "Bash(python *)",
       "Bash(cp *)",
-      "Bash(pkill *)"
+      "Bash(pkill *)",
+      "Bash(nohup *)"
     ]
   },
   "$version": 3
