@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G-Code - Cam Kesme Programı</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        code,
+        pre,
+        .gcode-viewer {
+            font-family: 'SF Mono', Menlo, Monaco, 'Courier New', monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">🪟 Cam Kesme Programı</h1>
+                <span class="subtitle">LiSEC GFB-60/30RE</span>
+            </div>
+            <div class="header-center">
+                <nav class="nav-tabs">
+                    <a href="/" class="nav-tab">Ana Sayfa</a>
+                    <a href="/orders" class="nav-tab">Siparişler</a>
+                    <a href="/visualization" class="nav-tab">Yerleşim</a>
+                    <a href="/gcode" class="nav-tab active">G-Code</a>
+                    <a href="/lamine" class="nav-tab">Lamine</a>
+                    <a href="/settings" class="nav-tab">⚙️ Ayarlar</a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <div class="machine-status">
+                    <span class="status-indicator idle"></span>
+                    <span class="status-text">Hazır</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Offline Banner -->
+        <div class="offline-banner" id="offlineBanner" style="display: none;">
+            <span class="offline-icon">📡</span>
+            <span>Offline Mode - Local algoritmalar çalışıyor</span>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content gcode-main">
+            <!-- G-Code Files Panel -->
+            <section class="panel files-panel">
+                <h2 class="panel-title">📁 G-Code Dosyaları</h2>
+                <div class="files-list" id="filesList">
+                    <div class="empty-state">
+                        <span>G-Code dosyası yok</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- G-Code Editor Panel -->
+            <section class="panel editor-panel">
+                <h2 class="panel-title">📄 G-Code İçeriği</h2>
+                <div class="editor-header">
+                    <span id="currentFile">-</span>
+                    <span id="fileLines">0 satır</span>
+                    <div class="editor-actions">
+                        <button class="btn small" onclick="copyGcode()">📋 Kopyala</button>
+                        <button class="btn small" onclick="downloadGcode()">⬇️ İndir</button>
+                        <button class="btn small" onclick="validateGcode()">✓ Doğrula</button>
+                    </div>
+                </div>
+                <div class="gcode-container">
+                    <div class="gcode-viewer" id="gcodeViewer">
+                        <pre><code id="gcodeContent">; G-Code içeriği yüklenmedi
+; Optimizasyon çalıştırın veya dosya seçin</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- G-Code Info Panel -->
+            <section class="panel info-panel">
+                <h2 class="panel-title">ℹ️ NC300 Komutları</h2>
+                <div class="command-info">
+                    <div class="command-row">
+                        <span class="code">G00</span>
+                        <span class="desc">Hızlı hareket (Rapid)</span>
+                    </div>
+                    <div class="command-row">
+                        <span class="code">G01</span>
+                        <span class="desc">Doğrusal kesim (Linear)</span>
+                    </div>
+                    <div class="command-row">
+                        <span class="code">G02/G03</span>
+                        <span class="desc">Arc kesim (CW/CCW)</span>
+                    </div>
+                    <div class="command-row">
+                        <span class="code">G21</span>
+                        <span class="desc">Metrik mod (mm)</span>
+                    </div>
+                    <div class="command-row">
+                        <span class="code">G90</span>
+                        <span class="desc">Absolut konum</span>
+                    </div>
+                    <div class="command-row">
+                        <span class="code">M03</span>
+                        <span class="desc">Spindle başlat</span>
+                    </div>
+                    <div class="command-row">
+                        <span class="code">M05</span>
+                        <span class="desc">Spindle durdur</span>
+                    </div>
+                    <div class="command-row">
+                        <span class="code">M30</span>
+                        <span class="desc">Program sonu</span>
+                    </div>
+                    <div class="command-row">
+                        <span class="code">F</span>
+                        <span class="desc">Hız (Feed rate)</span>
+                    </div>
+                    <div class="command-row">
+                        <span class="code">X/Y/Z</span>
+                        <span class="desc">Koordinat</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Glass Type Info -->
+            <section class="panel glass-info-panel">
+                <h2 class="panel-title">🪟 Cam Tipi Kesim Modları</h2>
+                <div class="glass-modes">
+                    <div class="mode-card float">
+                        <h3>Float Cam</h3>
+                        <ul>
+                            <li>Standart perimeter kesim</li>
+                            <li>Tek geçiş</li>
+                            <li>Normal kesim derinliği</li>
+                        </ul>
+                    </div>
+                    <div class="mode-card laminated">
+                        <h3>Lamine Cam</h3>
+                        <ul>
+                            <li>Üst cam kesimi</li>
+                            <li>Heating (PVB/EVA/SGP)</li>
+                            <li>Alt cam kesimi</li>
+                            <li>Ayırma ve kırma</li>
+                        </ul>
+                    </div>
+                    <div class="mode-card tempered">
+                        <h3>Temperli Cam</h3>
+                        <ul>
+                            <li>Sadece scoring</li>
+                            <li>Derin kesim yok</li>
+                            <li>Break-out noktası</li>
+                            <li>Manuel kırma</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span>Glass Cutting Program v1.0</span>
+            <span>NC300 Compatible</span>
+            <span id="currentTime"></span>
+        </footer>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">G-Code yükleniyor...</div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGcodeFiles();
+            updateTime();
+            setInterval(updateTime, 1000);
+        });
+    </script>
+</body>
+
+</html>

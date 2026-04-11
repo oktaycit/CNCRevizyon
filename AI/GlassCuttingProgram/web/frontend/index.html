@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cam Kesme Programı - LiSEC GFB-60/30RE</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Offline: Local fonts fallback to system fonts -->
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">🪟 Cam Kesme Programı</h1>
+                <span class="subtitle">LiSEC GFB-60/30RE</span>
+            </div>
+            <div class="header-center">
+                <nav class="nav-tabs">
+                    <a href="/" class="nav-tab active">Ana Sayfa</a>
+                    <a href="/orders" class="nav-tab">Siparişler</a>
+                    <a href="/visualization" class="nav-tab">Yerleşim</a>
+                    <a href="/gcode" class="nav-tab">G-Code</a>
+                    <a href="/lamine" class="nav-tab">Lamine</a>
+                    <a href="/settings" class="nav-tab">⚙️ Ayarlar</a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <div class="machine-status" id="machineStatus">
+                    <span class="status-indicator idle"></span>
+                    <span class="status-text">Hazır</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Offline Banner -->
+        <div class="offline-banner" id="offlineBanner" style="display: none;">
+            <span class="offline-icon">📡</span>
+            <span>Offline Mode - Local algoritmalar çalışıyor (AI API bağlantısı yok)</span>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Machine Info Panel -->
+            <section class="panel machine-info-panel">
+                <h2 class="panel-title">📊 Makine Bilgileri</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Model</label>
+                        <span>LiSEC GFB-60/30RE</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Kontrolör</label>
+                        <span>Delta NC300</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Max Cam Boyutu</label>
+                        <span>6000 x 3000 mm</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Kesim Hızı</label>
+                        <span>80 m/dk</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Hassasiyet</label>
+                        <span>±0.05 mm</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Eksenler</label>
+                        <span>X, Y, Z, Alt, CNC</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Stats Panel -->
+            <section class="panel stats-panel">
+                <h2 class="panel-title">📈 Anlık Durum</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="orderCount">0</div>
+                        <div class="stat-label">Sipariş</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="partsCount">0</div>
+                        <div class="stat-label">Toplam Parça</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="utilization">-</div>
+                        <div class="stat-label">Kullanım (%)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="estimatedTime">-</div>
+                        <div class="stat-label">Est. Süre (dk)</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions Panel -->
+            <section class="panel actions-panel">
+                <h2 class="panel-title">⚡ Hızlı İşlemler</h2>
+                <div class="actions-grid">
+                    <button class="action-btn primary" onclick="loadSampleOrders()">
+                        <span class="icon">📁</span>
+                        <span>Örnek Sipariş Yükle</span>
+                    </button>
+                    <button class="action-btn success" onclick="runOptimization()">
+                        <span class="icon">⚡</span>
+                        <span>Optimizasyon Çalıştır</span>
+                    </button>
+                    <button class="action-btn" onclick="viewGcode()">
+                        <span class="icon">📄</span>
+                        <span>G-Code Görüntüle</span>
+                    </button>
+                    <button class="action-btn" onclick="downloadGcode()">
+                        <span class="icon">⬇️</span>
+                        <span>G-Code İndir</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- AI Models Panel -->
+            <section class="panel ai-panel">
+                <h2 class="panel-title">🤖 AI Modeller (6 Paralel)</h2>
+                <div class="models-grid">
+                    <div class="model-card">
+                        <div class="model-name">qwen3.5-plus</div>
+                        <div class="model-use">Genel, Hızlı</div>
+                        <span class="model-status active">Aktif</span>
+                    </div>
+                    <div class="model-card">
+                        <div class="model-name">qwen3-max</div>
+                        <div class="model-use">Analiz</div>
+                        <span class="model-status active">Aktif</span>
+                    </div>
+                    <div class="model-card">
+                        <div class="model-name">qwen3-coder-plus</div>
+                        <div class="model-use">G-Code</div>
+                        <span class="model-status active">Aktif</span>
+                    </div>
+                    <div class="model-card">
+                        <div class="model-name">qwen3-coder-next</div>
+                        <div class="model-use">İleri Kod</div>
+                        <span class="model-status active">Aktif</span>
+                    </div>
+                    <div class="model-card">
+                        <div class="model-name">glm-4.7</div>
+                        <div class="model-use">Doğrulama</div>
+                        <span class="model-status active">Aktif</span>
+                    </div>
+                    <div class="model-card">
+                        <div class="model-name">kimi-k2.5</div>
+                        <div class="model-use">Dokümantasyon</div>
+                        <span class="model-status active">Aktif</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Activity Panel -->
+            <section class="panel activity-panel">
+                <h2 class="panel-title">📝 Son Aktivite</h2>
+                <div class="activity-log" id="activityLog">
+                    <div class="log-entry">
+                        <span class="log-time">--:--</span>
+                        <span class="log-msg">Sistem başlatıldı</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span>Glass Cutting Program v1.0</span>
+            <span>AI Orchestrator: 6 Models Parallel</span>
+            <span id="currentTime"></span>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Optimizasyon çalışıyor...</div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+            updateTime();
+            setInterval(updateTime, 1000);
+            addLogEntry('Web arayüzü yüklendi');
+        });
+    </script>
+</body>
+
+</html>

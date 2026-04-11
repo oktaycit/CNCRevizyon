@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lamine Cam - Cam Kesme Programı</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">🪟 Cam Kesme Programı</h1>
+                <span class="subtitle">LiSEC GFB-60/30RE</span>
+            </div>
+            <div class="header-center">
+                <nav class="nav-tabs">
+                    <a href="/" class="nav-tab">Ana Sayfa</a>
+                    <a href="/orders" class="nav-tab">Siparişler</a>
+                    <a href="/visualization" class="nav-tab">Yerleşim</a>
+                    <a href="/gcode" class="nav-tab">G-Code</a>
+                    <a href="/lamine" class="nav-tab active">Lamine</a>
+                    <a href="/settings" class="nav-tab">⚙️ Ayarlar</a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <div class="machine-status">
+                    <span class="status-indicator idle"></span>
+                    <span class="status-text">Hazır</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Offline Banner -->
+        <div class="offline-banner" id="offlineBanner" style="display: none;">
+            <span class="offline-icon">📡</span>
+            <span>Offline Mode - Local formüller kullanılıyor</span>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content lamine-main">
+            <!-- Glass Spec Panel -->
+            <section class="panel spec-panel">
+                <h2 class="panel-title">📐 Lamine Cam Spesifikasyonu</h2>
+                <form id="lamineForm" class="lamine-form">
+                    <div class="form-section">
+                        <h3>Üst Cam</h3>
+                        <div class="form-group">
+                            <label for="upperThickness">Kalınlık (mm)</label>
+                            <select id="upperThickness">
+                                <option value="3">3 mm</option>
+                                <option value="4" selected>4 mm</option>
+                                <option value="5">5 mm</option>
+                                <option value="6">6 mm</option>
+                                <option value="8">8 mm</option>
+                                <option value="10">10 mm</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Interlayer Film</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="filmType">Film Tipi</label>
+                                <select id="filmType">
+                                    <option value="PVB" selected>PVB (Standard)</option>
+                                    <option value="EVA">EVA (Soğuk lamine)</option>
+                                    <option value="SGP">SGP (Structural)</option>
+                                    <option value="TPU">TPU (Esnek)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="filmThickness">Film Kalınlığı (mm)</label>
+                                <select id="filmThickness">
+                                    <option value="0.38">0.38 mm</option>
+                                    <option value="0.76" selected>0.76 mm</option>
+                                    <option value="1.52">1.52 mm</option>
+                                    <option value="2.28">2.28 mm</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Alt Cam</h3>
+                        <div class="form-group">
+                            <label for="lowerThickness">Kalınlık (mm)</label>
+                            <select id="lowerThickness">
+                                <option value="3">3 mm</option>
+                                <option value="4" selected>4 mm</option>
+                                <option value="5">5 mm</option>
+                                <option value="6">6 mm</option>
+                                <option value="8">8 mm</option>
+                                <option value="10">10 mm</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn primary">
+                            ⚡ Parametre Hesapla
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Glass Preview -->
+                <div class="glass-preview" id="glassPreview">
+                    <div class="glass-layer upper">Üst Cam: 4mm</div>
+                    <div class="glass-layer film">Film (PVB): 0.76mm</div>
+                    <div class="glass-layer lower">Alt Cam: 4mm</div>
+                    <div class="glass-total">Total: 8.76mm</div>
+                </div>
+            </section>
+
+            <!-- Calculated Parameters Panel -->
+            <section class="panel params-panel">
+                <h2 class="panel-title">🔧 Hesaplanan Kesim Parametreleri</h2>
+                <div class="params-result" id="paramsResult">
+                    <div class="empty-state">
+                        <span>Parametre hesaplanmadı</span>
+                    </div>
+                </div>
+
+                <!-- Parameter Cards -->
+                <div class="params-grid" id="paramsGrid" style="display: none;">
+                    <div class="param-card heating">
+                        <div class="param-icon">🔥</div>
+                        <div class="param-name">Heating</div>
+                        <div class="param-value" id="heatingTime">-</div>
+                        <div class="param-unit">s @ <span id="heatingTemp">-</span>°C</div>
+                    </div>
+                    <div class="param-card pressure">
+                        <div class="param-icon">⬇️</div>
+                        <div class="param-name">Üst Kesim</div>
+                        <div class="param-value" id="upperPressure">-</div>
+                        <div class="param-unit">bar</div>
+                    </div>
+                    <div class="param-card pressure">
+                        <div class="param-icon">⬇️</div>
+                        <div class="param-name">Alt Kesim</div>
+                        <div class="param-value" id="lowerPressure">-</div>
+                        <div class="param-unit">bar</div>
+                    </div>
+                    <div class="param-card separation">
+                        <div class="param-icon">↔️</div>
+                        <div class="param-name">Ayırma</div>
+                        <div class="param-value" id="separationPressure">-</div>
+                        <div class="param-unit">bar</div>
+                    </div>
+                    <div class="param-card break">
+                        <div class="param-icon">💥</div>
+                        <div class="param-name">Kırma</div>
+                        <div class="param-value" id="breakPressure">-</div>
+                        <div class="param-unit">bar</div>
+                    </div>
+                    <div class="param-card speed">
+                        <div class="param-icon">🏃</div>
+                        <div class="param-name">Kesim Hızı</div>
+                        <div class="param-value" id="cuttingSpeed">-</div>
+                        <div class="param-unit">mm/min</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- E-Cam Profile Panel -->
+            <section class="panel ecam-panel">
+                <h2 class="panel-title">📊 E-Cam Profili</h2>
+                <div class="ecam-info">
+                    <p>E-Cam profili, üst ve alt kesim kafalarının senkronizasyonunu kontrol eder.</p>
+                </div>
+                <div class="ecam-preview" id="ecamPreview">
+                    <canvas id="ecamCanvas" width="400" height="200"></canvas>
+                </div>
+                <div class="ecam-params" id="ecamParams">
+                    <div class="ecam-row">
+                        <span>Sync Angle:</span>
+                        <span id="syncAngle">180°</span>
+                    </div>
+                    <div class="ecam-row">
+                        <span>Cycle Period:</span>
+                        <span id="cyclePeriod">-</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cutting Sequence Panel -->
+            <section class="panel sequence-panel">
+                <h2 class="panel-title">📋 Kesim Sekansı</h2>
+                <div class="sequence-list" id="sequenceList">
+                    <div class="sequence-item">
+                        <span class="step">1</span>
+                        <span class="action">Approach</span>
+                        <span class="desc">Başlangıç pozisyonuna git</span>
+                    </div>
+                    <div class="sequence-item">
+                        <span class="step">2</span>
+                        <span class="action">Upper Cut</span>
+                        <span class="desc">Üst cam perimeter kesimi</span>
+                    </div>
+                    <div class="sequence-item">
+                        <span class="step">3</span>
+                        <span class="action">Heat</span>
+                        <span class="desc">Film layer ısıtma</span>
+                    </div>
+                    <div class="sequence-item">
+                        <span class="step">4</span>
+                        <span class="action">Lower Cut</span>
+                        <span class="desc">Alt cam perimeter kesimi</span>
+                    </div>
+                    <div class="sequence-item">
+                        <span class="step">5</span>
+                        <span class="action">Separation</span>
+                        <span class="desc">Ayırma basıncı uygulama</span>
+                    </div>
+                    <div class="sequence-item">
+                        <span class="step">6</span>
+                        <span class="action">Break</span>
+                        <span class="desc">Kırma basıncı</span>
+                    </div>
+                    <div class="sequence-item">
+                        <span class="step">7</span>
+                        <span class="action">Retract</span>
+                        <span class="desc">Kafaları geri çek</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Film Properties Panel -->
+            <section class="panel film-panel">
+                <h2 class="panel-title">🧪 Film Özellikleri</h2>
+                <div class="film-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Film</th>
+                                <th>Erime Noktası</th>
+                                <th>Optimum Temp</th>
+                                <th>Isıtma Faktörü</th>
+                                <th>Kullanım</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="film-pvb">
+                                <td><strong>PVB</strong></td>
+                                <td>120°C</td>
+                                <td>135°C</td>
+                                <td>1.0</td>
+                                <td>Standart güvenlik camı</td>
+                            </tr>
+                            <tr class="film-eva">
+                                <td><strong>EVA</strong></td>
+                                <td>80°C</td>
+                                <td>100°C</td>
+                                <td>0.7</td>
+                                <td>Soğuk lamine</td>
+                            </tr>
+                            <tr class="film-sgp">
+                                <td><strong>SGP</strong></td>
+                                <td>140°C</td>
+                                <td>160°C</td>
+                                <td>1.5</td>
+                                <td>Yapısal, yüksek dayanım</td>
+                            </tr>
+                            <tr class="film-tpu">
+                                <td><strong>TPU</strong></td>
+                                <td>90°C</td>
+                                <td>110°C</td>
+                                <td>0.8</td>
+                                <td>Esnek uygulamalar</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span>Glass Cutting Program v1.0</span>
+            <span>E-Cam Technology</span>
+            <span id="currentTime"></span>
+        </footer>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Parametre hesaplanıyor...</div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            updateGlassPreview();
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            // Form submit
+            document.getElementById('lamineForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await calculateLamineParams();
+            });
+
+            // Update preview on select change
+            ['upperThickness', 'filmType', 'filmThickness', 'lowerThickness'].forEach(id => {
+                document.getElementById(id).addEventListener('change', updateGlassPreview);
+            });
+        });
+
+        function updateGlassPreview() {
+            const upper = document.getElementById('upperThickness').value;
+            const film = document.getElementById('filmThickness').value;
+            const filmType = document.getElementById('filmType').value;
+            const lower = document.getElementById('lowerThickness').value;
+            const total = parseFloat(upper) + parseFloat(film) + parseFloat(lower);
+
+            document.querySelector('.glass-layer.upper').textContent = `Üst Cam: ${upper}mm`;
+            document.querySelector('.glass-layer.film').textContent = `Film (${filmType}): ${film}mm`;
+            document.querySelector('.glass-layer.lower').textContent = `Alt Cam: ${lower}mm`;
+            document.querySelector('.glass-total').textContent = `Total: ${total.toFixed(2)}mm`;
+        }
+
+        async function calculateLamineParams() {
+            showLoading();
+
+            const data = {
+                upper_thickness: document.getElementById('upperThickness').value,
+                film_type: document.getElementById('filmType').value,
+                film_thickness: document.getElementById('filmThickness').value,
+                lower_thickness: document.getElementById('lowerThickness').value
+            };
+
+            try {
+                const response = await fetch('/api/lamine/calculate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    displayParams(result.parameters);
+                    showToast('Parametre hesaplandı!', 'success');
+                } else {
+                    showToast('Hesaplama hatası', 'error');
+                }
+            } catch (error) {
+                showToast('API hatası: ' + error.message, 'error');
+            }
+
+            hideLoading();
+        }
+
+        function displayParams(params) {
+            document.getElementById('paramsGrid').style.display = 'grid';
+            document.getElementById('paramsResult').style.display = 'none';
+
+            document.getElementById('heatingTime').textContent = params.heating_time.toFixed(2);
+            document.getElementById('heatingTemp').textContent = params.heating_temperature;
+            document.getElementById('upperPressure').textContent = params.upper_cut_pressure.toFixed(1);
+            document.getElementById('lowerPressure').textContent = params.lower_cut_pressure.toFixed(1);
+            document.getElementById('separationPressure').textContent = params.separation_pressure.toFixed(1);
+            document.getElementById('breakPressure').textContent = params.break_pressure.toFixed(1);
+            document.getElementById('cuttingSpeed').textContent = params.cutting_speed.toFixed(0);
+        }
+    </script>
+</body>
+
+</html>

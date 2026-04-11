@@ -1,7 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(www.delta-emea.com)"
+      "WebFetch(www.delta-emea.com)",
+      "Bash(python3 *)",
+      "Bash(pip3 install *)",
+      "Bash(sleep *)",
+      "Bash(curl *)",
+      "WebFetch(herofis.com)",
+      "Bash(python *)",
+      "Bash(cp *)"
     ]
-  }
+  },
+  "$version": 3
 }

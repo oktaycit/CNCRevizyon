@@ -1,0 +1,95 @@
+{
+  "orders": [
+    {
+      "order_id": "HERO-001",
+      "width": 500.0,
+      "height": 400.0,
+      "quantity": 10,
+      "thickness": 4.0,
+      "glass_type": "float",
+      "priority": 2,
+      "rotate_allowed": true,
+      "customer": "ABC Cam",
+      "notes": "Pencere camları",
+      "poz_no": "",
+      "edge_processing": "",
+      "invoice_no": "",
+      "order_date": ""
+    },
+    {
+      "order_id": "HERO-002",
+      "width": 800.0,
+      "height": 600.0,
+      "quantity": 5,
+      "thickness": 6.0,
+      "glass_type": "float",
+      "priority": 1,
+      "rotate_allowed": true,
+      "customer": "XYZ Dekorasyon",
+      "notes": "Büyük panel",
+      "poz_no": "",
+      "edge_processing": "",
+      "invoice_no": "",
+      "order_date": ""
+    },
+    {
+      "order_id": "HERO-003",
+      "width": 300.0,
+      "height": 200.0,
+      "quantity": 20,
+      "thickness": 4.0,
+      "glass_type": "float",
+      "priority": 2,
+      "rotate_allowed": true,
+      "customer": "Mekan Cam",
+      "notes": "Vitrin",
+      "poz_no": "",
+      "edge_processing": "",
+      "invoice_no": "",
+      "order_date": ""
+    },
+    {
+      "order_id": "HERO-004",
+      "width": 1200.0,
+      "height": 800.0,
+      "quantity": 3,
+      "thickness": 8.0,
+      "glass_type": "laminated",
+      "priority": 1,
+      "rotate_allowed": true,
+      "customer": "Pencere Ltd",
+      "notes": "Giriş kapısı",
+      "poz_no": "",
+      "edge_processing": "",
+      "invoice_no": "",
+      "order_date": ""
+    },
+    {
+      "order_id": "HERO-005",
+      "width": 450.0,
+      "height": 350.0,
+      "quantity": 15,
+      "thickness": 5.0,
+      "glass_type": "float",
+      "priority": 3,
+      "rotate_allowed": true,
+      "customer": "Ayna Sanayi",
+      "notes": "Standart",
+      "poz_no": "",
+      "edge_processing": "",
+      "invoice_no": "",
+      "order_date": ""
+    }
+  ],
+  "source": "herofis",
+  "import_time": "2026-04-11T15:11:13.330123",
+  "sheet": {
+    "width": 6000,
+    "height": 3000
+  },
+  "metadata": {
+    "source_file": "unknown",
+    "total_orders": 5,
+    "converter": "HerofisConnector v1.0"
+  }
+}

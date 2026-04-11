@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siparişler - Cam Kesme Programı</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">🪟 Cam Kesme Programı</h1>
+                <span class="subtitle">LiSEC GFB-60/30RE</span>
+            </div>
+            <div class="header-center">
+                <nav class="nav-tabs">
+                    <a href="/" class="nav-tab">Ana Sayfa</a>
+                    <a href="/orders" class="nav-tab active">Siparişler</a>
+                    <a href="/visualization" class="nav-tab">Yerleşim</a>
+                    <a href="/gcode" class="nav-tab">G-Code</a>
+                    <a href="/lamine" class="nav-tab">Lamine</a>
+                    <a href="/settings" class="nav-tab">⚙️ Ayarlar</a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <div class="machine-status">
+                    <span class="status-indicator idle"></span>
+                    <span class="status-text">Hazır</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Offline Banner -->
+        <div class="offline-banner" id="offlineBanner" style="display: none;">
+            <span class="offline-icon">📡</span>
+            <span>Offline Mode - Local algoritmalar çalışıyor</span>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Order Form Panel -->
+            <section class="panel form-panel">
+                <h2 class="panel-title">➕ Yeni Sipariş</h2>
+                <form id="orderForm" class="order-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="orderId">Sipariş No</label>
+                            <input type="text" id="orderId" placeholder="ORD-001" />
+                        </div>
+                        <div class="form-group">
+                            <label for="glassType">Cam Tipi</label>
+                            <select id="glassType">
+                                <option value="float">Float Cam</option>
+                                <option value="laminated">Lamine Cam</option>
+                                <option value="tempered">Temperli Cam</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="width">Genişlik (mm)</label>
+                            <input type="number" id="width" value="500" min="300" max="6000" step="1" />
+                        </div>
+                        <div class="form-group">
+                            <label for="height">Yükseklik (mm)</label>
+                            <input type="number" id="height" value="400" min="200" max="3000" step="1" />
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">Adet</label>
+                            <input type="number" id="quantity" value="1" min="1" max="100" step="1" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="thickness">Kalınlık (mm)</label>
+                            <select id="thickness">
+                                <option value="2">2 mm</option>
+                                <option value="3">3 mm</option>
+                                <option value="4" selected>4 mm</option>
+                                <option value="5">5 mm</option>
+                                <option value="6">6 mm</option>
+                                <option value="8">8 mm</option>
+                                <option value="10">10 mm</option>
+                                <option value="12">12 mm</option>
+                                <option value="15">15 mm</option>
+                                <option value="19">19 mm</option>
+                                <option value="25">25 mm</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="priority">Öncelik</label>
+                            <select id="priority">
+                                <option value="1">Yüksek</option>
+                                <option value="2">Normal</option>
+                                <option value="3">Düşük</option>
+                            </select>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="rotateAllowed" checked />
+                                Döndürme İzinli
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn primary">
+                            <span class="icon">➕</span> Sipariş Ekle
+                        </button>
+                        <button type="button" class="btn" onclick="clearForm()">
+                            <span class="icon">🗑️</span> Temizle
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Order List Panel -->
+            <section class="panel list-panel">
+                <h2 class="panel-title">📋 Sipariş Listesi</h2>
+                <div class="list-header">
+                    <span id="orderCountText">0 sipariş</span>
+                    <div class="list-actions">
+                        <button class="btn small" onclick="showHerofisImport()">
+                            📥 Herofis Import
+                        </button>
+                        <button class="btn small" onclick="loadSampleOrders()">
+                            📁 Örnek Yükle
+                        </button>
+                        <button class="btn small danger" onclick="clearAllOrders()">
+                            🗑️ Tümünü Sil
+                        </button>
+                    </div>
+                </div>
+                <div class="order-list" id="orderList">
+                    <div class="empty-state">
+                        <span class="icon">📭</span>
+                        <span>Henüz sipariş yok</span>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="order-summary" id="orderSummary">
+                    <div class="summary-item">
+                        <span class="label">Toplam Parça:</span>
+                        <span class="value" id="totalParts">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Toplam Alan:</span>
+                        <span class="value" id="totalArea">0 m²</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Optimizations -->
+            <section class="panel optimize-panel">
+                <h2 class="panel-title">⚡ Optimizasyon</h2>
+                <div class="optimize-options">
+                    <label class="checkbox-option">
+                        <input type="checkbox" id="includeDefects" />
+                        Kusur Kontrolü Dahil
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" id="optimizePath" checked />
+                        Kesim Yolu Optimizasyonu
+                    </label>
+                </div>
+                <div class="optimize-actions">
+                    <button class="btn primary large" onclick="runOptimization()">
+                        ⚡ Optimizasyon Çalıştır
+                    </button>
+                    <button class="btn large" onclick="goToVisualization()">
+                        🗺️ Yerleşim Görüntüle
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span>Glass Cutting Program v1.0</span>
+            <span>AI Orchestrator: 6 Models Parallel</span>
+            <span id="currentTime"></span>
+        </footer>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Optimizasyon çalışıyor...</div>
+    </div>
+
+    <!-- Herofis Import Modal -->
+    <div class="modal-overlay" id="herofisModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📥 Herofis CSV Import</h2>
+                <button class="modal-close" onclick="closeHerofisModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <!-- File Upload -->
+                <div class="import-section">
+                    <h3>CSV Dosyası Seç</h3>
+                    <input type="file" id="herofisFile" accept=".csv" style="display: none;"
+                        onchange="handleHerofisFile(event)" />
+                    <button class="btn primary" onclick="document.getElementById('herofisFile').click()">
+                        📄 Dosya Seç
+                    </button>
+                    <span id="herofisFileName" style="margin-left: 10px;">Dosya seçilmedi</span>
+                </div>
+
+                <!-- Preview Section -->
+                <div class="preview-section" id="herofisPreview" style="display: none;">
+                    <h3>📋 Önizleme</h3>
+                    <table class="preview-table">
+                        <thead>
+                            <tr>
+                                <th>Sipariş No</th>
+                                <th>Müşteri</th>
+                                <th>En (mm)</th>
+                                <th>Boy (mm)</th>
+                                <th>Kalınlık</th>
+                                <th>Cam Tipi</th>
+                                <th>Adet</th>
+                            </tr>
+                        </thead>
+                        <tbody id="herofisPreviewBody">
+                        </tbody>
+                    </table>
+                    <div class="preview-summary">
+                        <span id="herofisImportable">0 sipariş import edilebilir</span>
+                        <span id="herofisErrors" class="error-text"></span>
+                    </div>
+                </div>
+
+                <!-- Column Mapping Info -->
+                <div class="mapping-info">
+                    <h4>📌 Desteklenen CSV Kolonları</h4>
+                    <p class="info-text">
+                        Sipariş_No, Müşteri, En, Boy, Kalınlık, Cam_Tipi, Adet, Öncelik, Notlar<br>
+                        <small>İngilizce: Order_No, Customer, Width, Height, Thickness, Glass_Type, Quantity, Priority,
+                            Notes</small>
+                    </p>
+                    <button class="btn small" onclick="downloadHerofisSample()">
+                        📥 Örnek CSV İndir
+                    </button>
+                </div>
+
+                <!-- Import History -->
+                <div class="history-section" id="herofisHistorySection">
+                    <h4>📜 Import Geçmişi</h4>
+                    <div id="herofisHistoryList" class="history-list"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeHerofisModal()">İptal</button>
+                <button class="btn primary" id="herofisImportBtn" onclick="importHerofisOrders()" disabled>
+                    ✅ Import Et
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadOrders();
+            updateTime();
+            setInterval(updateTime, 1000);
+        });
+
+        // Form submit handler
+        document.getElementById('orderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await addOrder();
+        });
+    </script>
+</body>
+
+</html>

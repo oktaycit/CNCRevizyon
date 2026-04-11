@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayarlar - Cam Kesme Programı</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }</style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">🪟 Cam Kesme Programı</h1>
+                <span class="subtitle">LiSEC GFB-60/30RE</span>
+            </div>
+            <div class="header-center">
+                <nav class="nav-tabs">
+                    <a href="/" class="nav-tab">Ana Sayfa</a>
+                    <a href="/orders" class="nav-tab">Siparişler</a>
+                    <a href="/visualization" class="nav-tab">Yerleşim</a>
+                    <a href="/gcode" class="nav-tab">G-Code</a>
+                    <a href="/lamine" class="nav-tab">Lamine</a>
+                    <a href="/settings" class="nav-tab active">⚙️ Ayarlar</a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <div class="machine-status">
+                    <span class="status-indicator idle" id="connectionStatus"></span>
+                    <span class="status-text" id="connectionText">Offline</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Offline Banner -->
+        <div class="offline-banner" id="offlineBanner" style="display: none;">
+            <span class="offline-icon">📡</span>
+            <span>Offline Mode - Ayarlar localStorage'da saklanır</span>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content settings-main">
+            
+            <!-- API Configuration -->
+            <section class="panel api-panel">
+                <h2 class="panel-title">🔑 API Yapılandırması</h2>
+                
+                <div class="api-config">
+                    <!-- API Key -->
+                    <div class="config-group">
+                        <label for="apiKey">API Key</label>
+                        <div class="input-group">
+                            <input type="password" id="apiKey" placeholder="sk-xxxxxxxxxxxx" />
+                            <button class="btn small" onclick="toggleApiKeyVisibility()">👁️</button>
+                            <button class="btn small" onclick="testApiConnection()">🧪 Test</button>
+                        </div>
+                        <span class="hint">Alibaba Cloud DashScope API key (sk- format)</span>
+                    </div>
+
+                    <!-- API Endpoint -->
+                    <div class="config-group">
+                        <label for="apiEndpoint">API Endpoint</label>
+                        <input type="text" id="apiEndpoint" value="https://coding-intl.dashscope.aliyuncs.com/v1" />
+                        <span class="hint">DashScope coding endpoint</span>
+                    </div>
+
+                    <!-- Mode Toggle -->
+                    <div class="config-group">
+                        <label>Çalışma Modu</label>
+                        <div class="mode-toggle">
+                            <button class="mode-btn offline active" onclick="setMode('offline')">
+                                🔌 Offline (Local)
+                            </button>
+                            <button class="mode-btn online" onclick="setMode('online')">
+                                🌐 Online (AI)
+                            </button>
+                        </div>
+                        <span class="hint">Offline: Local algorithms, Online: AI API</span>
+                    </div>
+
+                    <!-- Connection Status -->
+                    <div class="connection-status" id="connectionStatusBox">
+                        <div class="status-item">
+                            <span class="label">API Durumu:</span>
+                            <span class="value" id="apiStatus">Bağlantı yok</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">Rate Limit:</span>
+                            <span class="value" id="rateLimit">60 req/min</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">Last Test:</span>
+                            <span class="value" id="lastTest">-</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Models Configuration -->
+            <section class="panel models-panel">
+                <h2 class="panel-title">🤖 AI Modelleri</h2>
+                
+                <div class="models-config" id="modelsConfig">
+                    <!-- Model 1: qwen3.5-plus -->
+                    <div class="model-config-item" data-model="qwen3.5-plus">
+                        <div class="model-header">
+                            <span class="model-name">qwen3.5-plus</span>
+                            <span class="model-desc">Genel amaçlı, hızlı</span>
+                            <label class="toggle">
+                                <input type="checkbox" checked data-model-toggle="qwen3.5-plus" />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="model-params">
+                            <div class="param-group">
+                                <label>Temperature</label>
+                                <input type="number" step="0.1" min="0" max="2" value="0.7" data-param="temperature" />
+                            </div>
+                            <div class="param-group">
+                                <label>Max Tokens</label>
+                                <input type="number" step="256" min="256" max="8192" value="2048" data-param="max_tokens" />
+                            </div>
+                            <div class="param-group">
+                                <label>Task Routing</label>
+                                <select data-param="use_case">
+                                    <option value="general">General</option>
+                                    <option value="quick">Quick Query</option>
+                                    <option value="lamine">Lamine Params</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Model 2: qwen3-max -->
+                    <div class="model-config-item" data-model="qwen3-max-2026-01-23">
+                        <div class="model-header">
+                            <span class="model-name">qwen3-max</span>
+                            <span class="model-desc">Karmaşık analiz</span>
+                            <label class="toggle">
+                                <input type="checkbox" checked data-model-toggle="qwen3-max-2026-01-23" />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="model-params">
+                            <div class="param-group">
+                                <label>Temperature</label>
+                                <input type="number" step="0.1" min="0" max="2" value="0.5" data-param="temperature" />
+                            </div>
+                            <div class="param-group">
+                                <label>Max Tokens</label>
+                                <input type="number" step="256" min="256" max="8192" value="4096" data-param="max_tokens" />
+                            </div>
+                            <div class="param-group">
+                                <label>Task Routing</label>
+                                <select data-param="use_case">
+                                    <option value="complex">Complex Analysis</option>
+                                    <option value="nesting">Nesting</option>
+                                    <option value="debug">Debug</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Model 3: qwen3-coder-plus -->
+                    <div class="model-config-item" data-model="qwen3-coder-plus">
+                        <div class="model-header">
+                            <span class="model-name">qwen3-coder-plus</span>
+                            <span class="model-desc">G-Code, Python, PLC</span>
+                            <label class="toggle">
+                                <input type="checkbox" checked data-model-toggle="qwen3-coder-plus" />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="model-params">
+                            <div class="param-group">
+                                <label>Temperature</label>
+                                <input type="number" step="0.1" min="0" max="2" value="0.2" data-param="temperature" />
+                            </div>
+                            <div class="param-group">
+                                <label>Max Tokens</label>
+                                <input type="number" step="256" min="256" max="16384" value="8192" data-param="max_tokens" />
+                            </div>
+                            <div class="param-group">
+                                <label>Task Routing</label>
+                                <select data-param="use_case">
+                                    <option value="code">Code Generation</option>
+                                    <option value="gcode">G-Code</option>
+                                    <option value="plc">PLC</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Model 4: qwen3-coder-next -->
+                    <div class="model-config-item" data-model="qwen3-coder-next">
+                        <div class="model-header">
+                            <span class="model-name">qwen3-coder-next</span>
+                            <span class="model-desc">İleri kod üretimi</span>
+                            <label class="toggle">
+                                <input type="checkbox" checked data-model-toggle="qwen3-coder-next" />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="model-params">
+                            <div class="param-group">
+                                <label>Temperature</label>
+                                <input type="number" step="0.1" min="0" max="2" value="0.3" data-param="temperature" />
+                            </div>
+                            <div class="param-group">
+                                <label>Max Tokens</label>
+                                <input type="number" step="256" min="256" max="8192" value="4096" data-param="max_tokens" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Model 5: glm-4.7 -->
+                    <div class="model-config-item" data-model="glm-4.7">
+                        <div class="model-header">
+                            <span class="model-name">glm-4.7</span>
+                            <span class="model-desc">Çapraz doğrulama</span>
+                            <label class="toggle">
+                                <input type="checkbox" checked data-model-toggle="glm-4.7" />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="model-params">
+                            <div class="param-group">
+                                <label>Temperature</label>
+                                <input type="number" step="0.1" min="0" max="2" value="0.6" data-param="temperature" />
+                            </div>
+                            <div class="param-group">
+                                <label>Max Tokens</label>
+                                <input type="number" step="256" min="256" max="4096" value="2048" data-param="max_tokens" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Model 6: kimi-k2.5 -->
+                    <div class="model-config-item" data-model="kimi-k2.5">
+                        <div class="model-header">
+                            <span class="model-name">kimi-k2.5</span>
+                            <span class="model-desc">Dokümantasyon</span>
+                            <label class="toggle">
+                                <input type="checkbox" checked data-model-toggle="kimi-k2.5" />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="model-params">
+                            <div class="param-group">
+                                <label>Temperature</label>
+                                <input type="number" step="0.1" min="0" max="2" value="0.5" data-param="temperature" />
+                            </div>
+                            <div class="param-group">
+                                <label>Max Tokens</label>
+                                <input type="number" step="256" min="256" max="8192" value="4096" data-param="max_tokens" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Task Routing -->
+            <section class="panel routing-panel">
+                <h2 class="panel-title">🔀 Task Routing</h2>
+                
+                <div class="routing-config">
+                    <div class="routing-item">
+                        <label>Nesting Optimization</label>
+                        <select data-routing="nesting">
+                            <option value="qwen3-max-2026-01-23,qwen3-coder-plus">qwen3-max + coder-plus (Parallel)</option>
+                            <option value="qwen3-max-2026-01-23">qwen3-max only</option>
+                            <option value="local">Local (Offline)</option>
+                        </select>
+                    </div>
+                    <div class="routing-item">
+                        <label>G-Code Generation</label>
+                        <select data-routing="gcode">
+                            <option value="qwen3-coder-plus,qwen3-coder-next">coder-plus + coder-next (Parallel)</option>
+                            <option value="qwen3-coder-plus">coder-plus only</option>
+                            <option value="local">Local Template</option>
+                        </select>
+                    </div>
+                    <div class="routing-item">
+                        <label>Lamine Parameters</label>
+                        <select data-routing="lamine">
+                            <option value="qwen3.5-plus">qwen3.5-plus (Quick)</option>
+                            <option value="local">Local Formula</option>
+                        </select>
+                    </div>
+                    <div class="routing-item">
+                        <label>Validation</label>
+                        <select data-routing="validation">
+                            <option value="glm-4.7,kimi-k2.5">glm-4.7 + kimi (Parallel)</option>
+                            <option value="glm-4.7">glm-4.7 only</option>
+                            <option value="none">Skip Validation</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Parallel Settings -->
+            <section class="panel parallel-panel">
+                <h2 class="panel-title">⚡ Paralel Ayarlar</h2>
+                
+                <div class="parallel-config">
+                    <div class="config-group">
+                        <label for="maxParallel">Max Parallel Models</label>
+                        <input type="number" id="maxParallel" min="1" max="6" value="3" />
+                        <span class="hint">Lite Plan limit: 3 concurrent</span>
+                    </div>
+                    <div class="config-group">
+                        <label for="timeout">API Timeout (seconds)</label>
+                        <input type="number" id="timeout" min="10" max="300" value="90" />
+                    </div>
+                    <div class="config-group">
+                        <label for="retryCount">Retry on Failure</label>
+                        <input type="number" id="retryCount" min="0" max="5" value="2" />
+                    </div>
+                    <div class="config-group checkbox">
+                        <label>
+                            <input type="checkbox" id="fallbackEnabled" checked />
+                            Fallback to Local on API Error
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Save/Reset Actions -->
+            <section class="panel actions-panel">
+                <h2 class="panel-title">💾 Kaydet / Reset</h2>
+                
+                <div class="settings-actions">
+                    <button class="btn primary large" onclick="saveSettings()">
+                        💾 Kaydet
+                    </button>
+                    <button class="btn large" onclick="loadSettings()">
+                        📂 Yükle
+                    </button>
+                    <button class="btn warning large" onclick="resetToDefaults()">
+                        🔄 Varsayılanlar
+                    </button>
+                    <button class="btn large" onclick="exportSettings()">
+                        📤 Export JSON
+                    </button>
+                    <button class="btn large" onclick="importSettings()">
+                        📥 Import JSON
+                    </button>
+                </div>
+                
+                <div class="settings-status" id="settingsStatus">
+                    <span>Ayarlar localStorage'da saklanır</span>
+                </div>
+            </section>
+
+            <!-- Current Config Preview -->
+            <section class="panel preview-panel">
+                <h2 class="panel-title">📄 Config Preview</h2>
+                <div class="config-preview">
+                    <pre id="configPreview">// Ayarlar yüklenmedi...</pre>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span>Glass Cutting Program v1.0</span>
+            <span>Settings: localStorage + API</span>
+            <span id="currentTime"></span>
+        </footer>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Import Modal -->
+    <div class="modal" id="importModal" style="display: none;">
+        <div class="modal-content">
+            <h3>📥 Import Settings</h3>
+            <textarea id="importTextarea" placeholder="JSON config paste here..."></textarea>
+            <div class="modal-actions">
+                <button class="btn primary" onclick="doImport()">Import</button>
+                <button class="btn" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/settings.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initSettings();
+            updateTime();
+            setInterval(updateTime, 1000);
+        });
+    </script>
+</body>
+</html>

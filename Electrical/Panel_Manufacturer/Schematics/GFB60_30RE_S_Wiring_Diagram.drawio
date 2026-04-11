@@ -1,0 +1,638 @@
+<mxfile host="app.diagrams.net" modified="2026-04-09T12:30:00Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="wiring-overview" name="01 Wiring Overview">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="ov_title" value="GFB60/30RE-S&#10;01 Wiring Overview&#10;Revizyon 1.1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=26;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="480" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_sub" value="Genel wiring görünümü: güç, safety, EtherCAT, servo eksenler ve saha I/O" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="600" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_tag" value="PAGE 01 / OVERVIEW&#10;Rev 1.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="30" width="170" height="36" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ov_x1" value="X1&#10;3F AC GİRİŞ&#10;&#10;L1 / L2 / L3 / N / PE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="180" width="160" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_q1" value="Q1 + K1&#10;Ana Şalter / Kontaktör" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="280" y="180" width="170" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_ps1" value="PS1&#10;24VDC Power Supply" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="180" width="180" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_x2" value="X2&#10;24VDC DAĞITIM&#10;&#10;NC300&#10;HMI&#10;R1-EC&#10;Safety&#10;Sensors" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="740" y="160" width="170" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_nc300" value="U1&#10;Delta NC300-E&#10;EtherCAT Master&#10;&#10;CN1 OUT&#10;CN2 IN&#10;CN3 HMI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=3;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="980" y="150" width="220" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_hmi" value="U2&#10;DOP-110CS HMI&#10;&#10;24VDC + Ethernet" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1270" y="120" width="160" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_r1ec" value="U50-U53&#10;R1-EC I/O&#10;&#10;2 x DI&#10;1 x DO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1270" y="250" width="170" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_pilz" value="K10&#10;Pilz PNOZ X2.8P&#10;&#10;E-STOP / Door / Reset" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="740" y="380" width="180" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_x11" value="X11&#10;STO ÇIKIŞLARI&#10;&#10;X / Y / ALT / Z / CNC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="980" y="390" width="170" height="120" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ov_xservo" value="U41&#10;X Servo&#10;4.5kW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="440" width="140" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_yservo" value="U42&#10;Y Servo&#10;2.0kW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1430" y="440" width="140" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_altservo" value="U43&#10;ALT Servo&#10;2.0kW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="580" width="140" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_zservo" value="U44&#10;Z Servo&#10;1.0kW + BRK" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1430" y="580" width="140" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_cservo" value="U45&#10;CNC Servo&#10;1.5kW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1345" y="720" width="140" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_io" value="SAHA I/O&#10;&#10;Limit + Home sensörleri&#10;Vakum / Cam algılama&#10;Pompa / Fan / Buzzer / Lamba" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="520" width="250" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_sdev" value="SAFETY DEVICES&#10;&#10;S0 E-STOP&#10;S1 Door Switch&#10;S2 Reset" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="500" y="390" width="170" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_legend" value="RENK KODU&#10;&#10;Kırmızı: AC güç / servo&#10;Mavi: 24VDC kontrol&#10;Sarı: Safety / STO&#10;Yeşil: Network / HMI&#10;Mor: I/O ve saha sinyali" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="760" width="240" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_refs" value="DETAY SAYFALARI&#10;&#10;Page 02: Power Wiring&#10;Page 03: Safety &amp; STO&#10;Page 04: I/O &amp; Terminal Wiring" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="340" y="760" width="260" height="110" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ov_e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#b85450;" edge="1" parent="1" source="ov_x1" target="ov_q1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#b85450;" edge="1" parent="1" source="ov_q1" target="ov_ps1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#6c8ebf;" edge="1" parent="1" source="ov_ps1" target="ov_x2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#6c8ebf;" edge="1" parent="1" source="ov_x2" target="ov_nc300"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="ov_x2" target="ov_hmi"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="ov_x2" target="ov_r1ec"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="ov_x2" target="ov_pilz"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e8" value="Ethernet" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;fontSize=10;" edge="1" parent="1" source="ov_nc300" target="ov_hmi"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e9" value="EtherCAT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;fontSize=10;" edge="1" parent="1" source="ov_nc300" target="ov_xservo"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e10" value="EtherCAT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;fontSize=10;" edge="1" parent="1" source="ov_xservo" target="ov_yservo"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e11" value="EtherCAT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;fontSize=10;" edge="1" parent="1" source="ov_yservo" target="ov_altservo"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e12" value="EtherCAT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;fontSize=10;" edge="1" parent="1" source="ov_altservo" target="ov_zservo"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e13" value="EtherCAT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;fontSize=10;" edge="1" parent="1" source="ov_zservo" target="ov_cservo"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e14" value="EtherCAT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;fontSize=10;" edge="1" parent="1" source="ov_cservo" target="ov_r1ec"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#d6b656;" edge="1" parent="1" source="ov_sdev" target="ov_pilz"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#d6b656;" edge="1" parent="1" source="ov_pilz" target="ov_x11"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e17" value="STO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d6b656;fontSize=10;" edge="1" parent="1" source="ov_x11" target="ov_xservo"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e18" value="STO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d6b656;fontSize=10;" edge="1" parent="1" source="ov_x11" target="ov_yservo"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e19" value="STO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d6b656;fontSize=10;" edge="1" parent="1" source="ov_x11" target="ov_altservo"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e20" value="STO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d6b656;fontSize=10;" edge="1" parent="1" source="ov_x11" target="ov_zservo"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e21" value="STO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d6b656;fontSize=10;" edge="1" parent="1" source="ov_x11" target="ov_cservo"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e22" value="DI / DO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#9673a6;fontSize=10;" edge="1" parent="1" source="ov_io" target="ov_r1ec"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e23" value="AC güç" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#b85450;fontSize=10;" edge="1" parent="1" source="ov_q1" target="ov_xservo"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e24" value="AC güç" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#b85450;fontSize=10;" edge="1" parent="1" source="ov_q1" target="ov_yservo"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e25" value="AC güç" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#b85450;fontSize=10;" edge="1" parent="1" source="ov_q1" target="ov_altservo"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e26" value="AC güç" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#b85450;fontSize=10;" edge="1" parent="1" source="ov_q1" target="ov_zservo"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ov_e27" value="AC güç" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#b85450;fontSize=10;" edge="1" parent="1" source="ov_q1" target="ov_cservo"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="ov_footer1" value="Rev 1.1 | Wiring overview | Rev4.1 çizim stili ile uyumlu" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1110" width="1080" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_footer2" value="Prepared in Codex workspace" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="1110" width="450" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="ov_footer3" value="Sheet 1 / 4" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1570" y="1110" width="110" height="28" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="wiring-power" name="02 Power Wiring">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="pw_title" value="GFB60/30RE-S&#10;02 Power Wiring&#10;Revizyon 1.1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=26;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="420" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_sub" value="Ana güç girişi, kontaktör, 24VDC besleme ve servo besleme hatları" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="620" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_tag" value="PAGE 02 / POWER&#10;Rev 1.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="30" width="170" height="36" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pw_x1" value="X1&#10;AC GİRİŞ&#10;&#10;L1&#10;L2&#10;L3&#10;N&#10;PE" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="80" y="180" width="150" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_q1" value="Q1&#10;ANA ŞALTER&#10;&#10;3P / 32A" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="200" width="140" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_k1" value="K1&#10;ANA KONTAKTÖR&#10;&#10;24VDC Coil" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="200" width="160" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_ps1" value="PS1&#10;24VDC POWER SUPPLY&#10;&#10;24VDC / 20A" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="190" width="180" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_x2" value="X2&#10;24VDC DAĞITIM&#10;&#10;1 NC300 +24V&#10;2 R1-EC +24V&#10;3 SENSOR +24V&#10;4 SAFETY +24V&#10;5 HMI +24V&#10;6 0V COMMON&#10;7 0V SENSOR&#10;8 PE/SHIELD" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#d5e8d4;strokeColor=#82b366;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="950" y="150" width="230" height="230" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pw_load1" value="U1 NC300&#10;24VDC / 2A" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="140" width="130" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_load2" value="U2 HMI&#10;24VDC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="230" width="130" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_load3" value="U50 R1-EC&#10;24VDC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="320" width="130" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_load4" value="K10 Safety&#10;24VDC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1430" y="140" width="130" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_load5" value="Sensors&#10;+24V / 0V" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1430" y="230" width="130" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pw_srv1" value="U41 X Servo&#10;3F 400VAC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="250" y="500" width="150" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_srv2" value="U42 Y Servo&#10;3F 400VAC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="430" y="500" width="150" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_srv3" value="U43 ALT Servo&#10;3F 400VAC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="610" y="500" width="150" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_srv4" value="U44 Z Servo&#10;1F 230VAC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="790" y="500" width="150" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_srv5" value="U45 CNC Servo&#10;1F 230VAC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="970" y="500" width="150" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pw_note1" value="KABLO KESİTLERİ&#10;&#10;AC giriş: 4G10 mm²&#10;X servo besleme: 4G6 mm²&#10;Y/ALT servo besleme: 4G4 mm²&#10;Z/CNC servo besleme: 3G2.5 mm²&#10;24VDC ana dağıtım: 2G2.5 mm²&#10;Branch 24VDC: 2G1.5 mm²" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1230" y="500" width="260" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_note2" value="WIRE LIST REFERANSI&#10;&#10;W001-W003: Ana güç ve PSU&#10;W004-W015: 24VDC dağıtım ve PE&#10;W101-W110: Servo besleme ve motor kabloları&#10;W111-W112: Z fren hattı" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1230" y="700" width="260" height="140" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pw_e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#b85450;" edge="1" parent="1" source="pw_x1" target="pw_q1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pw_e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#b85450;" edge="1" parent="1" source="pw_q1" target="pw_k1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pw_e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#b85450;" edge="1" parent="1" source="pw_k1" target="pw_ps1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pw_e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#6c8ebf;" edge="1" parent="1" source="pw_ps1" target="pw_x2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pw_e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="pw_x2" target="pw_load1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pw_e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="pw_x2" target="pw_load2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pw_e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="pw_x2" target="pw_load3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pw_e8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="pw_x2" target="pw_load4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pw_e9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="pw_x2" target="pw_load5"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pw_e10" value="3F 400VAC" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#b85450;fontSize=10;" edge="1" parent="1" source="pw_k1" target="pw_srv1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pw_e11" value="3F 400VAC" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#b85450;fontSize=10;" edge="1" parent="1" source="pw_k1" target="pw_srv2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pw_e12" value="3F 400VAC" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#b85450;fontSize=10;" edge="1" parent="1" source="pw_k1" target="pw_srv3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pw_e13" value="1F 230VAC" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#b85450;fontSize=10;" edge="1" parent="1" source="pw_k1" target="pw_srv4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pw_e14" value="1F 230VAC" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#b85450;fontSize=10;" edge="1" parent="1" source="pw_k1" target="pw_srv5"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="pw_lbl1" value="W001-W003&#10;AC main feed" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="150" width="120" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_lbl2" value="W004-W015&#10;24VDC distribution" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="825" y="120" width="150" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_lbl3" value="W101" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="260" y="455" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_lbl4" value="W103" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="455" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_lbl5" value="W105" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="455" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_lbl6" value="W107" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="455" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_lbl7" value="W109" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="980" y="455" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_lbl8" value="W111-W112&#10;Z brake" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="790" y="590" width="110" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_term1" value="X2.1-8" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="385" width="70" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_term2" value="P1 R/S/T" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="270" y="585" width="90" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_term3" value="P1 R/L1-S/L2" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="795" y="585" width="140" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_w1" value="W001" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="190" y="205" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_w2" value="W002" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="205" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_w3" value="W003" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="610" y="205" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_w4" value="W004" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="900" y="205" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_w5" value="W005-W006" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1195" y="155" width="80" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_w6" value="W008-W009" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1195" y="245" width="80" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_w7" value="W011-W012" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1195" y="335" width="90" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_w8" value="W201-W202" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="155" width="90" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_w9" value="W101" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="285" y="470" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_w10" value="W103" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="465" y="470" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_w11" value="W105" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="645" y="470" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_w12" value="W107" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="825" y="470" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_w13" value="W109" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1005" y="470" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_tt1" value="X1 -> Q1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="185" y="225" width="90" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_tt2" value="Q1 -> K1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="375" y="225" width="90" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_tt3" value="K1 -> PS1 AC IN" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="585" y="225" width="120" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_tt4" value="PS1 +24V -> X2.1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="875" y="225" width="130" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_tt5" value="X2.1/6 -> U1 +24V/0V" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="175" width="150" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_tt6" value="X2.5/6 -> U2 +V/-V" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="265" width="150" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_tt7" value="X2.2/6 -> U50 V+/GND" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1175" y="355" width="160" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_tt8" value="X2.4/6 -> K10 A1/A2" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="175" width="150" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_tt9" value="K1 -> U41 P1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="255" y="485" width="110" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_tt10" value="K1 -> U42 P1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="435" y="485" width="110" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_tt11" value="K1 -> U43 P1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="615" y="485" width="110" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_tt12" value="K1 -> U44 P1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="795" y="485" width="110" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_tt13" value="K1 -> U45 P1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="975" y="485" width="110" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pw_footer1" value="Rev 1.1 | Power wiring | AC giriş, PSU ve servo güç dağıtımı" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1110" width="1080" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_footer2" value="Prepared in Codex workspace" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="1110" width="450" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="pw_footer3" value="Sheet 2 / 4" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1570" y="1110" width="110" height="28" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="wiring-safety" name="03 Safety and STO">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="sf_title" value="GFB60/30RE-S&#10;03 Safety and STO&#10;Revizyon 1.1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=26;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="420" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_sub" value="E-STOP, emniyet kapısı, reset mantığı ve 5 eksene STO dağıtımı" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="620" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_tag" value="PAGE 03 / SAFETY&#10;Rev 1.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="30" width="170" height="36" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="sf_x10" value="X10&#10;SAFETY INPUTS&#10;&#10;1 E-STOP CH1&#10;2 E-STOP CH2&#10;3 DOOR SAFE&#10;4 RESET BTN&#10;5 +24V SAFETY&#10;6 0V SAFETY" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="80" y="170" width="210" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_estop" value="S0&#10;E-STOP&#10;&#10;2NC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="170" width="120" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_door" value="S1&#10;DOOR SWITCH&#10;&#10;2NC + 1NO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="290" width="120" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_reset" value="S2&#10;RESET&#10;&#10;NO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="410" width="120" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_pilz" value="K10&#10;Pilz PNOZ X2.8P&#10;&#10;A1/A2 Besleme&#10;S11/S12 Güvenlik girişi&#10;S52 Reset&#10;13-14 / 23-24 / 33-34 Safety çıkış" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="180" width="260" height="250" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_x11" value="X11&#10;STO OUTPUTS&#10;&#10;1-2 X&#10;3-4 Y&#10;5-6 ALT&#10;7-8 Z&#10;9-10 CNC" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="900" y="200" width="180" height="200" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="sf_sx" value="U41 X Servo&#10;CN1-29 STO1&#10;CN1-30 STO2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="150" width="150" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_sy" value="U42 Y Servo&#10;CN1-29 STO1&#10;CN1-30 STO2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="150" width="150" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_sa" value="U43 ALT Servo&#10;CN1-29 STO1&#10;CN1-30 STO2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="270" width="150" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_sz" value="U44 Z Servo&#10;CN1-29 STO1&#10;CN1-30 STO2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="270" width="150" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_sc" value="U45 CNC Servo&#10;CN1-29 STO1&#10;CN1-30 STO2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="390" width="150" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="sf_note1" value="SAFETY KURALI&#10;&#10;E-STOP veya kapı emniyeti açıldığında K10 safety çıkışlarını düşürür.&#10;Bu çıkışlar X11 üzerinden tüm servo sürücü STO girişlerini keser.&#10;Reset yalnızca manuel olarak yapılır." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="560" y="520" width="340" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_note2" value="WIRE LIST REFERANSI&#10;&#10;W201-W205: Safety besleme ve girişler&#10;W206-W210: Servo STO kanalları&#10;W211: STO common / return" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="940" y="520" width="300" height="120" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="sf_e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#d6b656;" edge="1" parent="1" source="sf_x10" target="sf_estop"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="sf_e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#d6b656;" edge="1" parent="1" source="sf_x10" target="sf_door"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="sf_e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#d6b656;" edge="1" parent="1" source="sf_x10" target="sf_reset"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="sf_e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#d6b656;" edge="1" parent="1" source="sf_estop" target="sf_pilz"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="sf_e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#d6b656;" edge="1" parent="1" source="sf_door" target="sf_pilz"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="sf_e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#d6b656;" edge="1" parent="1" source="sf_reset" target="sf_pilz"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="sf_e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#d6b656;" edge="1" parent="1" source="sf_pilz" target="sf_x11"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="sf_e8" value="STO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d6b656;fontSize=10;" edge="1" parent="1" source="sf_x11" target="sf_sx"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="sf_e9" value="STO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d6b656;fontSize=10;" edge="1" parent="1" source="sf_x11" target="sf_sy"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="sf_e10" value="STO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d6b656;fontSize=10;" edge="1" parent="1" source="sf_x11" target="sf_sa"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="sf_e11" value="STO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d6b656;fontSize=10;" edge="1" parent="1" source="sf_x11" target="sf_sz"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="sf_e12" value="STO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d6b656;fontSize=10;" edge="1" parent="1" source="sf_x11" target="sf_sc"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="sf_lbl1" value="W201-W205&#10;Safety supply + inputs" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="120" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_lbl2" value="W206-W210&#10;STO channels" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="120" width="130" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_lbl3" value="X10.1-6" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="145" y="395" width="80" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_lbl4" value="A1/A2, S11/S12, S52" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="600" y="435" width="180" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_lbl5" value="X11.1-10" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="955" y="405" width="70" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_lbl6" value="CN1-29 / CN1-30" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1190" y="235" width="110" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_lbl7" value="CN1-29 / CN1-30" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="235" width="110" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_lbl8" value="CN1-29 / CN1-30" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1190" y="355" width="110" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_lbl9" value="CN1-29 / CN1-30" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="355" width="110" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_lbl10" value="CN1-29 / CN1-30" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="475" width="110" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_w1" value="W201-W202" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="125" y="145" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_w2" value="W203" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="315" y="185" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_w3" value="W204" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="315" y="305" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_w4" value="W205" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="315" y="425" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_w5" value="Safety chain" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="490" y="240" width="80" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_w6" value="Safety chain" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="490" y="335" width="80" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_w7" value="Reset loop" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="490" y="430" width="80" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_w8" value="W206-W210" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="840" y="245" width="90" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_w9" value="W206" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="165" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_w10" value="W207" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="165" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_w11" value="W208" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="285" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_w12" value="W209" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="285" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_w13" value="W210" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1190" y="405" width="50" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_tt1" value="X10.1/2 -> S0 CH1/CH2" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="265" y="205" width="150" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_tt2" value="X10.3 -> S1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="285" y="325" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_tt3" value="X10.4 -> S2" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="285" y="445" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_tt4" value="S0/S1/S2 -> K10" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="480" y="270" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_tt5" value="K10 13-14 / 23-24 / 33-34 -> X11" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="795" y="290" width="170" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_tt6" value="X11.1/2 -> U41 CN1-29/30" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="185" width="170" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_tt7" value="X11.3/4 -> U42 CN1-29/30" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="185" width="170" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_tt8" value="X11.5/6 -> U43 CN1-29/30" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="305" width="170" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_tt9" value="X11.7/8 -> U44 CN1-29/30" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="305" width="170" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_tt10" value="X11.9/10 -> U45 CN1-29/30" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="425" width="180" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="sf_footer1" value="Rev 1.1 | Safety and STO | Pilz PNOZ + 5 eksen STO dağıtımı" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1110" width="1080" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_footer2" value="Prepared in Codex workspace" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="1110" width="450" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="sf_footer3" value="Sheet 3 / 4" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1570" y="1110" width="110" height="28" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="wiring-io" name="04 IO and Terminal Wiring">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="io_title" value="GFB60/30RE-S&#10;04 IO and Terminal Wiring&#10;Revizyon 1.1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=26;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="460" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_sub" value="R1-EC dijital giriş/çıkışlar, saha sensörleri ve terminal planı" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="620" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_tag" value="PAGE 04 / I/O&#10;Rev 1.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="30" width="170" height="36" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="io_r1ec" value="U50-U53&#10;R1-EC I/O SISTEMI&#10;&#10;U50 R1-EC01 Coupler&#10;U51 DI Modül #1&#10;U52 DI Modül #2&#10;U53 DO Modül" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="170" width="240" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_x20" value="X20&#10;DI TERMİNALİ #1&#10;&#10;%IX0.0 X+LIMIT&#10;%IX0.1 X-LIMIT&#10;%IX0.2 X-HOME&#10;%IX0.3 Y+LIMIT&#10;%IX0.4 Y-LIMIT&#10;%IX0.5 Y-HOME&#10;%IX0.6 Z+LIMIT&#10;%IX0.7 Z-LIMIT" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="150" width="230" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_x30" value="X30&#10;DI TERMİNALİ #2&#10;&#10;%IX0.8 Z-HOME&#10;%IX0.9 ALT+LIMIT&#10;%IX0.10 ALT-LIMIT&#10;%IX0.11 ALT-HOME&#10;%IX0.12 E-STOP1&#10;%IX0.13 E-STOP2&#10;%IX0.14 DOOR_OPEN&#10;%IX0.15 VACUUM_OK" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="650" y="150" width="230" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_x40" value="X40&#10;DO TERMİNALİ&#10;&#10;%QX0.0 SERVO_ENABLE&#10;%QX0.1 VACUUM_PUMP&#10;%QX0.2 OIL_PUMP&#10;%QX0.3 COOLING_FAN&#10;%QX0.4 WARNING_LIGHT&#10;%QX0.5 BUZZER&#10;%QX0.7 BREAKER_ENABLE" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="920" y="150" width="230" height="220" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="io_sens" value="SAHA SENSÖRLERİ&#10;&#10;S11 X+ Limit&#10;S12 X- Limit&#10;S10 X Home&#10;S21 Y+ Limit&#10;S22 Y- Limit&#10;S20 Y Home&#10;S31 Z+ Limit&#10;Z- Limit&#10;S30 Z Home&#10;S41 ALT+ Limit&#10;S42 ALT- Limit&#10;S40 ALT Home" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1210" y="140" width="220" height="280" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_act" value="AKTÜATÖRLER&#10;&#10;Vakum pompası&#10;Yağ pompası&#10;Fan&#10;Uyarı lambası&#10;Buzzer&#10;Breaker enable&#10;Konveyör ileri / geri" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1210" y="460" width="220" height="200" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="io_eth" value="ETHERCAT / NETWORK&#10;&#10;W301-W307 EtherCAT zinciri&#10;W308 HMI Ethernet" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="80" y="470" width="240" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_note1" value="WIRE LIST REFERANSI&#10;&#10;W401-W417: Sensör ve DI kabloları&#10;W451-W459: DO ve aktüatör kabloları" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="470" width="300" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_note2" value="TEST SIRASI&#10;&#10;1. DI adreslerini tek tek aktive et.&#10;2. Ekran/PLC eşleşmesini doğrula.&#10;3. DO çıkışlarını yük bağlı değilken test et.&#10;4. Sonra saha yükleri ile test et." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="720" y="470" width="350" height="120" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="io_e1" value="DI" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#9673a6;fontSize=10;" edge="1" parent="1" source="io_r1ec" target="io_x20"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="io_e2" value="DI" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#9673a6;fontSize=10;" edge="1" parent="1" source="io_r1ec" target="io_x30"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="io_e3" value="DO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#9673a6;fontSize=10;" edge="1" parent="1" source="io_r1ec" target="io_x40"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="io_e4" value="Sensor wiring" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#9673a6;fontSize=10;" edge="1" parent="1" source="io_sens" target="io_x20"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="io_e5" value="Sensor wiring" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#9673a6;fontSize=10;" edge="1" parent="1" source="io_sens" target="io_x30"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="io_e6" value="Output wiring" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#9673a6;fontSize=10;" edge="1" parent="1" source="io_x40" target="io_act"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="io_lbl1" value="W401-W417&#10;DI field cables" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="120" width="130" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_lbl2" value="W451-W459&#10;DO field cables" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="120" width="130" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_lbl3" value="U51 / U52" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="165" y="375" width="70" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_lbl4" value="X20.1-8" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="465" y="395" width="70" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_lbl5" value="X30.1-8" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="735" y="395" width="70" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_lbl6" value="X40.1-7" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1005" y="375" width="70" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_lbl7" value="%IX0.0-%IX0.7" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="430" y="120" width="120" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_lbl8" value="%IX0.8-%IX0.15" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="700" y="120" width="120" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_lbl9" value="%QX0.0-%QX0.7" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="970" y="120" width="120" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_lbl10" value="W301-W308&#10;Network wiring" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="130" y="575" width="140" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_w1" value="W401-W408" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="365" y="170" width="90" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_w2" value="W409-W416" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="635" y="170" width="90" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_w3" value="W451-W457" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="905" y="170" width="90" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_w4" value="W301-W307" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="430" width="90" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_w5" value="W401-W412" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="190" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_w6" value="W451-W459" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="500" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_tt1" value="U50-U53 -> X20" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="320" y="235" width="90" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_tt2" value="U50-U53 -> X30" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="590" y="235" width="90" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_tt3" value="U50-U53 -> X40" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="860" y="235" width="90" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_tt4" value="S11/S12/S10... -> X20" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="245" width="130" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_tt5" value="S30/S40/S51... -> X30" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="315" width="130" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_tt6" value="X40 -> saha yükleri" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="525" width="110" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="io_footer1" value="Rev 1.1 | I/O and terminal wiring | R1-EC, DI/DO ve saha bağlantıları" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1110" width="1080" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_footer2" value="Prepared in Codex workspace" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="1110" width="450" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_footer3" value="Sheet 4 / 4" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1570" y="1110" width="110" height="28" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

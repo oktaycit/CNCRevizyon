@@ -1,0 +1,76 @@
+{
+  "orders": [
+    {
+      "order_id": "ORD-001",
+      "width": 500,
+      "height": 400,
+      "quantity": 10,
+      "thickness": 4,
+      "glass_type": "float",
+      "priority": 1,
+      "rotate_allowed": true,
+      "customer": "Customer A",
+      "notes": "Standard window panels"
+    },
+    {
+      "order_id": "ORD-002",
+      "width": 300,
+      "height": 200,
+      "quantity": 20,
+      "thickness": 4,
+      "glass_type": "float",
+      "priority": 2,
+      "rotate_allowed": true,
+      "customer": "Customer B",
+      "notes": "Small display panels"
+    },
+    {
+      "order_id": "ORD-003",
+      "width": 800,
+      "height": 600,
+      "quantity": 5,
+      "thickness": 6,
+      "glass_type": "float",
+      "priority": 1,
+      "rotate_allowed": true,
+      "customer": "Customer A",
+      "notes": "Large display panels"
+    },
+    {
+      "order_id": "ORD-004",
+      "width": 400,
+      "height": 300,
+      "quantity": 15,
+      "thickness": 4,
+      "glass_type": "float",
+      "priority": 3,
+      "rotate_allowed": true,
+      "customer": "Customer C",
+      "notes": "Standard panels"
+    },
+    {
+      "order_id": "ORD-005",
+      "width": 1000,
+      "height": 800,
+      "quantity": 2,
+      "thickness": 8,
+      "glass_type": "laminated",
+      "priority": 1,
+      "rotate_allowed": false,
+      "customer": "Customer D",
+      "notes": "Safety glass for doors",
+      "film_type": "PVB",
+      "film_thickness": 0.76
+    }
+  ],
+  "sheet": {
+    "width": 6000,
+    "height": 3000,
+    "thickness": null
+  },
+  "metadata": {
+    "created_at": "2026-04-11T10:00:00",
+    "operator": "AI Orchestrator",
+    "version": "1.0.0"
+  }
+}

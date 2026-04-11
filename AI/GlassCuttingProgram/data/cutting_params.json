@@ -1,0 +1,73 @@
+{
+  "machine": {
+    "model": "LiSEC GFB-60/30RE",
+    "controller": "Delta NC300",
+    "hmi": "Delta DOP-110CS",
+    "max_speed": 80000,
+    "accuracy": 0.05,
+    "axes": ["X", "Y", "Z", "Alt", "CNC"]
+  },
+  "default_parameters": {
+    "rapid_speed": 80000,
+    "cut_speed": 1000,
+    "approach_speed": 500,
+    "spindle_speed": 1000,
+    "coolant": false,
+    "safe_z": 10,
+    "cut_z": 0
+  },
+  "glass_types": {
+    "float": {
+      "cut_pressure": 3.0,
+      "break_pressure": 3.5,
+      "cut_depth_ratio": 0.95
+    },
+    "laminated": {
+      "cut_pressure_upper": 3.5,
+      "cut_pressure_lower": 3.2,
+      "separation_pressure": 2.8,
+      "break_pressure": 4.0,
+      "heating_time": 4.0,
+      "heating_temp": 135
+    },
+    "tempered": {
+      "score_speed": 2000,
+      "score_depth_ratio": 0.1,
+      "break_required": true,
+      "note": "Tempered glass can only be scored, not cut"
+    }
+  },
+  "film_types": {
+    "PVB": {
+      "melting_temp": 120,
+      "optimal_temp": 135,
+      "heating_time_factor": 1.0
+    },
+    "EVA": {
+      "melting_temp": 80,
+      "optimal_temp": 100,
+      "heating_time_factor": 0.7
+    },
+    "SGP": {
+      "melting_temp": 140,
+      "optimal_temp": 160,
+      "heating_time_factor": 1.5
+    }
+  },
+  "e_cam_profiles": {
+    "default": {
+      "sync_angle": 180,
+      "approach_length": 100,
+      "sync_amplitude": 0.02
+    }
+  },
+  "safety": {
+    "sto_enabled": true,
+    "min_speed": 100,
+    "alarm_codes": {
+      "13": "Position deviation",
+      "14": "Servo overload",
+      "15": "Communication error"
+    }
+  }
+}

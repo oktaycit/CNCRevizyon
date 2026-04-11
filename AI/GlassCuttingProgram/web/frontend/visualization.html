@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yerleşim Görünümü - Cam Kesme Programı</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">🪟 Cam Kesme Programı</h1>
+                <span class="subtitle">LiSEC GFB-60/30RE</span>
+            </div>
+            <div class="header-center">
+                <nav class="nav-tabs">
+                    <a href="/" class="nav-tab">Ana Sayfa</a>
+                    <a href="/orders" class="nav-tab">Siparişler</a>
+                    <a href="/visualization" class="nav-tab active">Yerleşim</a>
+                    <a href="/gcode" class="nav-tab">G-Code</a>
+                    <a href="/lamine" class="nav-tab">Lamine</a>
+                    <a href="/settings" class="nav-tab">⚙️ Ayarlar</a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <div class="machine-status">
+                    <span class="status-indicator idle"></span>
+                    <span class="status-text">Hazır</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Offline Banner -->
+        <div class="offline-banner" id="offlineBanner" style="display: none;">
+            <span class="offline-icon">📡</span>
+            <span>Offline Mode - Local algoritmalar çalışıyor</span>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content visualization-main">
+            <!-- Canvas Panel -->
+            <section class="panel canvas-panel">
+                <h2 class="panel-title">🗺️ Levha Yerleşimi (6000 x 3000 mm)</h2>
+                <div class="canvas-container">
+                    <canvas id="nestingCanvas" width="800" height="400"></canvas>
+                    <div class="canvas-info">
+                        <div class="info-row">
+                            <span>Scale: 7.5 px/mm</span>
+                            <span>Sheet: 6000 x 3000 mm</span>
+                        </div>
+                    </div>
+                    <div class="canvas-controls">
+                        <button class="btn small" onclick="zoomIn()">🔍+</button>
+                        <button class="btn small" onclick="zoomOut()">🔍-</button>
+                        <button class="btn small" onclick="resetZoom()">↺</button>
+                        <button class="btn small" onclick="toggleGrid()">Grid</button>
+                        <button class="btn small" onclick="toggleDefects()">Kusurlar</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Panel -->
+            <section class="panel stats-panel">
+                <h2 class="panel-title">📊 Optimizasyon Sonuçları</h2>
+                <div class="result-stats">
+                    <div class="stat-row">
+                        <label>Yerleşen Parça:</label>
+                        <span id="placedCount">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <label>Kullanım Oranı:</label>
+                        <span id="utilizationRate">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <label>Fire Alan:</label>
+                        <span id="wasteArea">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <label>Kesim Sayısı:</label>
+                        <span id="cutCount">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <label>Toplam Kesim Yolu:</label>
+                        <span id="totalDistance">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <label>Est. Süre:</label>
+                        <span id="estimatedTime">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <label>Algoritma:</label>
+                        <span id="algorithmUsed">-</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Parts List Panel -->
+            <section class="panel parts-panel">
+                <h2 class="panel-title">📦 Yerleşen Parçalar</h2>
+                <div class="parts-list" id="partsList">
+                    <div class="empty-state">
+                        <span>Optimizasyon çalıştırın</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Defects Panel -->
+            <section class="panel defects-panel">
+                <h2 class="panel-title">⚠️ Kusur Haritası</h2>
+                <div class="defects-list" id="defectsList">
+                    <div class="empty-state">
+                        <span>Kusur yok</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Actions Panel -->
+            <section class="panel actions-panel">
+                <h2 class="panel-title">⚡ İşlemler</h2>
+                <div class="actions-grid">
+                    <button class="btn primary" onclick="refreshVisualization()">
+                        🔄 Yerleşimi Güncelle
+                    </button>
+                    <button class="btn" onclick="runNestingOnly()">
+                        ⚡ Nesting Optimize
+                    </button>
+                    <button class="btn" onclick="runPathOptimization()">
+                        🛤️ Yol Optimize
+                    </button>
+                    <button class="btn" onclick="exportImage()">
+                        🖼️ Görsel İndir
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span>Glass Cutting Program v1.0</span>
+            <span>AI Orchestrator: 6 Models Parallel</span>
+            <span id="currentTime"></span>
+        </footer>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Yerleşim hesaplanıyor...</div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/visualization.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initCanvas();
+            updateTime();
+            setInterval(updateTime, 1000);
+            updateVisualizationStats();
+        });
+    </script>
+</body>
+
+</html>
