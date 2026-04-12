@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "GlassCutting Pro - CNC Glass Cutting Machine",
+  "version": "2.0.0",
+  "description": "Chrome Extension for Lisec GFB-60/30RE glass cutting machine with G-code editor, cutting parameters, simulation and machine monitoring",
+  "author": "CNC Revizyon Team",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png",
+    "256": "icons/icon256.png"
+  },
+  "action": {
+    "default_popup": "app.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "GlassCutting Pro"
+  },
+  "background": {
+    "service_worker": "app.background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "downloads"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "manifest_version": 3,
+  "name": "GlassCutting - CNC Glass Cutting Machine",
+  "version": "1.0.0",
+  "description": "Lisec GFB-60/30RE cam kesme makinesi için G-kod editörü, kesim parametreleri ve simülasyon aracı",
+  "author": "CNC Revizyon Team",
+  "default_locale": "tr",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "GlassCutting Program"
+  },
+  "background": {
+    "service_worker": "background/background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "downloads",
+    "appWindow"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content/content.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "simulation/*",
+        "icons/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "app": {
+    "background": {
+      "scripts": [
+        "app.background.js"
+      ]
+    }
+  }
+}

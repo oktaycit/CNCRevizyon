@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlassCutting Pro - Test Page</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      color: #1976D2;
+      text-align: center;
+    }
+    .test-section {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .test-section h2 {
+      color: #1565C0;
+      margin-bottom: 15px;
+    }
+    .test-item {
+      padding: 10px;
+      margin: 10px 0;
+      background: #e3f2fd;
+      border-radius: 4px;
+    }
+    .test-item.success {
+      background: #e8f5e9;
+      color: #388E3C;
+    }
+    .test-item.error {
+      background: #ffebee;
+      color: #c62828;
+    }
+    button {
+      padding: 12px 24px;
+      background: #1976D2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background: #1565C0;
+    }
+    .status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+    .status.ok {
+      background: #4CAF50;
+      color: white;
+    }
+    .status.fail {
+      background: #F44336;
+      color: white;
+    }
+    pre {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 15px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 GlassCutting Pro - Test Page</h1>
+  
+  <div class="test-section">
+    <h2>App Information</h2>
+    <div class="test-item" id="appInfo">
+      Testing app info...
+    </div>
+  </div>
+  
+  <div class="test-section">
+    <h2>Chrome API Tests</h2>
+    <button onclick="testChromeAPI()">Test Chrome APIs</button>
+    <div id="chromeApiTests"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>File System Test</h2>
+    <button onclick="testFileSystem()">Test File System</button>
+    <div id="fileSystemTest"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>Storage Test</h2>
+    <button onclick="testStorage()">Test Storage</button>
+    <div id="storageTest"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>Simulation Test</h2>
+    <button onclick="testSimulation()">Test Simulation Parser</button>
+    <div id="simulationTest"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>Test Results Summary</h2>
+    <pre id="testResults">No tests run yet</pre>
+  </div>
+  
+  <script>
+    const results = [];
+    
+    function logResult(test, success, message) {
+      results.push({ test, success, message, time: new Date().toISOString() });
+      updateResults();
+    }
+    
+    function updateResults() {
+      const pre = document.getElementById('testResults');
+      pre.textContent = JSON.stringify(results, null, 2);
+    }
+    
+    function showTestResult(elementId, success, message) {
+      const el = document.getElementById(elementId);
+      el.className = `test-item ${success ? 'success' : 'error'}`;
+      el.textContent = message;
+    }
+    
+    // Test Chrome APIs
+    function testChromeAPI() {
+      const output = document.getElementById('chromeApiTests');
+      output.innerHTML = '';
+      
+      // Test chrome.runtime
+      const hasRuntime = typeof chrome !== 'undefined' && typeof chrome.runtime !== 'undefined';
+      output.innerHTML += `<div class="test-item ${hasRuntime ? 'success' : 'error'}">
+        chrome.runtime: ${hasRuntime ? 'Available' : 'Not Available'}
+      </div>`;
+      logResult('chrome.runtime', hasRuntime, hasRuntime ? 'Available' : 'Not available');
+      
+      // Test chrome.storage
+      const hasStorage = typeof chrome !== 'undefined' && typeof chrome.storage !== 'undefined';
+      output.innerHTML += `<div class="test-item ${hasStorage ? 'success' : 'error'}">
+        chrome.storage: ${hasStorage ? 'Available' : 'Not Available'}
+      </div>`;
+      logResult('chrome.storage', hasStorage, hasStorage ? 'Available' : 'Not available');
+      
+      // Test chrome.fileSystem
+      const hasFileSystem = typeof chrome !== 'undefined' && typeof chrome.fileSystem !== 'undefined';
+      output.innerHTML += `<div class="test-item ${hasFileSystem ? 'success' : 'error'}">
+        chrome.fileSystem: ${hasFileSystem ? 'Available' : 'Not Available'} ${!hasFileSystem ? '(Expected in browser)' : ''}
+      </div>`;
+      logResult('chrome.fileSystem', hasFileSystem, hasFileSystem ? 'Available' : 'Not available (expected in browser)');
+    }
+    
+    // Test File System
+    function testFileSystem() {
+      const output = document.getElementById('fileSystemTest');
+      output.innerHTML = '';
+      
+      if (typeof chrome !== 'undefined' && chrome.fileSystem) {
+        chrome.fileSystem.getDisplayPath(chrome.fileSystem.getWritableEntry, (path) => {
+          showTestResult('fileSystemTest', true, `File system accessible: ${path || 'Yes'}`);
+          logResult('FileSystem', true, 'Accessible');
+        });
+      } else {
+        showTestResult('fileSystemTest', false, 'File system API not available (expected in regular browser)');
+        logResult('FileSystem', false, 'API not available in browser');
+      }
+    }
+    
+    // Test Storage
+    function testStorage() {
+      const output = document.getElementById('storageTest');
+      output.innerHTML = '';
+      
+      if (typeof chrome !== 'undefined' && chrome.storage) {
+        chrome.storage.local.set({ testKey: 'testValue' }, () => {
+          chrome.storage.local.get(['testKey'], (result) => {
+            const success = result.testKey === 'testValue';
+            showTestResult('storageTest', success, `Storage test: ${success ? 'Passed' : 'Failed'}`);
+            logResult('Storage', success, success ? 'Passed' : 'Failed');
+          });
+        });
+      } else {
+        showTestResult('storageTest', false, 'Storage API not available');
+        logResult('Storage', false, 'API not available');
+      }
+    }
+    
+    // Test Simulation Parser
+    function testSimulation() {
+      const output = document.getElementById('simulationTest');
+      output.innerHTML = '';
+      
+      const testGCode = `G21
+G90
+G0 Z50
+G0 X0 Y0
+G1 Z5 F500
+G1 X1000 F3000
+G1 Y500
+G0 Z50
+M30`;
+      
+      try {
+        const movements = parseGCode(testGCode);
+        const success = movements.length > 0;
+        showTestResult('simulationTest', success, 
+          `Parsed ${movements.length} movements from test G-code`);
+        logResult('Simulation Parser', success, `Parsed ${movements.length} movements`);
+        
+        // Show parsed movements
+        output.innerHTML += `<pre>${JSON.stringify(movements, null, 2)}</pre>`;
+      } catch (error) {
+        showTestResult('simulationTest', false, `Error: ${error.message}`);
+        logResult('Simulation Parser', false, error.message);
+      }
+    }
+    
+    // G-Code parser (simplified version from app.js)
+    function parseGCode(gcode) {
+      const lines = gcode.split('\n');
+      const movements = [];
+      let currentPos = { x: 0, y: 0, z: 50 };
+      let feedRate = 1000;
+      
+      lines.forEach(line => {
+        line = line.trim();
+        if (!line || line.startsWith(';')) return;
+        
+        const parts = line.split(/\s+/);
+        let command = '';
+        let newPos = { ...currentPos };
+        let newFeed = feedRate;
+        
+        parts.forEach(part => {
+          const code = part.substring(0, 2).toUpperCase();
+          const value = parseFloat(part.substring(2));
+          
+          if (code === 'G') {
+            command = `G${Math.floor(value)}`;
+          } else if (code === 'X') {
+            newPos.x = value;
+          } else if (code === 'Y') {
+            newPos.y = value;
+          } else if (code === 'Z') {
+            newPos.z = value;
+          } else if (code === 'F') {
+            newFeed = value;
+          }
+        });
+        
+        if (command === 'G0' || command === 'G1') {
+          const dx = newPos.x - currentPos.x;
+          const dy = newPos.y - currentPos.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance > 0) {
+            movements.push({
+              from: { ...currentPos },
+              to: { ...newPos },
+              distance: distance,
+              feedRate: command === 'G0' ? 5000 : newFeed,
+              type: command
+            });
+            currentPos = newPos;
+            feedRate = newFeed;
+          }
+        }
+      });
+      
+      return movements;
+    }
+    
+    // Get app info
+    function getAppInfo() {
+      const infoEl = document.getElementById('appInfo');
+      const info = {
+        name: 'GlassCutting Pro',
+        version: '2.0.0',
+        isChromeApp: typeof chrome !== 'undefined',
+        hasFileSystem: typeof chrome !== 'undefined' && typeof chrome.fileSystem !== 'undefined',
+        hasStorage: typeof chrome !== 'undefined' && typeof chrome.storage !== 'undefined',
+        userAgent: navigator.userAgent
+      };
+      
+      infoEl.innerHTML = `<pre>${JSON.stringify(info, null, 2)}</pre>`;
+      infoEl.className = 'test-item success';
+    }
+    
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      getAppInfo();
+      console.log('GlassCutting Pro - Test Page Loaded');
+    });
+  </script>
+</body>
+</html>

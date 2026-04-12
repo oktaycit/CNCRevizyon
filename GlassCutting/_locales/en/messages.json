@@ -1,0 +1,50 @@
+{
+  "appName": {
+    "message": "GlassCutting - CNC Glass Cutting Machine",
+    "description": "Application name"
+  },
+  "appDescription": {
+    "message": "G-code editor, cutting parameters and simulation tool for Lisec GFB-60/30RE glass cutting machine",
+    "description": "Application description"
+  },
+  "tabGCode": {
+    "message": "G-Code",
+    "description": "G-Code tab"
+  },
+  "tabParams": {
+    "message": "Parameters",
+    "description": "Parameters tab"
+  },
+  "tabSimulation": {
+    "message": "Simulation",
+    "description": "Simulation tab"
+  },
+  "tabMachine": {
+    "message": "Machine",
+    "description": "Machine tab"
+  },
+  "btnNew": {
+    "message": "New",
+    "description": "New file button"
+  },
+  "btnLoad": {
+    "message": "Load",
+    "description": "Load file button"
+  },
+  "btnSave": {
+    "message": "Save",
+    "description": "Save file button"
+  },
+  "btnRun": {
+    "message": "Run",
+    "description": "Run button"
+  },
+  "machineStatusConnected": {
+    "message": "Connected",
+    "description": "Machine connected status"
+  },
+  "machineStatusDisconnected": {
+    "message": "Disconnected",
+    "description": "Machine disconnected status"
+  }
+}

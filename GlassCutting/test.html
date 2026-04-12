@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlassCutting Test Sayfası</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 { color: #1976D2; }
+    h2 { color: #424242; font-size: 18px; }
+    .test-item {
+      padding: 10px;
+      margin: 10px 0;
+      background: #e3f2fd;
+      border-radius: 4px;
+      border-left: 4px solid #1976D2;
+    }
+    .success { background: #e8f5e9; border-left-color: #4CAF50; }
+    .warning { background: #fff3e0; border-left-color: #F57C00; }
+    code {
+      background: #263238;
+      color: #80cbc4;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-family: Consolas, monospace;
+    }
+    .drop-zone {
+      border: 3px dashed #1976D2;
+      border-radius: 8px;
+      padding: 40px;
+      text-align: center;
+      color: #757575;
+      transition: all 0.3s;
+    }
+    .drop-zone.dragover {
+      background: #e3f2fd;
+      border-color: #0d47a1;
+    }
+    button {
+      background: #1976D2;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover { background: #1565C0; }
+  </style>
+</head>
+<body>
+  <h1>🔧 GlassCutting Test Sayfası</h1>
+  
+  <div class="card">
+    <h2>✅ Test 1: Content Script Yüklemesi</h2>
+    <div class="test-item" id="test1">
+      Content script durumu kontrol ediliyor...
+    </div>
+    <button onclick="checkContentScript()">Kontrol Et</button>
+  </div>
+  
+  <div class="card">
+    <h2>✅ Test 2: G-Kod Dosya Linki Algılama</h2>
+    <div class="test-item">
+      Aşağıdaki linklere sağ tıklayarak "GlassCutting ile aç" seçeneğini görebilmelisiniz:
+    </div>
+    <p>
+      <a href="#" onclick="return false;" class="gcode-link">📄 ornek_program.nc</a><br>
+      <a href="#" onclick="return false;" class="gcode-link">📄 kesim.gcode</a><br>
+      <a href="#" onclick="return false;" class="gcode-link">📄 test.txt</a>
+    </p>
+  </div>
+  
+  <div class="card">
+    <h2>✅ Test 3: Drag & Drop</h2>
+    <div class="test-item">
+      Bir G-kod dosyasını (.nc, .gcode, .txt) aşağıdaki alana sürükleyin:
+    </div>
+    <div class="drop-zone" id="dropZone">
+      📁 Dosyayı buraya sürükleyin
+    </div>
+  </div>
+  
+  <div class="card">
+    <h2>✅ Test 4: Klavye Kısayolu</h2>
+    <div class="test-item">
+      <code>Ctrl+Shift+G</code> tuşlarına basarak GlassCutting eklentisini açabilirsiniz.
+    </div>
+  </div>
+  
+  <div class="card">
+    <h2>✅ Test 5: Örnek G-Kod</h2>
+    <div class="test-item">
+      Aşağıdaki G-kod'u kopyalayıp GlassCutting editörüne yapıştırabilirsiniz:
+    </div>
+    <pre style="background: #263238; color: #d4d4d4; padding: 15px; border-radius: 4px; overflow-x: auto;">
+; Lisec GFB-60/30RE - Test Programı
+G21
+G90
+G0 Z50
+G0 X0 Y0
+G1 Z5 F500
+G1 X2000 F3000
+G1 Y1500
+G1 X0
+G1 Y0
+G0 Z50
+M30
+    </pre>
+    <button onclick="copyGCode()">Kopyala</button>
+  </div>
+  
+  <div class="card">
+    <h2>📊 Test Sonuçları</h2>
+    <div id="results"></div>
+  </div>
+  
+  <script>
+    // Test 1: Content Script kontrolü
+    function checkContentScript() {
+      const test1Div = document.getElementById('test1');
+      
+      // GlassCutting content script yüklendiyse
+      if (typeof window.glassCuttingLoaded !== 'undefined') {
+        test1Div.innerHTML = '✅ Content script başarıyla yüklendi!';
+        test1Div.className = 'test-item success';
+      } else {
+        test1Div.innerHTML = '⚠️ Content script yüklenmedi. Eklentiyi kontrol edin.';
+        test1Div.className = 'test-item warning';
+      }
+      
+      addResult('Content Script', test1Div.innerHTML.includes('✅'));
+    }
+    
+    // Test 2: Link algılama
+    function checkLinkDetection() {
+      const links = document.querySelectorAll('.gcode-link');
+      let detected = false;
+      
+      links.forEach(link => {
+        if (link.querySelector('.glasscutting-icon')) {
+          detected = true;
+        }
+      });
+      
+      addResult('Link Algılama', detected);
+      return detected;
+    }
+    
+    // Test 3: Drag & Drop
+    const dropZone = document.getElementById('dropZone');
+    
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+    
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('dragover');
+    });
+    
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        const file = files[0];
+        const validExts = ['.nc', '.gcode', '.txt', '.ngc'];
+        const ext = '.' + file.name.split('.').pop().toLowerCase();
+        
+        if (validExts.includes(ext)) {
+          dropZone.innerHTML = `✅ ${file.name} algılandı!`;
+          dropZone.style.borderColor = '#4CAF50';
+          addResult('Drag & Drop', true);
+          
+          // Content script dosyayı işlemeli
+          const event = new CustomEvent('glasscutting-file', { detail: file });
+          document.dispatchEvent(event);
+        } else {
+          dropZone.innerHTML = `❌ Geçersiz dosya tipi: ${ext}`;
+          dropZone.style.borderColor = '#F44336';
+          addResult('Drag & Drop', false);
+        }
+      }
+    });
+    
+    // G-Kod kopyalama
+    function copyGCode() {
+      const gcode = `; Lisec GFB-60/30RE - Test Programı
+G21
+G90
+G0 Z50
+G0 X0 Y0
+G1 Z5 F500
+G1 X2000 F3000
+G1 Y1500
+G1 X0
+G1 Y0
+G0 Z50
+M30`;
+      
+      navigator.clipboard.writeText(gcode).then(() => {
+        alert('G-kod kopyalandı! GlassCutting editörüne yapıştırın.');
+        addResult('G-Kod Kopyalama', true);
+      });
+    }
+    
+    // Sonuç ekleme
+    function addResult(name, passed) {
+      const results = document.getElementById('results');
+      const div = document.createElement('div');
+      div.innerHTML = `${passed ? '✅' : '❌'} ${name}: ${passed ? 'Başarılı' : 'Başarısız'}`;
+      div.style.padding = '8px';
+      div.style.borderBottom = '1px solid #eee';
+      results.appendChild(div);
+    }
+    
+    // Sayfa yüklendiğinde testleri çalıştır
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        checkContentScript();
+        checkLinkDetection();
+      }, 500);
+    });
+    
+    // GlassCutting content script sinyali
+    document.addEventListener('glasscutting-loaded', () => {
+      console.log('GlassCutting content script ready!');
+      window.glassCuttingLoaded = true;
+      checkContentScript();
+    });
+  </script>
+</body>
+</html>

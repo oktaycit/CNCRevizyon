@@ -1,0 +1,50 @@
+{
+  "appName": {
+    "message": "GlassCutting - CNC Glass Cutting Machine",
+    "description": "Uygulama adı"
+  },
+  "appDescription": {
+    "message": "Lisec GFB-60/30RE cam kesme makinesi için G-kod editörü, kesim parametreleri ve simülasyon aracı",
+    "description": "Uygulama açıklaması"
+  },
+  "tabGCode": {
+    "message": "G-Kod",
+    "description": "G-Kod sekmesi"
+  },
+  "tabParams": {
+    "message": "Parametreler",
+    "description": "Parametreler sekmesi"
+  },
+  "tabSimulation": {
+    "message": "Simülasyon",
+    "description": "Simülasyon sekmesi"
+  },
+  "tabMachine": {
+    "message": "Makine",
+    "description": "Makine sekmesi"
+  },
+  "btnNew": {
+    "message": "Yeni",
+    "description": "Yeni dosya butonu"
+  },
+  "btnLoad": {
+    "message": "Yükle",
+    "description": "Dosya yükleme butonu"
+  },
+  "btnSave": {
+    "message": "Kaydet",
+    "description": "Dosya kaydetme butonu"
+  },
+  "btnRun": {
+    "message": "Çalıştır",
+    "description": "Çalıştırma butonu"
+  },
+  "machineStatusConnected": {
+    "message": "Bağlı",
+    "description": "Makine bağlı durumu"
+  },
+  "machineStatusDisconnected": {
+    "message": "Bağlı Değil",
+    "description": "Makine bağlı değil durumu"
+  }
+}

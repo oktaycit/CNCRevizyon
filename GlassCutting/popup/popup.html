@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlassCutting Program</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect x="4" y="4" width="24" height="24" rx="2" fill="#1976D2"/>
+          <path d="M10 16L14 20L22 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h1>GlassCutting</h1>
+      </div>
+      <div class="machine-status" id="machineStatus">
+        <span class="status-indicator offline"></span>
+        <span class="status-text">Bağlı Değil</span>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="gcode">G-Kod</button>
+      <button class="tab-btn" data-tab="params">Parametreler</button>
+      <button class="tab-btn" data-tab="simulation">Simülasyon</button>
+      <button class="tab-btn" data-tab="machine">Makine</button>
+    </nav>
+
+    <!-- Tab Contents -->
+    <main class="tab-content">
+      <!-- G-Kod Tab -->
+      <div class="tab-pane active" id="gcode">
+        <div class="toolbar">
+          <button class="btn btn-primary" id="btnNew">Yeni</button>
+          <button class="btn btn-secondary" id="btnLoad">Yükle</button>
+          <button class="btn btn-secondary" id="btnSave">Kaydet</button>
+          <button class="btn btn-success" id="btnRun">Çalıştır</button>
+        </div>
+        <div class="gcode-editor">
+          <textarea id="gcodeEditor" spellcheck="false" placeholder="G-kodunuzu buraya girin..."></textarea>
+          <div class="line-numbers" id="lineNumbers"></div>
+        </div>
+        <div class="gcode-info">
+          <span id="gcodeStats">Satır: 0 | Karakter: 0</span>
+        </div>
+      </div>
+
+      <!-- Parametreler Tab -->
+      <div class="tab-pane" id="params">
+        <div class="params-grid">
+          <div class="param-group">
+            <h3>Cam Özellikleri</h3>
+            <div class="param-item">
+              <label>Genişlik (mm)</label>
+              <input type="number" id="glassWidth" value="3000" min="200" max="3000">
+            </div>
+            <div class="param-item">
+              <label>Yükseklik (mm)</label>
+              <input type="number" id="glassHeight" value="2000" min="200" max="2000">
+            </div>
+            <div class="param-item">
+              <label>Kalınlık (mm)</label>
+              <input type="number" id="glassThickness" value="6" min="2" max="25" step="0.5">
+            </div>
+            <div class="param-item">
+              <label>Cam Tipi</label>
+              <select id="glassType">
+                <option value="float">Float Cam</option>
+                <option value="laminated">Lamine Cam</option>
+                <option value="tempered">Temperli</option>
+                <option value="reflective">Reflekte</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="param-group">
+            <h3>Kesim Parametreleri</h3>
+            <div class="param-item">
+              <label>Kesim Hızı (m/dk)</label>
+              <input type="number" id="cutSpeed" value="60" min="5" max="80">
+            </div>
+            <div class="param-item">
+              <label>Kesim Basıncı (bar)</label>
+              <input type="number" id="cutPressure" value="4.5" min="1" max="8" step="0.1">
+            </div>
+            <div class="param-item">
+              <label>Açı (°)</label>
+              <input type="number" id="cutAngle" value="0" min="-180" max="180">
+            </div>
+            <div class="param-item">
+              <label>Kerteriz</label>
+              <select id="kerfCompensation">
+                <option value="auto">Otomatik</option>
+                <option value="manual">Manuel</option>
+                <option value="none">Yok</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="param-group">
+            <h3>Eksen Ayarları</h3>
+            <div class="param-item">
+              <label>X Maks. Hız (mm/s)</label>
+              <input type="number" id="xMaxSpeed" value="1500" min="100" max="2000">
+            </div>
+            <div class="param-item">
+              <label>Y Maks. Hız (mm/s)</label>
+              <input type="number" id="yMaxSpeed" value="1500" min="100" max="2000">
+            </div>
+            <div class="param-item">
+              <label>Z Referans (mm)</label>
+              <input type="number" id="zReference" value="50" min="0" max="200">
+            </div>
+            <div class="param-item">
+              <label>Encoder Çözünürlük</label>
+              <input type="text" value="24-bit" disabled>
+            </div>
+          </div>
+
+          <div class="param-group">
+            <h3>E-Cam (Lamine)</h3>
+            <div class="param-item">
+              <label>Senkronizasyon</label>
+              <select id="ecamSync">
+                <option value="enabled">Aktif</option>
+                <option value="disabled">Pasif</option>
+              </select>
+            </div>
+            <div class="param-item">
+              <label>Profil Tipi</label>
+              <select id="ecamProfile">
+                <option value="straight">Düz Kesim</option>
+                <option value="curve">Eğri Kesim</option>
+                <option value="custom">Özel Profil</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="toolbar">
+          <button class="btn btn-primary" id="btnApplyParams">Uygula</button>
+          <button class="btn btn-secondary" id="btnResetParams">Sıfırla</button>
+          <button class="btn btn-info" id="btnSavePreset">Preset Kaydet</button>
+        </div>
+      </div>
+
+      <!-- Simülasyon Tab -->
+      <div class="tab-pane" id="simulation">
+        <div class="simulation-container">
+          <canvas id="simCanvas" width="500" height="400"></canvas>
+          <div class="sim-controls">
+            <div class="sim-info">
+              <div class="info-item">
+                <span class="label">Konum X:</span>
+                <span id="simPosX" class="value">0.00</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Konum Y:</span>
+                <span id="simPosY" class="value">0.00</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Mesafe:</span>
+                <span id="simDistance" class="value">0.00</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Süre:</span>
+                <span id="simTime" class="value">0:00</span>
+              </div>
+            </div>
+            <div class="sim-buttons">
+              <button class="btn btn-primary" id="btnSimStart">▶ Başlat</button>
+              <button class="btn btn-warning" id="btnSimPause">⏸ Duraklat</button>
+              <button class="btn btn-secondary" id="btnSimReset">↺ Sıfırla</button>
+            </div>
+            <div class="sim-speed">
+              <label>Hız:</label>
+              <input type="range" id="simSpeed" min="1" max="10" value="5">
+              <span id="simSpeedValue">5x</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Makine Tab -->
+      <div class="tab-pane" id="machine">
+        <div class="machine-overview">
+          <div class="machine-card">
+            <h3>Lisec GFB-60/30RE</h3>
+            <div class="machine-specs">
+              <div class="spec-item">
+                <span class="spec-label">Maks. Boyut</span>
+                <span class="spec-value">6000 x 3000 mm</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Cam Kalınlık</span>
+                <span class="spec-value">2-25 mm</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Kesim Hızı</span>
+                <span class="spec-value">0-80 m/dk</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Hassasiyet</span>
+                <span class="spec-value">±0.05 mm</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="machine-card">
+            <h3>Servo Durumu</h3>
+            <div class="servo-status">
+              <div class="servo-item">
+                <span class="servo-name">X Ekseni</span>
+                <span class="servo-indicator ready">Hazır</span>
+                <span class="servo-value" id="servoX">0.00 mm</span>
+              </div>
+              <div class="servo-item">
+                <span class="servo-name">Y Ekseni</span>
+                <span class="servo-indicator ready">Hazır</span>
+                <span class="servo-value" id="servoY">0.00 mm</span>
+              </div>
+              <div class="servo-item">
+                <span class="servo-name">Z Ekseni</span>
+                <span class="servo-indicator ready">Hazır</span>
+                <span class="servo-value" id="servoZ">50.00 mm</span>
+              </div>
+              <div class="servo-item">
+                <span class="servo-name">Alt Eksen</span>
+                <span class="servo-indicator ready">Hazır</span>
+                <span class="servo-value" id="servoAlt">0.00°</span>
+              </div>
+              <div class="servo-item">
+                <span class="servo-name">CNC Eksen</span>
+                <span class="servo-indicator ready">Hazır</span>
+                <span class="servo-value" id="servoCNC">0.00 mm</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="machine-card">
+            <h3>I/O Durumu</h3>
+            <div class="io-status">
+              <div class="io-group">
+                <span class="io-label">Girişler (R1-EC0902D)</span>
+                <div class="io-leds" id="inputLeds">
+                  <div class="led off" title="Input 0"></div>
+                  <div class="led off" title="Input 1"></div>
+                  <div class="led off" title="Input 2"></div>
+                  <div class="led off" title="Input 3"></div>
+                  <div class="led off" title="Input 4"></div>
+                  <div class="led off" title="Input 5"></div>
+                  <div class="led off" title="Input 6"></div>
+                  <div class="led off" title="Input 7"></div>
+                </div>
+              </div>
+              <div class="io-group">
+                <span class="io-label">Çıkışlar (R1-EC0902O)</span>
+                <div class="io-leds" id="outputLeds">
+                  <div class="led off" title="Output 0"></div>
+                  <div class="led off" title="Output 1"></div>
+                  <div class="led off" title="Output 2"></div>
+                  <div class="led off" title="Output 3"></div>
+                  <div class="led off" title="Output 4"></div>
+                  <div class="led off" title="Output 5"></div>
+                  <div class="led off" title="Output 6"></div>
+                  <div class="led off" title="Output 7"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="machine-card">
+            <h3>Alarmlar</h3>
+            <div class="alarm-list" id="alarmList">
+              <div class="alarm-item no-alarm">Aktif alarm yok</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span>Delta NC300 • EtherCAT • v1.0.0</span>
+      <button class="btn btn-sm" id="btnSettings">⚙ Ayarlar</button>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

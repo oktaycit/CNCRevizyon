@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Icon Generator</title>
+</head>
+<body>
+  <h2>GlassCutting İkon Oluşturucu</h2>
+  <p>Bu sayfayı açtıktan sonra, ikonlar otomatik olarak indirilecektir.</p>
+  
+  <canvas id="canvas" style="display:none;"></canvas>
+  
+  <script>
+    function generateIcon(size) {
+      const canvas = document.getElementById('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      
+      const scale = size / 128;
+      
+      // Arka plan gradient
+      const gradient = ctx.createLinearGradient(0, 0, size, size);
+      gradient.addColorStop(0, '#1976D2');
+      gradient.addColorStop(1, '#1565C0');
+      
+      // Yuvarlak köşeli dikdörtgen
+      const radius = 16 * scale;
+      ctx.fillStyle = gradient;
+      roundRect(ctx, 4 * scale, 4 * scale, size - 8 * scale, size - 8 * scale, radius);
+      ctx.fill();
+      
+      // Cam levha
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+      ctx.lineWidth = 2 * scale;
+      roundRect(ctx, 28 * scale, 36 * scale, 72 * scale, 56 * scale, 4 * scale);
+      ctx.fill();
+      ctx.stroke();
+      
+      // Kesim yolu
+      ctx.strokeStyle = '#4CAF50';
+      ctx.lineWidth = 4 * scale;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(36 * scale, 64 * scale);
+      ctx.lineTo(64 * scale, 64 * scale);
+      ctx.lineTo(64 * scale, 84 * scale);
+      ctx.stroke();
+      
+      // Kesim noktası
+      ctx.fillStyle = '#FF5722';
+      ctx.beginPath();
+      ctx.arc(64 * scale, 84 * scale, 6 * scale, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = '#FFF';
+      ctx.beginPath();
+      ctx.arc(64 * scale, 84 * scale, 3 * scale, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // X ekseni
+      ctx.strokeStyle = '#FF6B6B';
+      ctx.lineWidth = 2.5 * scale;
+      ctx.beginPath();
+      ctx.moveTo(28 * scale, 100 * scale);
+      ctx.lineTo(100 * scale, 100 * scale);
+      ctx.stroke();
+      
+      // X oku
+      ctx.beginPath();
+      ctx.moveTo(100 * scale, 100 * scale);
+      ctx.lineTo(92 * scale, 96 * scale);
+      ctx.moveTo(100 * scale, 100 * scale);
+      ctx.lineTo(92 * scale, 104 * scale);
+      ctx.stroke();
+      
+      // Y ekseni
+      ctx.strokeStyle = '#4ECDC4';
+      ctx.beginPath();
+      ctx.moveTo(28 * scale, 100 * scale);
+      ctx.lineTo(28 * scale, 28 * scale);
+      ctx.stroke();
+      
+      // Y oku
+      ctx.beginPath();
+      ctx.moveTo(28 * scale, 28 * scale);
+      ctx.lineTo(24 * scale, 36 * scale);
+      ctx.moveTo(28 * scale, 28 * scale);
+      ctx.lineTo(32 * scale, 36 * scale);
+      ctx.stroke();
+      
+      // X etiketi
+      ctx.fillStyle = '#FF6B6B';
+      ctx.font = `bold ${14 * scale}px Arial`;
+      ctx.fillText('X', 104 * scale, 105 * scale);
+      
+      // Y etiketi
+      ctx.fillStyle = '#4ECDC4';
+      ctx.fillText('Y', 18 * scale, 26 * scale);
+      
+      return canvas.toDataURL('image/png');
+    }
+    
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+    
+    function downloadIcon(size) {
+      const dataUrl = generateIcon(size);
+      const link = document.createElement('a');
+      link.download = `icon${size}.png`;
+      link.href = dataUrl;
+      link.click();
+      console.log(`Generated icon${size}.png`);
+    }
+    
+    // Tüm ikon boyutlarını oluştur
+    [16, 48, 128].forEach(size => {
+      setTimeout(() => downloadIcon(size), size * 10);
+    });
+  </script>
+</body>
+</html>

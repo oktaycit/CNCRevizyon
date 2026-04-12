@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlassCutting Pro</title>
+  <link rel="stylesheet" href="app.css">
+  <style>
+    /* Override for popup mode */
+    body {
+      width: 900px;
+      min-height: 650px;
+      max-height: 800px;
+    }
+
+    .app-container {
+      height: 100%;
+    }
+
+    .sidebar {
+      width: 80px;
+    }
+
+    .nav-label {
+      font-size: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="2" fill="#1976D2" />
+            <path d="M10 16L14 20L22 12" stroke="white" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+          <div class="logo-text">
+            <h1>GlassCutting Pro</h1>
+            <span class="subtitle">Lisec GFB-60/30RE</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-center">
+        <div class="machine-status" id="machineStatus">
+          <span class="status-indicator offline"></span>
+          <span class="status-text">Disconnected</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="btn btn-icon" id="btnSettings" title="Settings">⚙</button>
+        <button class="btn btn-icon" id="btnHelp" title="Help">?</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <nav class="sidebar-nav">
+          <button class="nav-btn active" data-tab="gcode">
+            <span class="nav-icon">📝</span>
+            <span class="nav-label">G-Code</span>
+          </button>
+          <button class="nav-btn" data-tab="params">
+            <span class="nav-icon">⚙</span>
+            <span class="nav-label">Params</span>
+          </button>
+          <button class="nav-btn" data-tab="simulation">
+            <span class="nav-icon">🎯</span>
+            <span class="nav-label">Simulate</span>
+          </button>
+          <button class="nav-btn" data-tab="machine">
+            <span class="nav-icon">🖥</span>
+            <span class="nav-label">Machine</span>
+          </button>
+        </nav>
+        <div class="sidebar-footer">
+          <div class="version-info">v2.0</div>
+        </div>
+      </aside>
+
+      <!-- Tab Content Area -->
+      <main class="content-area">
+        <!-- G-Code Tab -->
+        <div class="tab-pane active" id="gcode">
+          <div class="tab-header">
+            <h2>G-Code Editor</h2>
+            <div class="toolbar">
+              <button class="btn btn-primary" id="btnNew">📄 New</button>
+              <button class="btn btn-secondary" id="btnLoad">📂 Load</button>
+              <button class="btn btn-secondary" id="btnSave">💾 Save</button>
+              <button class="btn btn-success" id="btnRun">▶ Run</button>
+            </div>
+          </div>
+          <div class="gcode-editor-container">
+            <div class="line-numbers" id="lineNumbers">1</div>
+            <textarea id="gcodeEditor" spellcheck="false" placeholder="Enter your G-code here..."></textarea>
+          </div>
+          <div class="gcode-info">
+            <span id="gcodeStats">Lines: 0 | Characters: 0</span>
+            <span id="gcodeFile"></span>
+          </div>
+        </div>
+
+        <!-- Parameters Tab -->
+        <div class="tab-pane" id="params">
+          <div class="tab-header">
+            <h2>Cutting Parameters</h2>
+            <div class="toolbar">
+              <button class="btn btn-primary" id="btnApplyParams">✓ Apply</button>
+              <button class="btn btn-secondary" id="btnResetParams">↺ Reset</button>
+              <button class="btn btn-info" id="btnSavePreset">💾 Save Preset</button>
+            </div>
+          </div>
+          <div class="params-container">
+            <div class="param-card">
+              <h3>📦 Glass Properties</h3>
+              <div class="param-grid">
+                <div class="param-item">
+                  <label>Width (mm)</label>
+                  <input type="number" id="glassWidth" value="3000" min="200" max="6000">
+                </div>
+                <div class="param-item">
+                  <label>Height (mm)</label>
+                  <input type="number" id="glassHeight" value="2000" min="200" max="3000">
+                </div>
+                <div class="param-item">
+                  <label>Thickness (mm)</label>
+                  <input type="number" id="glassThickness" value="6" min="2" max="25" step="0.5">
+                </div>
+                <div class="param-item">
+                  <label>Glass Type</label>
+                  <select id="glassType">
+                    <option value="float">Float Glass</option>
+                    <option value="laminated">Laminated Glass</option>
+                    <option value="tempered">Tempered</option>
+                    <option value="reflective">Reflective</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="param-card">
+              <h3>✂️ Cutting Parameters</h3>
+              <div class="param-grid">
+                <div class="param-item">
+                  <label>Cutting Speed (m/min)</label>
+                  <input type="number" id="cutSpeed" value="60" min="5" max="80">
+                </div>
+                <div class="param-item">
+                  <label>Cutting Pressure (bar)</label>
+                  <input type="number" id="cutPressure" value="4.5" min="1" max="8" step="0.1">
+                </div>
+                <div class="param-item">
+                  <label>Angle (°)</label>
+                  <input type="number" id="cutAngle" value="0" min="-180" max="180">
+                </div>
+                <div class="param-item">
+                  <label>Kerf Compensation</label>
+                  <select id="kerfCompensation">
+                    <option value="auto">Automatic</option>
+                    <option value="manual">Manual</option>
+                    <option value="none">None</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="param-card">
+              <h3>📐 Axis Settings</h3>
+              <div class="param-grid">
+                <div class="param-item">
+                  <label>X Max Speed (mm/s)</label>
+                  <input type="number" id="xMaxSpeed" value="1500" min="100" max="2000">
+                </div>
+                <div class="param-item">
+                  <label>Y Max Speed (mm/s)</label>
+                  <input type="number" id="yMaxSpeed" value="1500" min="100" max="2000">
+                </div>
+                <div class="param-item">
+                  <label>Z Reference (mm)</label>
+                  <input type="number" id="zReference" value="50" min="0" max="200">
+                </div>
+                <div class="param-item">
+                  <label>Encoder Resolution</label>
+                  <input type="text" value="24-bit" disabled>
+                </div>
+              </div>
+            </div>
+
+            <div class="param-card">
+              <h3>🔷 E-Cam (Laminated)</h3>
+              <div class="param-grid">
+                <div class="param-item">
+                  <label>Synchronization</label>
+                  <select id="ecamSync">
+                    <option value="enabled">Enabled</option>
+                    <option value="disabled">Disabled</option>
+                  </select>
+                </div>
+                <div class="param-item">
+                  <label>Profile Type</label>
+                  <select id="ecamProfile">
+                    <option value="straight">Straight Cut</option>
+                    <option value="curve">Curve Cut</option>
+                    <option value="custom">Custom Profile</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulation Tab -->
+        <div class="tab-pane" id="simulation">
+          <div class="tab-header">
+            <h2>Cutting Simulation</h2>
+            <div class="toolbar">
+              <button class="btn btn-primary" id="btnSimStart">▶ Start</button>
+              <button class="btn btn-warning" id="btnSimPause">⏸ Pause</button>
+              <button class="btn btn-secondary" id="btnSimReset">↺ Reset</button>
+            </div>
+          </div>
+          <div class="simulation-wrapper">
+            <div class="simulation-container">
+              <canvas id="simCanvas" width="500" height="400"></canvas>
+            </div>
+            <div class="sim-panel">
+              <div class="sim-info">
+                <div class="info-row">
+                  <span class="info-label">Position X:</span>
+                  <span id="simPosX" class="info-value">0.00</span>
+                  <span class="info-unit">mm</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Position Y:</span>
+                  <span id="simPosY" class="info-value">0.00</span>
+                  <span class="info-unit">mm</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Distance:</span>
+                  <span id="simDistance" class="info-value">0.00</span>
+                  <span class="info-unit">mm</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Time:</span>
+                  <span id="simTime" class="info-value">0:00</span>
+                  <span class="info-unit"></span>
+                </div>
+              </div>
+              <div class="sim-speed-control">
+                <label>Speed:</label>
+                <input type="range" id="simSpeed" min="1" max="10" value="5">
+                <span id="simSpeedValue" class="speed-display">5x</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Machine Tab -->
+        <div class="tab-pane" id="machine">
+          <div class="tab-header">
+            <h2>Machine Status</h2>
+            <div class="toolbar">
+              <button class="btn btn-primary" id="btnConnect">🔌 Connect</button>
+              <button class="btn btn-danger" id="btnDisconnect">🔌 Disconnect</button>
+              <button class="btn btn-warning" id="btnEmergencyStop">🚨 E-STOP</button>
+            </div>
+          </div>
+          <div class="machine-dashboard">
+            <div class="machine-card wide">
+              <h3>🏭 Machine Information</h3>
+              <div class="machine-specs">
+                <div class="spec-grid">
+                  <div class="spec-item">
+                    <span class="spec-label">Model</span>
+                    <span class="spec-value">Lisec GFB-60/30RE</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-label">Max Size</span>
+                    <span class="spec-value">6000 x 3000 mm</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-label">Glass Thickness</span>
+                    <span class="spec-value">2-25 mm</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-label">Cutting Speed</span>
+                    <span class="spec-value">0-80 m/min</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-label">Accuracy</span>
+                    <span class="spec-value">±0.05 mm</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-label">Controller</span>
+                    <span class="spec-value">Delta NC300</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="machine-card">
+              <h3>Servo Status</h3>
+              <div class="servo-grid">
+                <div class="servo-item">
+                  <span class="servo-name">X Axis</span>
+                  <span class="servo-indicator ready" id="servoXStatus">Ready</span>
+                  <span class="servo-value" id="servoX">0.000 mm</span>
+                </div>
+                <div class="servo-item">
+                  <span class="servo-name">Y Axis</span>
+                  <span class="servo-indicator ready" id="servoYStatus">Ready</span>
+                  <span class="servo-value" id="servoY">0.000 mm</span>
+                </div>
+                <div class="servo-item">
+                  <span class="servo-name">Z Axis</span>
+                  <span class="servo-indicator ready" id="servoZStatus">Ready</span>
+                  <span class="servo-value" id="servoZ">50.000 mm</span>
+                </div>
+                <div class="servo-item">
+                  <span class="servo-name">Alt Axis</span>
+                  <span class="servo-indicator ready" id="servoAltStatus">Ready</span>
+                  <span class="servo-value" id="servoAlt">0.00°</span>
+                </div>
+                <div class="servo-item">
+                  <span class="servo-name">CNC Axis</span>
+                  <span class="servo-indicator ready" id="servoCNCStatus">Ready</span>
+                  <span class="servo-value" id="servoCNC">0.000 mm</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="machine-card">
+              <h3>I/O Status</h3>
+              <div class="io-panel">
+                <div class="io-section">
+                  <span class="io-label">Inputs</span>
+                  <div class="io-leds" id="inputLeds">
+                    <div class="led off" data-io="0"><span class="led-label">0</span></div>
+                    <div class="led off" data-io="1"><span class="led-label">1</span></div>
+                    <div class="led off" data-io="2"><span class="led-label">2</span></div>
+                    <div class="led off" data-io="3"><span class="led-label">3</span></div>
+                    <div class="led off" data-io="4"><span class="led-label">4</span></div>
+                    <div class="led off" data-io="5"><span class="led-label">5</span></div>
+                    <div class="led off" data-io="6"><span class="led-label">6</span></div>
+                    <div class="led off" data-io="7"><span class="led-label">7</span></div>
+                  </div>
+                </div>
+                <div class="io-section">
+                  <span class="io-label">Outputs</span>
+                  <div class="io-leds" id="outputLeds">
+                    <div class="led off" data-io="0"><span class="led-label">0</span></div>
+                    <div class="led off" data-io="1"><span class="led-label">1</span></div>
+                    <div class="led off" data-io="2"><span class="led-label">2</span></div>
+                    <div class="led off" data-io="3"><span class="led-label">3</span></div>
+                    <div class="led off" data-io="4"><span class="led-label">4</span></div>
+                    <div class="led off" data-io="5"><span class="led-label">5</span></div>
+                    <div class="led off" data-io="6"><span class="led-label">6</span></div>
+                    <div class="led off" data-io="7"><span class="led-label">7</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="machine-card">
+              <h3>⚠ Alarms</h3>
+              <div class="alarm-list" id="alarmList">
+                <div class="alarm-item no-alarm">No active alarms</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Status Bar -->
+    <footer class="status-bar">
+      <div class="status-left">
+        <span class="status-item">Delta NC300</span>
+        <span class="status-item">EtherCAT</span>
+        <span class="status-item">Modbus TCP</span>
+      </div>
+      <div class="status-right">
+        <span class="status-item" id="statusMessage">Ready</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

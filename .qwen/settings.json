@@ -10,7 +10,9 @@
       "Bash(python *)",
       "Bash(cp *)",
       "Bash(pkill *)",
-      "Bash(nohup *)"
+      "Bash(nohup *)",
+      "Bash(grep *)",
+      "Bash(sed *)"
     ]
   },
   "$version": 3

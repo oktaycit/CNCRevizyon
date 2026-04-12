@@ -1,143 +1,170 @@
-# Glass Cutting Program - Web Interface
-# LiSEC GFB-60/30RE Cam Kesme Makinesi
+# GlassCutting Pro - Chrome Extension
 
-## Offline Mode
+Lisec GFB-60/30RE glass cutting machine control extension. Browser-based G-code editor, cutting parameters, simulation and machine monitoring.
 
-Bu uygulama **internet bağlantısı olmadan** da çalışır!
+## ⚡ Quick Install (2 minutes)
 
-### Offline Özellikler:
-- ✅ Sipariş girişi ve yönetimi
-- ✅ Nesting optimizasyonu (Guillotine algorithm)
-- ✅ Path optimizasyonu (TSP 2-opt)
-- ✅ G-Code üretimi (NC300 uyumlu)
-- ✅ Lamine cam parametre hesaplama (local formulas)
-- ✅ Kusur tespiti (simulated)
-- ✅ Canvas visualization
+### Step 1: Open Chrome Extensions
 
-### Online Özellikler (AI API gerekli):
-- 🤖 AI destekli optimizasyon (qwen3-max)
-- 🤖 AI kod validation (qwen3-coder-plus)
-- 🤖 AI lamine parametre tuning (qwen3.5-plus)
-
----
-
-## Başlatma
-
-### 1. Flask Server
-
-```bash
-cd AI/GlassCuttingProgram/web/backend
-python3 app.py
+```
+1. Open Google Chrome
+2. Go to: chrome://extensions/
 ```
 
-Server: http://localhost:5001
+### Step 2: Enable Developer Mode
 
-### 2. Browser
-
-Aç: http://localhost:5001
-
----
-
-## API Endpoints
-
-| Endpoint | Offline | Online | Description |
-|----------|---------|--------|-------------|
-| `/api/orders` | ✅ | ✅ | Sipariş CRUD |
-| `/api/optimize/local` | ✅ | ✅ | **Offline optimizasyon** |
-| `/api/optimize` | ❌ | ✅ | AI optimizasyon |
-| `/api/optimize/nesting` | ✅ | ✅ | Nesting only |
-| `/api/gcode` | ✅ | ✅ | G-Code output |
-| `/api/lamine/calculate` | ✅ | ✅ | Lamine params (local) |
-| `/api/machine/info` | ✅ | ✅ | Machine specs |
-
----
-
-## Offline Detection
-
-Web arayüzü otomatik olarak internet durumunu algılar:
-
-- **Online:** AI modelleri aktif
-- **Offline:** Local algorithms kullanılır
-
-Banner gösterir:
 ```
-📡 Offline Mode - Local algoritmalar çalışıyor
+- Toggle "Developer mode" switch (top right corner)
+- It turns blue when enabled
+```
+
+### Step 3: Load Extension
+
+```
+1. Click "Load unpacked" button
+2. Navigate to: AI/GlassCuttingProgram/web/
+3. Select the folder and click "Select Folder"
+```
+
+### Step 4: Use Extension
+
+```
+- Click the puzzle icon (Extensions) in Chrome toolbar
+- Pin "GlassCutting Pro" to toolbar
+- Click the icon to open
 ```
 
 ---
 
-## Local Algorithms
+## Features
 
-### Nesting
-- **Guillotine BestFit** - Optimal parça yerleşimi
-- **Maximal Rectangles** - Alternatif algoritma
+### 📝 G-Code Editor
 
-### Path
-- **Nearest Neighbor** - Hızlı çözüm
-- **2-opt** - Local search improvement
-- **3-opt** - Daha iyi sonuçlar
+- Full-featured text editor
+- Line numbers
+- Load/Save files
+- Sample G-code included
+- Character and line counter
 
-### G-Code
-- NC300 komut seti
-- Float/Laminated/Tempered glass modes
-- E-Cam profile generation
+### ⚙️ Cutting Parameters
+
+- Glass properties (width, height, thickness, type)
+- Cutting settings (speed, pressure, angle)
+- Axis settings (X/Y/Z max speed)
+- E-Cam for laminated glass
+- Preset save/load
+
+### 🎯 Simulation
+
+- Real-time 2D visualization
+- Cutting path animation
+- Position tracking
+- Speed control (1x-10x)
+- Pause/Resume/Reset
+
+### 🖥️ Machine Status
+
+- 5-axis servo monitoring
+- I/O LED indicators
+- Alarm list
+- Connection status
 
 ---
 
-## Directory Structure
+## Usage
+
+### Load G-Code
+
+1. Click extension icon
+2. Go to G-Code tab
+3. Click "📂 Load" button
+4. Select your .nc, .gcode, or .txt file
+
+### Set Parameters
+
+1. Go to Parameters tab
+2. Configure glass and cutting settings
+3. Click "✓ Apply"
+
+### Run Simulation
+
+1. Go to Simulation tab
+2. Click "▶ Start"
+3. Adjust speed with slider
+
+### Connect to Machine
+
+1. Go to Machine tab
+2. Click "🔌 Connect"
+3. Monitor servo positions
+
+---
+
+## File Structure
 
 ```
 web/
-├── backend/
-│   ├── app.py              # Flask API server
-│   └── requirements.txt    # Flask + CORS
-├── frontend/
-│   ├── index.html          # Dashboard
-│   ├── orders.html         # Order management
-│   ├── visualization.html  # Nesting canvas
-│   ├── gcode.html          # G-Code viewer
-│   ├── lamine.html         # Laminated glass
-│   └── static/
-│       ├── css/style.css   # Dark theme
-│       └── js/
-│           ├── app.js      # API + Offline
-│           └── visualization.js  # Canvas
+├── manifest.json         # Extension manifest (v3)
+├── app.html              # Main UI
+├── app.css               # Styles
+├── app.js                # Application logic
+├── app.background.js     # Service worker
+├── test.html             # Test page
+└── icons/
+    ├── icon16.png
+    ├── icon48.png
+    ├── icon128.png
+    └── icon256.png
 ```
 
 ---
 
-## Requirements
+## Keyboard Shortcuts
 
-```bash
-# Backend
-pip install flask flask-cors
-
-# Optional (for AI)
-pip install aiohttp
-```
+| Shortcut | Action |
+|----------|--------|
+| Click icon | Open extension |
+| Ctrl+Click | Open in new tab |
 
 ---
 
-## Browser Support
+## Supported G-Codes
 
-- Chrome (recommended)
-- Firefox
-- Safari
-- Edge
-- Mobile browsers
-
----
-
-## Tips
-
-1. **Offline çalışma:** Internet bağlantısı kapatın, uygulama yerel algoritmaları kullanır
-2. **Sipariş yükle:** "Örnek Sipariş Yükle" butonu ile test
-3. **Optimization:** "Optimizasyon Çalıştır" ile nesting + G-code
-4. **G-Code:** G-code sekmesinden .nc dosyasını indirin
-5. **Canvas:** Visualization sekmesinde yerleşimi görüntüle
+| Code | Description |
+|------|-------------|
+| G0 | Rapid positioning |
+| G1 | Linear cutting |
+| G21 | Metric units |
+| G90 | Absolute positioning |
+| G91 | Relative positioning |
+| M30 | Program end |
 
 ---
 
-**Version:** 1.0
-**Machine:** LiSEC GFB-60/30RE
-**Controller:** Delta NC300
+## Troubleshooting
+
+### Extension not showing
+
+- Make sure Developer mode is enabled
+- Reload from chrome://extensions/
+- Restart Chrome
+
+### Can't load files
+
+- Grant permissions when prompted
+- Use supported file extensions
+
+### Simulation not working
+
+- Check G-code format
+- Try sample G-code first
+
+---
+
+## Version
+
+**2.0.0** - Chrome Extension (April 2026)
+
+---
+
+**CNC Revizyon Team**
