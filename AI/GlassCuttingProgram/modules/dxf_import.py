@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 """
 DXF Import Module
 AutoCAD DXF file parser for glass cutting shapes

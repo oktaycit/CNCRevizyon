@@ -300,23 +300,17 @@ def create_full_assembly(doc, name="Full_Machine_Assembly"):
     z_axis = create_z_axis_assembly(doc, "Z_Assembly")
     part_names.append("Z_Assembly")
     
-    # Tüm parçaları birleştir (Part::Fuse kullanarak)
-    if len(part_names) >= 2:
-        # İlk iki parçayı birleştir
-        fuse1 = doc.addObject("Part::Fuse", "Fuse1")
-        fuse1.Base = doc.getObject(part_names[0])
-        fuse1.Tool0 = doc.getObject(part_names[1])
-        
-        # Diğer parçaları ekle
-        for i, name in enumerate(part_names[2:], 2):
-            fuse_new = doc.addObject("Part::Fuse", f"Fuse{i}")
-            fuse_new.Base = fuse1 if i == 2 else doc.getObject(f"Fuse{i-1}")
-            fuse_new.Tool0 = doc.getObject(name)
-        
-        final_fuse = doc.getObject(f"Fuse{len(part_names)-1}")
-        shape = doc.addObject("Part::Feature", name)
-        shape.Shape = final_fuse.Shape
-    
+    # Tüm parçaları geometri seviyesinde birleştir
+    if not part_names:
+        return None
+
+    combined = doc.getObject(part_names[0]).Shape
+    for part_name in part_names[1:]:
+        combined = combined.fuse(doc.getObject(part_name).Shape)
+
+    shape = doc.addObject("Part::Feature", name)
+    shape.Shape = combined
+
     return shape
 
 def export_to_step(doc, obj, filename):

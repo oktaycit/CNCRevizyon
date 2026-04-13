@@ -216,7 +216,11 @@ async function addOrder() {
         thickness: document.getElementById('thickness')?.value,
         glass_type: document.getElementById('glassType')?.value,
         priority: document.getElementById('priority')?.value,
-        rotate_allowed: document.getElementById('rotateAllowed')?.checked
+        rotate_allowed: document.getElementById('rotateAllowed')?.checked,
+        // Blade management options
+        grinding_allowance: document.getElementById('grindingAllowance')?.value || 'none',
+        blade_delete_enabled: document.getElementById('bladeDeleteEnabled')?.checked || false,
+        trimming_enabled: document.getElementById('trimmingEnabled')?.checked || false
     };
 
     try {
@@ -329,18 +333,72 @@ function renderOrderList() {
         return;
     }
 
-    list.innerHTML = currentOrders.map(order => `
+    list.innerHTML = currentOrders.map(order => {
+        const herofisOptions = order.herofis_options || {};
+
+        // Blade / processing indicators
+        const bladeOptions = [];
+        if (order.grinding_allowance && order.grinding_allowance !== 'none') {
+            bladeOptions.push(`<span class="blade-option-tag" title="Rodaj/Taşlama: ${order.grinding_allowance}">🔧</span>`);
+        }
+        if (order.blade_delete_enabled) {
+            bladeOptions.push(`<span class="blade-option-tag blade-delete" title="Lama Silme Aktif">🔪</span>`);
+        }
+        if (order.trimming_enabled) {
+            bladeOptions.push(`<span class="blade-option-tag trimming" title="Rodaj Aktif">✂️</span>`);
+        }
+        if (order.edge_processing) {
+            bladeOptions.push(`<span class="blade-option-tag rodaj" title="Kenar İşlemi: ${order.edge_processing}">🪟</span>`);
+        }
+        if (herofisOptions.is_shape) {
+            bladeOptions.push(`<span class="blade-option-tag shape" title="Şekilli ürün">⬡</span>`);
+        }
+        if (herofisOptions.is_warranty) {
+            bladeOptions.push(`<span class="blade-option-tag warranty" title="Garanti kapsamında">🛡️</span>`);
+        }
+        if ((herofisOptions.parameter_keys || []).length > 0) {
+            bladeOptions.push(`<span class="blade-option-tag params" title="Herofis opsiyonları: ${(herofisOptions.parameter_keys || []).join(', ')}">🧩</span>`);
+        }
+
+        const metaLines = [];
+        if (order.source_system === 'herofis') {
+            metaLines.push(`<span class="order-meta-chip source">Herofis</span>`);
+        }
+        if (order.customer_name) {
+            metaLines.push(`<span class="order-meta-chip">${order.customer_name}</span>`);
+        }
+        if (order.process_code) {
+            metaLines.push(`<span class="order-meta-chip">Proses: ${order.process_code}</span>`);
+        }
+        if (order.edge_processing) {
+            metaLines.push(`<span class="order-meta-chip">Kenar: ${order.edge_processing}</span>`);
+        }
+        if (herofisOptions.batch_no) {
+            metaLines.push(`<span class="order-meta-chip">Batch: ${herofisOptions.batch_no}</span>`);
+        }
+        if (herofisOptions.line_note) {
+            metaLines.push(`<span class="order-meta-chip">Not: ${herofisOptions.line_note}</span>`);
+        }
+
+        return `
         <div class="order-item">
-            <span class="id">${order.order_id}</span>
-            <span class="size">${order.width}x${order.height}</span>
-            <span class="qty">${order.quantity}</span>
-            <span class="type">${order.glass_type}</span>
-            <span class="priority ${order.priority === 1 ? 'high' : order.priority === 2 ? 'medium' : 'low'}">
-                ${order.priority === 1 ? 'Yüksek' : order.priority === 2 ? 'Normal' : 'Düşük'}
-            </span>
-            <button class="delete-btn" onclick="deleteOrder('${order.order_id}')">🗑️</button>
+            <div class="order-main">
+                <span class="id">${order.order_id}</span>
+                <span class="size">${order.width}x${order.height}</span>
+                <span class="qty">${order.quantity}</span>
+                <span class="type">${order.glass_type}</span>
+                <span class="priority ${order.priority === 1 ? 'high' : order.priority === 2 ? 'medium' : 'low'}">
+                    ${order.priority === 1 ? 'Yüksek' : order.priority === 2 ? 'Normal' : 'Düşük'}
+                </span>
+                <div class="blade-options">
+                    ${bladeOptions.join('')}
+                </div>
+                <button class="delete-btn" onclick="deleteOrder('${order.order_id}')">🗑️</button>
+            </div>
+            ${metaLines.length ? `<div class="order-meta">${metaLines.join('')}</div>` : ''}
         </div>
-    `).join('');
+    `;
+    }).join('');
 }
 
 function clearForm() {
@@ -355,6 +413,16 @@ function clearForm() {
 
     const quantity = document.getElementById('quantity');
     if (quantity) quantity.value = 1;
+
+    // Reset blade options
+    const grindingAllowance = document.getElementById('grindingAllowance');
+    if (grindingAllowance) grindingAllowance.value = 'none';
+
+    const bladeDeleteEnabled = document.getElementById('bladeDeleteEnabled');
+    if (bladeDeleteEnabled) bladeDeleteEnabled.checked = false;
+
+    const trimmingEnabled = document.getElementById('trimmingEnabled');
+    if (trimmingEnabled) trimmingEnabled.checked = false;
 }
 
 // ==================== Optimization Functions ====================

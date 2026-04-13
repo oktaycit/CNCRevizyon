@@ -260,6 +260,83 @@
                 </div>
             </section>
 
+            <!-- Herofis Integration -->
+            <section class="panel integration-panel">
+                <h2 class="panel-title">🔗 Herofis Entegrasyonu</h2>
+
+                <div class="integration-config">
+                    <div class="config-group">
+                        <label for="herofisBaseUrl">Herofis URL</label>
+                        <input type="text" id="herofisBaseUrl" value="https://herofis.com" />
+                        <span class="hint">Canlı CamCAD/Herofis ana adresi</span>
+                    </div>
+
+                    <div class="config-group">
+                        <label for="herofisUsername">Kullanıcı</label>
+                        <input type="text" id="herofisUsername" placeholder="ornek@firma.com" />
+                    </div>
+
+                    <div class="config-group">
+                        <label for="herofisPassword">Şifre</label>
+                        <div class="input-group">
+                            <input type="password" id="herofisPassword" placeholder="Şifre" />
+                            <button class="btn small" onclick="toggleHerofisPasswordVisibility()">👁️</button>
+                        </div>
+                        <span class="hint">Yerel ayarlarda saklanır; canlı test için kullanılır</span>
+                    </div>
+
+                    <div class="integration-grid">
+                        <div class="config-group">
+                            <label for="integrationDefaultStatusId">Varsayılan Hedef Statü</label>
+                            <input type="number" id="integrationDefaultStatusId" value="20" min="0" />
+                            <span class="hint">Önerilen: `20 / Production`</span>
+                        </div>
+
+                        <div class="config-group checkbox">
+                            <label>
+                                <input type="checkbox" id="herofisVerifySsl" />
+                                SSL doğrulaması açık
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="integration-divider"></div>
+
+                    <div class="integration-grid">
+                        <div class="config-group">
+                            <label for="integrationTestOrderNo">Test Sipariş No</label>
+                            <input type="text" id="integrationTestOrderNo" placeholder="10416" />
+                        </div>
+
+                        <div class="config-group">
+                            <label for="integrationStatusOverride">Test Statü Override</label>
+                            <input type="number" id="integrationStatusOverride" placeholder="Boş bırak: varsayılanı kullan" min="0" />
+                        </div>
+                    </div>
+
+                    <div class="settings-actions">
+                        <button class="btn small" onclick="testHerofisConnection()">🧪 Bağlantıyı Test Et</button>
+                        <button class="btn small" onclick="testHerofisFetchOrder()">📥 Siparişi Çek</button>
+                        <button class="btn primary small" onclick="runHerofisLiveOptimize()">⚙️ Siparişi Optimize Et</button>
+                    </div>
+
+                    <div class="connection-status integration-status-box">
+                        <div class="status-item">
+                            <span class="label">Herofis Durumu:</span>
+                            <span class="value" id="herofisConnectionStatus">Hazır değil</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">Son Sipariş:</span>
+                            <span class="value" id="integrationLastOrder">-</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">Son Sonuç:</span>
+                            <span class="value" id="integrationLastResult">-</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Task Routing -->
             <section class="panel routing-panel">
                 <h2 class="panel-title">🔀 Task Routing</h2>

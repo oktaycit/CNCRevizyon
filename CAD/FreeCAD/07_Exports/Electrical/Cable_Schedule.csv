@@ -1,0 +1,15 @@
+Route,Cable_Type,Cross_Section_mm2,Color,Wire_Count,Wire_IDs,Total_Length_m
+PS1 → X1,H07V-K,2.5,Red,2,"W001, W002",20
+PS1 → X6,H07V-K,4.0,Green/Yellow,1,W003,20
+X1 → U2,H07V-K,1.5,Red,2,"W004, W005",0.5
+X6 → U2,H07V-K,1.5,Green/Yellow,1,W006,0.5
+X1 → U3,H07V-K,1.5,Red,2,"W007, W008",0.3
+X6 → U3,H07V-K,1.5,Green/Yellow,1,W009,0.3
+U1 → X2,CAT6 SF/UTP,0.14,Blue,1,W010,20
+X2 → U3,CAT6 SF/UTP,0.14,Blue,1,W011,0.5
+U1 → X3,CAT5e UTP,0.14,Gray,1,W012,20
+X3 → U2,CAT5e UTP,0.14,Gray,1,W013,0.5
+X4 → X1,H07V-K,0.5,Green,4,"W014, W016, W018, W020",0.5
+U4 → X4,H07V-K,0.5,Blue,4,"W015, W017, W019, W021",0.3
+U5 → X5,H07V-K,0.5,Green,2,"W022, W024",0.3
+X5 → X1,H07V-K,0.5,Green,2,"W023, W025",0.5

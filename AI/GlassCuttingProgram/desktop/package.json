@@ -1,0 +1,13 @@
+{
+  "name": "glasscutting-pro-desktop",
+  "version": "1.0.0",
+  "description": "Browser-independent desktop shell for GlassCutting Pro",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^33.2.1"
+  }
+}

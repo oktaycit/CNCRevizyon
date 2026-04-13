@@ -1,0 +1,17 @@
+{
+  "doc_name": "GFB_60_30RE_S_Complete1",
+  "objects": 128,
+  "order_state_path": "/Users/oktaycit/Projeler/CNCRevizyon/AI/GlassCuttingProgram/data/runtime/current_orders_laminated_test.json",
+  "gcode_file": "/Users/oktaycit/Projeler/CNCRevizyon/AI/GlassCuttingProgram/output/gcode/current_orders_laminated_auto_test_20260413_093657.nc",
+  "glass_type": "laminated",
+  "parts_loaded": 15,
+  "parts_placed": 15,
+  "utilization": 0.6612222222222223,
+  "simulation_moves": 199,
+  "simulation_cut_moves": 120,
+  "simulation_rapid_moves": 79,
+  "estimated_duration_s": 7270.704,
+  "total_cut_length_mm": 105716.6,
+  "event_log_count": 4,
+  "source_date": "2026-04-13"
+}

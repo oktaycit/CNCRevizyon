@@ -54,6 +54,21 @@ class GlassOrder:
     priority: int = 1  # 1=high, 2=medium, 3=low
     rotate_allowed: bool = True
     edge_quality: str = "standard"  # standard, polished
+    
+    # Blade management options
+    grinding_allowance: str = "none"  # none, grinding, fine_grinding, polishing, bevelling, edge_sealing
+    blade_delete_enabled: bool = False  # Lama silme aktif
+    trimming_enabled: bool = False  # Rodaj aktif
+    
+    # Source and integration metadata
+    source_system: str = "manual"
+    source_order_no: str = ""
+    customer_name: str = ""
+    edge_processing: str = ""
+    process_code: str = ""
+    herofis_options: Dict[str, Any] = field(default_factory=dict)
+    film_type: str = ""
+    film_thickness: float = 0.0
 
 
 @dataclass
@@ -117,6 +132,10 @@ class GlassCuttingOrchestrator:
 
         # Initialize AI orchestrator
         self.ai_orchestrator = self._init_ai_orchestrator()
+        self.model_index_by_id = {
+            model["model_id"]: index
+            for index, model in enumerate(self.config.get("models", []))
+        }
 
         # Modules
         self.modules_dir = Path(__file__).parent / "modules"
@@ -180,6 +199,25 @@ class GlassCuttingOrchestrator:
             ))
 
         return AIOrchestrator(model_configs)
+
+    def _resolve_model_indices(self, route_name: str) -> List[int]:
+        """Resolve configured model ids to orchestrator indices."""
+        indices = []
+        for model_id in self.TASK_ROUTING.get(route_name, []):
+            index = self.model_index_by_id.get(model_id)
+            if index is not None:
+                indices.append(index)
+        return indices
+
+    def _get_successful_contents(self, responses: List[Any]) -> List[str]:
+        """Normalize orchestrator responses into successful content strings."""
+        contents = []
+        for response in responses or []:
+            status = getattr(response, "status", None)
+            content = getattr(response, "content", None)
+            if status == "success" and content:
+                contents.append(content)
+        return contents
 
     async def optimize_cutting(self,
                                orders: List[GlassOrder],
@@ -291,8 +329,11 @@ Suggest:
 2. Edge quality considerations
 3. Cutting sequence optimization"""
 
-                responses = await self.ai_orchestrator.run_parallel(prompt, ["qwen3-max-2026-01-23"])
-                # Process suggestions...
+                model_indices = self._resolve_model_indices("nesting_analysis")
+                responses = await self.ai_orchestrator.run_parallel(prompt, model_indices or None)
+                suggestions = self._get_successful_contents(responses)
+                if suggestions:
+                    print(f"AI nesting suggestions received from {len(suggestions)} model(s)")
             except Exception as e:
                 print(f"AI suggestion failed: {e}")
 
@@ -520,10 +561,8 @@ Check for:
 2. NC300 compatibility
 3. Safety considerations"""
 
-                await self.ai_orchestrator.run_parallel(
-                    prompt,
-                    self.TASK_ROUTING["gcode_generation"]
-                )
+                model_indices = self._resolve_model_indices("gcode_generation")
+                await self.ai_orchestrator.run_parallel(prompt, model_indices or None)
             except Exception as e:
                 print(f"G-code validation skipped: {e}")
 
@@ -641,10 +680,9 @@ Return JSON with:
 - offset_x, offset_y (mm) for upper/lower alignment"""
 
         try:
-            responses = await self.ai_orchestrator.run_single(
-                prompt,
-                "qwen3.5-plus"
-            )
+            model_indices = self._resolve_model_indices("lamine_params")
+            model_index = model_indices[0] if model_indices else 0
+            responses = await self.ai_orchestrator.run_single_model(prompt, model_index)
             # Parse response
             if responses and responses.content:
                 # Extract JSON from response

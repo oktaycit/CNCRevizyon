@@ -4,6 +4,15 @@
 
 Bu FreeCAD modeli, LiSEC GFB-60/30RE-S hibrit cam kesim makinesinin tam montajını içerir. Model, hem düz cam hem de lamine cam (VB-Modul) kesim yeteneklerine sahiptir.
 
+Makine modeli internet ve yerel referanslarla butunlendiginde bu montaj su hat yapisini temsil eder:
+
+- Yukleme: `ATH-60/30D` veya `BSK-60/30 RE-S`
+- Ana kesim masasi: `GFB-60/30RE-S`
+- Lamine kesim modulu: `VB-45` veya `VB-60`
+- Hat sonu: `BTS-60/30`
+
+Bu README'de `GFB-60/30RE-S hibrit sistem` kisa adi, yukaridaki komple hattin merkez kesim modulu uzerinden kullanilmaktadir.
+
 ## Özellikler
 
 ### Eksenler
@@ -106,10 +115,117 @@ doc = App.ActiveDocument
 run_nc300_lamine_cycle(doc, 25.0)
 ```
 
+NC dosyasını doğrudan model üzerinde oynatmak için:
+
+```python
+doc = App.ActiveDocument
+run_nc_file_simulation(
+    doc,
+    "/Users/oktaycit/Projeler/CNCRevizyon/Firmware/NC300/GCode/Standard_Cut.nc",
+)
+```
+
+Kesim programinin urettigi son NC dosyasini otomatik bulup oynatmak icin:
+
+```python
+doc = App.ActiveDocument
+run_nc_file_simulation(doc)
+```
+
+Runtime siparislerinden yeni NC uretmek icin:
+
+```python
+result = generate_nc_from_current_orders()
+print(result["gcode_file"])
+run_nc_file_simulation(App.ActiveDocument, result["gcode_file"])
+```
+
+Sekilli siparisler icin deneme konturu uretmek icin:
+
+```python
+shape_result = generate_shape_trial_nc_from_current_orders()
+print(shape_result["gcode_file"])
+run_nc_file_simulation(App.ActiveDocument, shape_result["gcode_file"])
+```
+
+Gercek kontur verisi varsa shape NC uretmek icin:
+
+```python
+real_shape_result = generate_real_shape_nc_from_current_orders()
+print(real_shape_result["gcode_file"])
+run_nc_file_simulation(App.ActiveDocument, real_shape_result["gcode_file"])
+```
+
+Komut satırından:
+
+```python
+main([
+    "--nc-file",
+    "/Users/oktaycit/Projeler/CNCRevizyon/Firmware/NC300/GCode/Standard_Cut.nc",
+])
+```
+
+JSON raporu ile birlikte:
+
+```python
+main([
+    "--generate-current-orders-nc",
+    "--nc-report",
+])
+```
+
+Sekilli deneme NC akisi:
+
+```python
+main([
+    "--generate-shape-trial-nc",
+    "--nc-report",
+])
+```
+
+Gercek shape NC akisi:
+
+```python
+main([
+    "--generate-real-shape-nc",
+    "--nc-report",
+])
+```
+
+Siparis dosyasini acikca vermek istersen:
+
+```python
+main([
+    "--generate-current-orders-nc",
+    "--current-orders-path",
+    "/Users/oktaycit/Projeler/CNCRevizyon/AI/GlassCuttingProgram/data/runtime/current_orders.json",
+    "--nc-report",
+])
+```
+
 Not:
 - Script artık GUI olmayan `FreeCAD -c` çalıştırmalarında da güvenli şekilde açılır.
 - Kinematik eşleme FreeCAD eksenlerinde şu şekilde uygulanır: makine `X -> FreeCAD Z`, makine `Y -> FreeCAD X`, makine `Z/V -> FreeCAD Y`.
 - Model açıldığında `Lamine_IO` ve `Lamine_Phases` spreadsheet'leri de oluşur.
+- `parse_nc_file()` temel NC çözümleyicisidir; `run_nc_file_simulation()` bunu FreeCAD oynatımına çevirir.
+- `run_nc_file_simulation(doc)` parametresiz cagrildiginda once `AI/GlassCuttingProgram/output/gcode` altindaki son uretilen NC dosyasini arar.
+- `generate_nc_from_current_orders()` runtime siparislerini yerel nesting + 2-opt yol optimizasyonu + NC300 G-code jenerasyonu ile `.nc` dosyasina cevirir.
+- `generate_real_shape_nc_from_current_orders()` `ShapeBaseString` veya son DXF importundan gelen gercek konturu kullanmayi dener.
+- `generate_shape_trial_nc_from_current_orders()` ise `is_shape=true` satirlar icin temsilci polygon kontur uretir; gercek kontur koordinati olmadiginda deneme amaclidir.
+- Şu anda `G00`, `G01`, `G02`, `G03`, `G28`, `G90`, `G91`, `F`, `M03`, `M05`, `M08`, `M09` desteklenir.
+- NC oynatımında çıkarım olarak `Z0 -> güvenli yükseklik`, `Z-5 -> kesim yüksekliği` eşlemesi kullanılır.
+- `--nc-report` ile yazılan JSON raporu tahmini çevrim süresi, toplam kesim uzunluğu ve spindle/vakum olay kaydı da içerir.
+
+NC raporunda bulunan ana alanlar:
+
+| Alan | Açıklama |
+|------|----------|
+| `estimated_duration_s` | Toplam tahmini çevrim süresi |
+| `estimated_cut_duration_s` | Kesim/yay hareketlerinin tahmini süresi |
+| `estimated_rapid_duration_s` | Rapid/home hareketlerinin tahmini süresi |
+| `total_cut_length_mm` | NC uzayında toplam kesim uzunluğu |
+| `total_rapid_length_mm` | NC uzayında toplam hızlı hareket uzunluğu |
+| `event_log` | `spindle_on/off`, `vacuum_on/off`, `cycle_complete` zaman çizelgesi |
 
 ### Faz ve I/O Mantığı
 
@@ -134,6 +250,25 @@ Temel faz akışı:
 | Ayırma | SEPARATION_OK | SEPARATING_BLADE | Kırma |
 | Kırma | BREAK_OK | BREAKING_BAR, PRESSURE_ROLLER | Boşaltma |
 | Boşaltma | UNLOAD_READY | CYCLE_COMPLETE | Tamamlandı |
+
+### NC Dosyası ve I/O Eşlemesi
+
+NC oynatımı sadece eksenleri değil, temel proses çıkışlarını da `Lamine_IO` sheet'ine yazar.
+
+Varsayılan eşlemeler:
+
+| NC Komutu | Model Çıkışı |
+|-----------|--------------|
+| `M03` | `UPPER_CUT_ENABLE=1`, `PRESSURE_ROLLER=1` |
+| `M05` | `UPPER_CUT_ENABLE=0`, `PRESSURE_ROLLER=0` |
+| `M08` | `VACUUM_PUMP=1` |
+| `M09` | `VACUUM_PUMP=0` |
+| Kesim hareketi (`G01`) | spindle açıksa `UPPER_CUT_ENABLE=1` korunur |
+| Program sonu | `CYCLE_COMPLETE=1` |
+
+Not:
+- Bu eşleme proses mantığından türetilmiş görsel/senaryo amaçlı bir modeldir.
+- NC dosyası gerçek NC300 register çevrimine değil, FreeCAD playback katmanına bağlanır.
 
 ## Model Parametreleri
 

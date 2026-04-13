@@ -1,0 +1,7 @@
+Device_ID,Type,Manufacturer,Model,Power_Rating,Voltage,Location,IP_Rating,Connection_Count
+U2,HMI_Panel,Delta,DOP-110CS,15W,24VDC,Operator_Terminal,IP65 (front),0
+U3,EtherCAT_Bus_Coupler,Delta,R1-EC01,5W,24VDC,Operator_Terminal,IP20,0
+U4,32-CH_Digital_Input,Delta,R1-EC0902D,3W,24VDC,Operator_Terminal,IP20,0
+U5,32-CH_Relay_Output,Delta,R1-EC0902O,5W,24VDC/250VAC,Operator_Terminal,IP20,0
+U1,CNC_Controller,Delta,NC300,50W,24VDC,Main_Cabinet,IP20,0
+PS1,Power_Supply,Delta,DVP-PS02,240W,24VDC/10A,Main_Cabinet,IP20,0

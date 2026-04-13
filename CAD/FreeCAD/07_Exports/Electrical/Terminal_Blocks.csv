@@ -1,0 +1,7 @@
+Terminal_ID,Type,Poles,Voltage_V,Current_A,Wire_Range_mm2,Torque_Nm,Manufacturer,Part_Number,Connection_Count
+X1,Power_Distribution,8,48,24,0.5-4.0,0.6,Phoenix Contact,MSTB 2.5/8-ST,0
+X2,Ethernet_RJ45,8,0,0,CAT6,0,Phoenix Contact,VS-RJ45-RJ45-945/5m,0
+X3,Ethernet_RJ45,8,0,0,CAT6,0,Phoenix Contact,VS-RJ45-RJ45-945/5m,0
+X4,Signal_DI,16,48,2,0.25-1.5,0.5,Phoenix Contact,MSTB 2.5/16-ST,0
+X5,Signal_DO,12,250,2,0.25-1.5,0.5,Phoenix Contact,MSTB 2.5/12-ST,0
+X6,PE_Ground_Bar,10,0,100,1.5-6.0,1.5,Phoenix Contact,PTTB 2.5-PE,0

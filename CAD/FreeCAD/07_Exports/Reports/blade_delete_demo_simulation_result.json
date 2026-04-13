@@ -1,0 +1,26 @@
+{
+  "doc_name": "GFB_60_30RE_S_Complete1",
+  "objects": 128,
+  "nc_path": "/Users/oktaycit/Projeler/CNCRevizyon/AI/GlassCuttingProgram/output/gcode/blade_delete_demo_20260413_094133.nc",
+  "moves": 15,
+  "cut_moves": 5,
+  "rapid_moves": 10,
+  "estimated_duration_s": 201.652,
+  "total_cut_length_mm": 3100.0,
+  "event_log_count": 6,
+  "blade_delete_event_count": 2,
+  "blade_delete_events": [
+    {
+      "time_s": 7.826,
+      "move_index": 4,
+      "event": "blade_delete_on",
+      "source": "M10"
+    },
+    {
+      "time_s": 7.826,
+      "move_index": 6,
+      "event": "blade_delete_off",
+      "source": "M11"
+    }
+  ]
+}

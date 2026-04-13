@@ -58,6 +58,15 @@ const DEFAULT_SETTINGS = {
         lamine: 'qwen3.5-plus',
         validation: 'glm-4.7,kimi-k2.5'
     },
+    integration: {
+        herofis_base_url: 'https://herofis.com',
+        herofis_username: '',
+        herofis_password: '',
+        verify_ssl: false,
+        default_target_status_id: 20,
+        test_order_no: '',
+        status_override: ''
+    },
     parallel: {
         max_parallel: 3,
         timeout: 90,
@@ -97,7 +106,23 @@ function loadSettings() {
 
     if (stored) {
         try {
-            currentSettings = JSON.parse(stored);
+            const parsed = JSON.parse(stored);
+            currentSettings = {
+                ...DEFAULT_SETTINGS,
+                ...parsed,
+                integration: {
+                    ...DEFAULT_SETTINGS.integration,
+                    ...(parsed.integration || {})
+                },
+                routing: {
+                    ...DEFAULT_SETTINGS.routing,
+                    ...(parsed.routing || {})
+                },
+                parallel: {
+                    ...DEFAULT_SETTINGS.parallel,
+                    ...(parsed.parallel || {})
+                }
+            };
             showToast('Ayalar yüklenildi', 'success');
         } catch (e) {
             currentSettings = DEFAULT_SETTINGS;
@@ -193,6 +218,16 @@ function applySettingsToUI() {
         if (select) select.value = value;
     });
 
+    // Integration
+    const integration = currentSettings.integration || DEFAULT_SETTINGS.integration;
+    document.getElementById('herofisBaseUrl').value = integration.herofis_base_url || DEFAULT_SETTINGS.integration.herofis_base_url;
+    document.getElementById('herofisUsername').value = integration.herofis_username || '';
+    document.getElementById('herofisPassword').value = integration.herofis_password || '';
+    document.getElementById('herofisVerifySsl').checked = Boolean(integration.verify_ssl);
+    document.getElementById('integrationDefaultStatusId').value = integration.default_target_status_id ?? 20;
+    document.getElementById('integrationTestOrderNo').value = integration.test_order_no || '';
+    document.getElementById('integrationStatusOverride').value = integration.status_override || '';
+
     // Parallel
     document.getElementById('maxParallel').value = currentSettings.parallel?.max_parallel || 3;
     document.getElementById('timeout').value = currentSettings.parallel?.timeout || 90;
@@ -228,6 +263,17 @@ function gatherSettingsFromUI() {
     document.querySelectorAll('[data-routing]').forEach(select => {
         currentSettings.routing[select.dataset.routing] = select.value;
     });
+
+    // Integration
+    currentSettings.integration = {
+        herofis_base_url: document.getElementById('herofisBaseUrl').value.trim(),
+        herofis_username: document.getElementById('herofisUsername').value.trim(),
+        herofis_password: document.getElementById('herofisPassword').value,
+        verify_ssl: document.getElementById('herofisVerifySsl').checked,
+        default_target_status_id: parseInt(document.getElementById('integrationDefaultStatusId').value || '20', 10),
+        test_order_no: document.getElementById('integrationTestOrderNo').value.trim(),
+        status_override: document.getElementById('integrationStatusOverride').value.trim()
+    };
 
     // Parallel
     currentSettings.parallel = {
@@ -365,6 +411,147 @@ function toggleApiKeyVisibility() {
     input.type = input.type === 'password' ? 'text' : 'password';
 }
 
+function toggleHerofisPasswordVisibility() {
+    const input = document.getElementById('herofisPassword');
+    input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+function updateIntegrationStatus(status, lastOrder = '-', lastResult = '-') {
+    const statusEl = document.getElementById('herofisConnectionStatus');
+    const orderEl = document.getElementById('integrationLastOrder');
+    const resultEl = document.getElementById('integrationLastResult');
+
+    if (statusEl) statusEl.textContent = status;
+    if (orderEl) orderEl.textContent = lastOrder;
+    if (resultEl) resultEl.textContent = lastResult;
+}
+
+function getIntegrationRequestConfig() {
+    gatherSettingsFromUI();
+
+    const integration = currentSettings.integration || {};
+    const orderNo = integration.test_order_no;
+
+    if (!integration.herofis_username || !integration.herofis_password) {
+        throw new Error('Herofis kullanıcı ve şifre gerekli');
+    }
+
+    if (!orderNo) {
+        throw new Error('Test sipariş numarası gerekli');
+    }
+
+    const body = {
+        username: integration.herofis_username,
+        password: integration.herofis_password,
+        orderNo,
+        baseUrl: integration.herofis_base_url || 'https://herofis.com',
+        verifySsl: integration.verify_ssl
+    };
+
+    return { integration, orderNo, body };
+}
+
+async function testHerofisConnection() {
+    try {
+        const { integration, orderNo, body } = getIntegrationRequestConfig();
+        updateIntegrationStatus('Bağlanıyor...', orderNo, '-');
+
+        const response = await fetch('/api/herofis/fetch-live-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.error || 'Bağlantı başarısız');
+        }
+
+        const payload = result.payload || {};
+        const lineCount = (payload.lines || []).length;
+        const statusText = payload.order?.status || 'Baglandi';
+        updateIntegrationStatus(`Bağlı (${statusText})`, orderNo, `${lineCount} satır`);
+        showToast('Herofis bağlantısı başarılı', 'success');
+        addLogEntry(`Herofis test başarılı: ${orderNo}, ${lineCount} satır`);
+
+        currentSettings.integration = {
+            ...integration,
+            test_order_no: orderNo
+        };
+        updateConfigPreview();
+    } catch (error) {
+        updateIntegrationStatus(`Hata: ${error.message}`);
+        showToast(`Herofis test hatası: ${error.message}`, 'error');
+    }
+}
+
+async function testHerofisFetchOrder() {
+    try {
+        const { orderNo, body } = getIntegrationRequestConfig();
+        updateIntegrationStatus('Sipariş çekiliyor...', orderNo, '-');
+
+        const response = await fetch('/api/orders/import-live-herofis', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                ...body,
+                replaceExisting: true
+            })
+        });
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.error || 'Sipariş çekilemedi');
+        }
+
+        const importedCount = result.imported || 0;
+        const customerName = result.customerName || '-';
+        updateIntegrationStatus('Sipariş aktarıldı', orderNo, `${importedCount} satır / ${customerName}`);
+        showToast(`Siparişler ekranına aktarıldı: ${orderNo}`, 'success');
+        addLogEntry(`Herofis sipariş aktarıldı: ${orderNo} / ${importedCount} satır`);
+        setTimeout(() => {
+            window.location.href = '/orders';
+        }, 500);
+    } catch (error) {
+        updateIntegrationStatus(`Hata: ${error.message}`);
+        showToast(`Sipariş çekme hatası: ${error.message}`, 'error');
+    }
+}
+
+async function runHerofisLiveOptimize() {
+    try {
+        const { integration, orderNo, body } = getIntegrationRequestConfig();
+        updateIntegrationStatus('Optimizasyon çalışıyor...', orderNo, '-');
+
+        const statusOverride = integration.status_override;
+        const requestBody = {
+            ...body,
+            targetStatusId: statusOverride
+                ? parseInt(statusOverride, 10)
+                : parseInt(integration.default_target_status_id || 20, 10)
+        };
+
+        const response = await fetch('/api/integration/herofis-live-optimize', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+        });
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.error || 'Optimizasyon başarısız');
+        }
+
+        const efficiency = result.summary?.efficiency ?? '-';
+        updateIntegrationStatus('Optimize edildi', orderNo, `%${efficiency}`);
+        showToast(`Sipariş optimize edildi: ${orderNo}`, 'success');
+        addLogEntry(`Herofis optimize: ${orderNo} / ${result.optimizationRunId}`);
+    } catch (error) {
+        updateIntegrationStatus(`Hata: ${error.message}`);
+        showToast(`Optimizasyon hatası: ${error.message}`, 'error');
+    }
+}
+
 // ==================== Export/Import ====================
 
 function exportSettings() {
@@ -416,6 +603,7 @@ function doImport() {
 
 function updateConfigPreview() {
     const preview = document.getElementById('configPreview');
+    gatherSettingsFromUI();
     preview.textContent = JSON.stringify(currentSettings, null, 2);
 }
 
@@ -443,6 +631,18 @@ function setupEventListeners() {
 
     // Parallel inputs
     ['maxParallel', 'timeout', 'retryCount', 'fallbackEnabled'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', updateConfigPreview);
+    });
+
+    [
+        'herofisBaseUrl',
+        'herofisUsername',
+        'herofisPassword',
+        'herofisVerifySsl',
+        'integrationDefaultStatusId',
+        'integrationTestOrderNo',
+        'integrationStatusOverride'
+    ].forEach(id => {
         document.getElementById(id)?.addEventListener('change', updateConfigPreview);
     });
 }
@@ -484,9 +684,13 @@ window.resetToDefaults = resetToDefaults;
 window.setMode = setMode;
 window.testApiConnection = testApiConnection;
 window.toggleApiKeyVisibility = toggleApiKeyVisibility;
+window.toggleHerofisPasswordVisibility = toggleHerofisPasswordVisibility;
 window.exportSettings = exportSettings;
 window.importSettings = importSettings;
 window.closeModal = closeModal;
 window.doImport = doImport;
 window.updateConfigPreview = updateConfigPreview;
 window.checkApiStatus = checkApiStatus;
+window.testHerofisConnection = testHerofisConnection;
+window.testHerofisFetchOrder = testHerofisFetchOrder;
+window.runHerofisLiveOptimize = runHerofisLiveOptimize;

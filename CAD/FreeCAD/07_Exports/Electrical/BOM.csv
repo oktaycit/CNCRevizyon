@@ -1,0 +1,25 @@
+Category,Item,Specification,Quantity,Unit
+Device,U2 - DOP-110CS,"HMI_Panel, 24VDC, 15W",1,pcs
+Device,U3 - R1-EC01,"EtherCAT_Bus_Coupler, 24VDC, 5W",1,pcs
+Device,U4 - R1-EC0902D,"32-CH_Digital_Input, 24VDC, 3W",1,pcs
+Device,U5 - R1-EC0902O,"32-CH_Relay_Output, 24VDC/250VAC, 5W",1,pcs
+Device,U1 - NC300,"CNC_Controller, 24VDC, 50W",1,pcs
+Device,PS1 - DVP-PS02,"Power_Supply, 24VDC/10A, 240W",1,pcs
+Terminal,X1 - MSTB 2.5/8-ST,"Power_Distribution, 8-pole, 0.6Nm",1,pcs
+Terminal,X2 - VS-RJ45-RJ45-945/5m,"Ethernet_RJ45, 8-pole, 0Nm",1,pcs
+Terminal,X3 - VS-RJ45-RJ45-945/5m,"Ethernet_RJ45, 8-pole, 0Nm",1,pcs
+Terminal,X4 - MSTB 2.5/16-ST,"Signal_DI, 16-pole, 0.5Nm",1,pcs
+Terminal,X5 - MSTB 2.5/12-ST,"Signal_DO, 12-pole, 0.5Nm",1,pcs
+Terminal,X6 - PTTB 2.5-PE,"PE_Ground_Bar, 10-pole, 1.5Nm",1,pcs
+Cable,H07V-K,"2.5mm², Red",20,meters
+Cable,H07V-K,"2.5mm², Black",20,meters
+Cable,H07V-K,"4.0mm², Green/Yellow",20,meters
+Cable,H07V-K,"1.5mm², Red",0.8,meters
+Cable,H07V-K,"1.5mm², Black",0.8,meters
+Cable,H07V-K,"1.5mm², Green/Yellow",0.8,meters
+Cable,CAT6 SF/UTP,"0.14mm², Blue",20.5,meters
+Cable,CAT5e UTP,"0.14mm², Gray",20.5,meters
+Cable,H07V-K,"0.5mm², Green",2.3,meters
+Cable,H07V-K,"0.5mm², Blue",1.2,meters
+Cable,H07V-K,"0.5mm², Yellow",0.5,meters
+Cable,H07V-K,"0.5mm², Red",0.8,meters

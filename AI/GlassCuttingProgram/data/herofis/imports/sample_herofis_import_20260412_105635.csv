@@ -1,0 +1,6 @@
+Sipariş_No;Müşteri;En;Boy;Kalınlık;Cam_Tipi;Adet;Öncelik;Notlar
+HERO-001;ABC Cam;500;400;4;Float;10;Normal;Pencere camları
+HERO-002;XYZ Dekorasyon;800;600;6;Float;5;Acil;Büyük panel
+HERO-003;Mekan Cam;300;200;4;Float;20;Normal;Vitrin
+HERO-004;Pencere Ltd;1200;800;8;Lamine;3;Acil;Giriş kapısı
+HERO-005;Ayna Sanayi;450;350;5;Float;15;Düşük;Standart

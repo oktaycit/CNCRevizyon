@@ -115,6 +115,8 @@ class NC300GCodeGenerator:
         "coolant_on": "M08",
         "coolant_off": "M09",
         "dwell": "G04",
+        "blade_delete_on": "M10",
+        "blade_delete_off": "M11",
     }
 
     def __init__(self, params: Optional[GCodeParams] = None):
@@ -258,6 +260,7 @@ class NC300GCodeGenerator:
         h = part.get("placed_height", part.get("height", 100))
         part_id = part.get("order_id", part.get("part_id", "unknown"))
         thickness = part.get("thickness", 4)
+        blade_delete_enabled = bool(part.get("blade_delete_enabled", False))
 
         lines.extend([
             "",
@@ -270,6 +273,11 @@ class NC300GCodeGenerator:
         # Rapid move to start position
         lines.append(f"{self.NC300_CODES['rapid']} X{x:.2f} Y{y:.2f} F{self.params.rapid_speed}")
 
+        if blade_delete_enabled:
+            blade_lines, blade_distance = self._generate_blade_delete_sequence(x, y, w, h)
+            lines.extend(blade_lines)
+            distance += blade_distance
+
         # Cutting sequence depends on glass type
         if glass_type == GlassType.LAMINATED:
             cut_lines, cut_dist = self._generate_laminated_cut(x, y, w, h)
@@ -281,6 +289,31 @@ class NC300GCodeGenerator:
         lines.extend(cut_lines)
         distance += cut_dist
 
+        return lines, distance
+
+    def _generate_blade_delete_sequence(self, x: float, y: float,
+                                        w: float, h: float) -> Tuple[List[str], float]:
+        """Generate a simple blade wiping / lama siyirma sequence."""
+        lines = [
+            "",
+            "; Blade delete sequence",
+            "; Step BD1: Move to wiping pad",
+        ]
+        distance = 0.0
+
+        pad_x = max(0.0, x - min(80.0, max(20.0, w * 0.1)))
+        pad_y = max(0.0, y - min(60.0, max(20.0, h * 0.1)))
+
+        lines.append(f"{self.NC300_CODES['rapid']} X{pad_x:.2f} Y{pad_y:.2f} F{self.params.rapid_speed}")
+        distance += abs(x - pad_x) + abs(y - pad_y)
+        lines.append(self.NC300_CODES["blade_delete_on"])
+        lines.append(f"{self.NC300_CODES['dwell']} P1.5 ; Blade wipe contact")
+        lines.append(self.NC300_CODES["blade_delete_off"])
+        lines.extend([
+            "; Step BD2: Return to cut start",
+            f"{self.NC300_CODES['rapid']} X{x:.2f} Y{y:.2f} F{self.params.rapid_speed}",
+        ])
+        distance += abs(x - pad_x) + abs(y - pad_y)
         return lines, distance
 
     def _generate_float_cut(self, x: float, y: float,

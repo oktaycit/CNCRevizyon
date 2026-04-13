@@ -1,0 +1,183 @@
+<mxfile host="app.diagrams.net" modified="2026-04-07T18:00:00Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="page-4c" name="04-C Z Ekseni Servo - Rev4.1">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Title Block -->
+        <mxCell id="title" value="GFB60/30RE-S&#10;04-C Z Ekseni Servo (1.0kW, Frenli)&#10;Revizyon 4.1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=26;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="480" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="Delta ASD-A3-1023-E servo sürücü, ECMA-C11010FS motor (FRENLİ)&#10;1.0kW / 1-faz 230VAC, EtherCAT kontrol (Node 4)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="580" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="pageTag4c" value="PAGE 04-C / SERVO&#10;Rev 4.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#5a2d2d;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="30" width="170" height="32" as="geometry"/>
+        </mxCell>
+
+        <!-- U44 Servo Drive -->
+        <mxCell id="u44" value="U44&#10;DELTA ASD-A3-1023-E&#10;SERVO DRIVE&#10;1.0kW / 1F 230VAC&#10;EtherCAT&#10;24-bit Encoder" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="150" width="300" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- P1 Power Input (1-phase) -->
+        <mxCell id="p1" value="P1&#10;MAIN POWER&#10;R/L1 (L)&#10;S/L2 (N)&#10;T/L3 (NC)&#10;&#10;1F 230VAC ±10%&#10;10A MCB&#10;2.5mm²&#10;&#10;NOT: T/L3 bağlı DEĞİL!" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f5f5f5;strokeColor=#666666;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="150" width="160" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- P2 Motor Output -->
+        <mxCell id="p2" value="P2&#10;MOTOR&#10;U (Black)&#10;V (White)&#10;W (Red)&#10;PE (Green/Yellow)&#10;&#10;Shielded cable&#10;1.5mm² x 4C&#10;Max 20m" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="310" width="140" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- M44 Servo Motor (Braked) -->
+        <mxCell id="m44" value="M44&#10;ECMA-C11010FS&#10;SERVO MOTOR (FRENLİ)&#10;1.0kW / 3000rpm&#10;24-bit Absolute&#10;Frame: 100mm&#10;&#10;Rated Torque: 3.18 Nm&#10;Peak Torque: 9.54 Nm&#10;Inertia: 0.88 x 10⁻⁴ kg·m²&#10;&#10;FREN: 24VDC, 0.35A&#10;Kalkış torku: 15 Nm&#10;Tutma torku: 18 Nm" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="720" y="150" width="220" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- Brake Control Circuit -->
+        <mxCell id="brake" value="FREN KONTROL DEVRESİ&#10;&#10;+24VDC (Page 01) → Fren Bobini (+)&#10;Fren Bobini (-) → DO_5 (BRK)&#10;DO_5 → 0V (via servo drive)&#10;&#10;DO_5 (CN1 Pin 40):&#10;- HIGH (24V): Fren AÇIK (serbest)&#10;- LOW (0V): Fren KAPALI (kilitli)&#10;&#10;Kontrol:&#10;- S-ON OFF → Fren AKTİF&#10;- Servo OFF → Fren AKTİF&#10;- Alarm → Fren AKTİF&#10;&#10;Kablo: 2x0.5mm²&#10;Akım: 0.35A" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="720" y="380" width="240" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- CN1 I/O Connector -->
+        <mxCell id="cn1" value="CN1&#10;50-pin D-Sub&#10;I/O CONNECTOR&#10;&#10;Pin 6: S-ON (Servo Enable)&#10;Pin 9: +24V (Control)&#10;Pin 29: STO1 (Safety)&#10;Pin 30: STO2 (Safety)&#10;Pin 40: DO_5 (BRK - Fren)&#10;Pin 43: STO_COM&#10;Pin 44: COM+&#10;&#10;See pinout detail →" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="380" width="220" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- CN1 Pin Detail -->
+        <mxCell id="cn1detail" value="CN1 PINOUT (Z Ekseni Özel)&#10;&#10;POWER &amp; ENABLE:&#10;Pin 6: S-ON (Servo ON, active low)&#10;Pin 9: +24V (Control power)&#10;Pin 44: COM+ (24V return)&#10;&#10;STO (Safe Torque Off):&#10;Pin 29: STO1 (Channel A)&#10;Pin 30: STO2 (Channel B)&#10;Pin 43: STO_COM (0V)&#10;&#10;BRAKE CONTROL (ÖNEMLİ):&#10;Pin 40: DO_5 (BRK - Brake control)&#10;→ Fren bobini kontrolü&#10;→ 24VDC, 0.35A&#10;&#10;DIGITAL OUTPUTS:&#10;Pin 36: DO_1 (ALM - Alarm)&#10;Pin 37: DO_2 (ZSPD)&#10;Pin 38: DO_3 (POS)&#10;&#10;Connector: 17JE-23500-02 (DDK)&#10;Cable: Shielded 0.5mm²" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="580" width="300" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- CN2 Encoder -->
+        <mxCell id="cn2" value="CN2&#10;6-pin&#10;ENCODER&#10;&#10;Pin 1: +5V&#10;Pin 2: /A&#10;Pin 3: A&#10;Pin 4: /B&#10;Pin 5: B&#10;Pin 6: Z&#10;&#10;24-bit Absolute&#10;Hirose HR10A-7P-6S&#10;Shielded 6x0.14mm²" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="400" y="440" width="140" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- CN3 EtherCAT IN -->
+        <mxCell id="cn3" value="CN3&#10;EtherCAT IN&#10;RJ45&#10;&#10;From ALT Axis&#10;&#10;Pin 1: TX+&#10;Pin 2: TX-&#10;Pin 3: RX+&#10;Pin 6: RX-&#10;&#10;CAT6 Shielded&#10;Node 4" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="380" width="140" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- CN6 EtherCAT OUT -->
+        <mxCell id="cn6" value="CN6&#10;EtherCAT OUT&#10;RJ45&#10;&#10;To CNC Axis&#10;&#10;Pin 1: TX+&#10;Pin 2: TX-&#10;Pin 3: RX+&#10;Pin 6: RX-&#10;&#10;CAT6 Shielded&#10;Daisy-chain" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="540" width="140" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- STO Connection -->
+        <mxCell id="sto" value="STO CONNECTION&#10;From Page 02 X11:7-8&#10;&#10;X11:7 (STO_A_Z) → CN1:29 (STO1)&#10;X11:8 (STO_B_Z) → CN1:30 (STO2)&#10;X11:COM → CN1:43 (STO_COM)&#10;&#10;Cable: Shielded twisted pair&#10;Kesit: 0.5mm²&#10;Renk: Sarı (Safety)&#10;&#10;Function: Safe Torque Off&#10;Category: Cat 3 PL e" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="400" y="600" width="240" height="160" as="geometry"/>
+        </mxCell>
+
+        <!-- Regenerative Resistor -->
+        <mxCell id="regen" value="REGENERATIVE&#10;RESISTOR&#10;&#10;Dahili: 120Ω / 50W&#10;&#10;Terminal: P3/C/D&#10;P3: External +&#10;C: Common (internal)&#10;D: External -&#10;&#10;Harici opsiyonel&#10;P3-D bağlanır&#10;C-D açık" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="980" y="150" width="180" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- Status LEDs -->
+        <mxCell id="leds" value="SERVO STATUS LEDs&#10;&#10;POWER (Green):&#10;- ON: Control power OK&#10;- OFF: No power&#10;&#10;RUN (Green):&#10;- ON: Servo ON&#10;- Blink: Homing&#10;- OFF: Servo OFF&#10;&#10;ALM (Red):&#10;- ON: Alarm detected&#10;- OFF: Normal&#10;&#10;7-segment display:&#10;Shows status/alarm codes&#10;BRK: Brake status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="820" width="220" height="160" as="geometry"/>
+        </mxCell>
+
+        <!-- Cable Schedule -->
+        <mxCell id="cablesch" value="CABLE SCHEDULE - Z AXIS&#10;&#10;Power (P1):&#10;- Type: 3G2.5mm²&#10;- Length: 5m&#10;- 1F 230VAC (L/N)&#10;&#10;Motor (P2):&#10;- Type: DELTACAB-PWR-4G1.5&#10;- Length: 5m&#10;- Shielded&#10;&#10;Encoder (CN2):&#10;- Type: 6x0.14mm²&#10;- Length: 5m&#10;- Hirose HR10A&#10;&#10;I/O (CN1):&#10;- Type: 50-pin shielded&#10;- Length: 3m&#10;- D-Sub&#10;&#10;Brake:&#10;- Type: 2x0.5mm²&#10;- Length: 3m&#10;- 24VDC&#10;&#10;EtherCAT (CN3/CN6):&#10;- Type: CAT6 SF/UTP&#10;- Length: 2m each&#10;- RJ45" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="340" y="820" width="200" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- Cross References -->
+        <mxCell id="crossref" value="SAYFA REFERANSLARI&#10;&#10;Page 01 → P1 power (2.5mm²)&#10;Page 01 → +24VDC (fren)&#10;Page 02 → STO (X11:7-8)&#10;Page 03 → EtherCAT (ALT→Z)&#10;Page 04-B → ALT Axis (previous)&#10;Page 04-E → CNC Axis (next)&#10;Page 07 → DO_5 (BRK control)&#10;&#10;Alarm Feedback:&#10;DO_1 (ALM) → NC300 DI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="980" y="320" width="200" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- Motor Specifications -->
+        <mxCell id="motospec" value="MOTOR SPECIFICATIONS&#10;ECMA-C11010FS (FRENLİ)&#10;&#10;Power: 1.0kW&#10;Speed: 3000 rpm&#10;Voltage: 230VAC&#10;Current: 5.1A&#10;&#10;Torque:&#10;- Rated: 3.18 Nm&#10;- Peak: 9.54 Nm&#10;&#10;Encoder: 24-bit absolute&#10;Resolution: 16,777,216 counts&#10;&#10;Frame: 100mm&#10;Shaft: 19mm&#10;Weight: 7.5 kg&#10;&#10;Fren:&#10;- Voltaj: 24VDC&#10;- Akım: 0.35A&#10;- Güç: 8.4W&#10;- Kalkış: 15 Nm&#10;- Tutma: 18 Nm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="980" y="380" width="200" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- Drive Specifications -->
+        <mxCell id="drivespec" value="DRIVE SPECIFICATIONS&#10;ASD-A3-1023-E&#10;&#10;Input: 1F 230VAC ±10%&#10;50/60 Hz&#10;Current: 8.5A&#10;&#10;Output: 1F 0-230VAC&#10;Power: 1.0kW&#10;Current: 5.1A&#10;&#10;Control:&#10;- EtherCAT&#10;- 24-bit encoder&#10;- 1ms cycle&#10;- Brake control (DO_5)&#10;&#10;Protection:&#10;- Overcurrent&#10;- Overvoltage&#10;- Overheat&#10;- Alarm output&#10;- Brake monitor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;align=left;verticalAlign=top;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="980" y="600" width="180" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- Brake Timing Diagram -->
+        <mxCell id="braketiming" value="FREN TİMING DİYAGRAMI&#10;&#10;S-ON    ────┐       ┌────&#10;          │       │&#10;          └───────┘&#10;&#10;BRK (DO_5) ─────┐   ┌─────&#10;        (OPEN) │   │ (CLOSE)&#10;               └───┘&#10;&#10;Fren      ┌───────┐&#10;        (RELEASED)&#10;                └─────── (LOCKED)&#10;&#10;Z ekseni    │←Hareket→│&#10;Durma           │←Fren&#10;&#10;Delay: 50-100ms (S-ON OFF → Fren)&#10;Release: 20-50ms (Fren → OPEN)" style="text;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="560" y="600" width="280" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- Connections -->
+        <mxCell id="e4c_1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#666666;" edge="1" parent="1" source="u44" target="p1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4c_2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#6c8ebf;" edge="1" parent="1" source="u44" target="p2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4c_3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="p2" target="m44">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4c_4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#9673a6;" edge="1" parent="1" source="u44" target="cn1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4c_5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="u44" target="cn2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4c_6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="u44" target="cn3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4c_7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="u44" target="cn6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4c_8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#9673a6;dashed=1;" edge="1" parent="1" source="cn1" target="cn1detail">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4c_9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#d6b656;dashed=1;" edge="1" parent="1" source="cn1" target="brake">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4c_10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#d6b656;dashed=1;" edge="1" parent="1" source="m44" target="brake">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Labels -->
+        <mxCell id="l4c_1" value="Servo Drive&#10;1kW 1F" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="180" y="148" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="l4c_2" value="1F 230V&#10;2.5mm²" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="540" y="148" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="l4c_3" value="Motor&#10;1.5mm²" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="540" y="308" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="l4c_4" value="Z Motor&#10;1kW FREN" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="780" y="148" width="80" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="l4c_5" value="I/O&#10;50-pin" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="180" y="378" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="l4c_6" value="Encoder&#10;24-bit" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="440" y="438" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="l4c_7" value="EtherCAT&#10;IN" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="620" y="378" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="l4c_8" value="EtherCAT&#10;OUT" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="620" y="538" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="l4c_9" value="Fren&#10;24VDC" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="820" y="378" width="60" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- Footer -->
+        <mxCell id="footer4c" value="Rev 4.1 | Delta ASD-A3-1023-E | 1.0kW 1F 230VAC | ECMA-C11010FS (Braked) | EtherCAT Node 4" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1110" width="1080" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="footer4d" value="Prepared in Codex workspace | For PDF issue / review use" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="1110" width="450" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="footer4e" value="Sheet 4-C / 9" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1570" y="1110" width="110" height="28" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

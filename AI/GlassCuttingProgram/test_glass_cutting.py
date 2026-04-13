@@ -11,10 +11,17 @@ import os
 import sys
 import asyncio
 import json
+import tempfile
 from pathlib import Path
 
 # Add module path
 sys.path.insert(0, str(Path(__file__).parent))
+
+from web.backend.backend_services import (
+    build_cutting_history,
+    build_report_dataset,
+    build_report_history,
+)
 
 from modules import (
     NestingOptimizer, NestingAlgorithm, Part,
@@ -22,7 +29,8 @@ from modules import (
     NC300GCodeGenerator, GlassType,
     LaminatedGlassCalculator, LaminatedGlassSpec, FilmType,
     DefectHandler, Defect, DefectType,
-    HMIInterface, HMIOrderEntry, HMIConfigGenerator
+    HMIInterface, HMIOrderEntry, HMIConfigGenerator,
+    AuthManager
 )
 
 
@@ -228,6 +236,56 @@ def test_hmi_interface():
     print("✓ HMI interface test passed")
 
 
+def test_auth_manager():
+    """Test auth bootstrap, login and token verification"""
+    print("\n" + "="*60)
+    print("TEST: Authentication")
+    print("="*60)
+
+    with tempfile.TemporaryDirectory(prefix="glasscut_auth_") as tmp_dir:
+        auth = AuthManager(tmp_dir)
+
+        assert auth.bootstrap_admin_file.exists(), "Bootstrap admin file missing!"
+
+        with open(auth.bootstrap_admin_file, 'r') as f:
+            bootstrap = json.load(f)
+
+        assert bootstrap['username'] == 'admin', "Bootstrap admin username mismatch!"
+
+        login_result = auth.authenticate(bootstrap['username'], bootstrap['password'])
+        assert login_result is not None, "Bootstrap admin login failed!"
+
+        token_user = auth.verify_token(login_result['access_token'])
+        assert token_user is not None, "Access token verification failed!"
+        assert token_user['role'] == 'admin', "Bootstrap admin role mismatch!"
+
+        print(f"Bootstrap file: {auth.bootstrap_admin_file}")
+        print(f"Admin user: {bootstrap['username']}")
+        print("✓ Authentication test passed")
+
+
+def test_reporting_services():
+    """Test backend reporting services against persisted outputs"""
+    print("\n" + "="*60)
+    print("TEST: Reporting Services")
+    print("="*60)
+
+    reports_dir = Path(__file__).parent / 'output' / 'reports'
+
+    dataset = build_report_dataset(reports_dir)
+    history = build_cutting_history(reports_dir)
+    report_history = build_report_history(reports_dir)
+
+    assert dataset['report_count'] >= 1, "No persisted reports found for dataset!"
+    assert len(history) >= 1, "Cutting history should not be empty!"
+    assert len(report_history) >= 1, "Report history should not be empty!"
+
+    print(f"Dataset reports: {dataset['report_count']}")
+    print(f"History entries: {len(history)}")
+    print(f"Report history entries: {len(report_history)}")
+    print("✓ Reporting services test passed")
+
+
 async def test_full_integration():
     """Test full integration pipeline"""
     print("\n" + "="*60)
@@ -295,6 +353,14 @@ def main():
     # Test HMI interface
     test_hmi_interface()
     results['hmi'] = True
+
+    # Test authentication
+    test_auth_manager()
+    results['auth'] = True
+
+    # Test reporting services
+    test_reporting_services()
+    results['reporting'] = True
 
     # Test full integration (async)
     asyncio.run(test_full_integration())

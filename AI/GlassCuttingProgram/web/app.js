@@ -5,6 +5,91 @@
  * Full-featured browser-independent application
  */
 
+const desktopBridge = window.desktopAPI || null;
+const chromeStorage = globalThis.chrome?.storage?.local || null;
+const chromeDownloads = globalThis.chrome?.downloads || null;
+
+function appStorageSet(payload, callback = () => {}) {
+  if (chromeStorage?.set) {
+    chromeStorage.set(payload, callback);
+    return;
+  }
+
+  if (desktopBridge?.storageSet) {
+    desktopBridge.storageSet(payload)
+      .then(() => callback())
+      .catch((error) => {
+        console.error('[GlassCutting Pro] storageSet failed:', error);
+        callback();
+      });
+    return;
+  }
+
+  try {
+    Object.entries(payload || {}).forEach(([key, value]) => {
+      localStorage.setItem(`glasscutting:${key}`, JSON.stringify(value));
+    });
+  } catch (error) {
+    console.error('[GlassCutting Pro] localStorage set failed:', error);
+  }
+  callback();
+}
+
+function appStorageGet(keys, callback = () => {}) {
+  if (chromeStorage?.get) {
+    chromeStorage.get(keys, callback);
+    return;
+  }
+
+  if (desktopBridge?.storageGet) {
+    desktopBridge.storageGet(keys)
+      .then((result) => callback(result || {}))
+      .catch((error) => {
+        console.error('[GlassCutting Pro] storageGet failed:', error);
+        callback({});
+      });
+    return;
+  }
+
+  const keyList = Array.isArray(keys) ? keys : [keys];
+  const result = {};
+  keyList.filter(Boolean).forEach((key) => {
+    const raw = localStorage.getItem(`glasscutting:${key}`);
+    result[key] = raw ? JSON.parse(raw) : undefined;
+  });
+  callback(result);
+}
+
+async function saveContentToFile(content, filename) {
+  if (desktopBridge?.saveFile) {
+    const result = await desktopBridge.saveFile({
+      content,
+      defaultPath: filename || 'program.nc'
+    });
+    return result;
+  }
+
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+
+  if (chromeDownloads?.download) {
+    return new Promise((resolve) => {
+      chromeDownloads.download({
+        url,
+        filename: filename || 'program.nc',
+        saveAs: true
+      }, () => resolve({ canceled: false, filePath: filename || 'program.nc' }));
+    });
+  }
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename || 'program.nc';
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  return { canceled: false, filePath: filename || 'program.nc' };
+}
+
 // ==================== APP INITIALIZATION ====================
 document.addEventListener('DOMContentLoaded', () => {
   console.log('[GlassCutting Pro] App initialized');
@@ -181,16 +266,16 @@ function loadGCode() {
 
 function saveGCode() {
   const content = editorElement.value;
-  const blob = new Blob([content], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-
-  chrome.downloads.download({
-    url: url,
-    filename: appState.currentFile || 'program.nc',
-    saveAs: true
-  }, () => {
-    updateStatusMessage(`Saved: ${appState.currentFile || 'program.nc'}`);
-  });
+  saveContentToFile(content, appState.currentFile || 'program.nc')
+    .then((result) => {
+      if (!result?.canceled) {
+        updateStatusMessage(`Saved: ${result.filePath || appState.currentFile || 'program.nc'}`);
+      }
+    })
+    .catch((error) => {
+      console.error('[GlassCutting Pro] save failed:', error);
+      alert('Failed to save file');
+    });
 }
 
 function runGCode() {
@@ -278,7 +363,7 @@ function applyParams() {
   appState.params = params;
 
   // Save to storage
-  chrome.storage.local.set({ params }, () => {
+  appStorageSet({ params }, () => {
     updateStatusMessage('Parameters applied');
     showNotification('Parameters applied successfully', 'success');
   });
@@ -312,13 +397,13 @@ function savePreset() {
   const params = getParamsFromUI();
   appState.presets[presetName] = params;
 
-  chrome.storage.local.set({ presets: appState.presets }, () => {
+  appStorageSet({ presets: appState.presets }, () => {
     showNotification(`Preset "${presetName}" saved`, 'success');
   });
 }
 
 function loadParams() {
-  chrome.storage.local.get(['params', 'presets'], (data) => {
+  appStorageGet(['params', 'presets'], (data) => {
     if (data.params) {
       appState.params = data.params;
       // Apply params to UI (could be implemented)
@@ -885,7 +970,7 @@ function saveSettings() {
     language: document.getElementById('settingLanguage').value
   };
 
-  chrome.storage.local.set({ settings: appState.settings }, () => {
+  appStorageSet({ settings: appState.settings }, () => {
     closeSettings();
     updateStatusMessage('Settings saved');
     showNotification('Settings saved successfully', 'success');
@@ -899,7 +984,7 @@ function saveSettings() {
 }
 
 function loadSettings() {
-  chrome.storage.local.get(['settings', 'presets'], (data) => {
+  appStorageGet(['settings', 'presets'], (data) => {
     if (data.settings) {
       appState.settings = { ...appState.settings, ...data.settings };
     }

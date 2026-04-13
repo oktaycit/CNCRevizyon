@@ -209,6 +209,7 @@ def create_cutting_head_assembly(doc, name="Cutting_Head_Assembly"):
     parts.append(wheel)
     
     # Teker koruyucu
+    wheel_radius = WHEEL_DIAMETER / 2
     guard_radius = wheel_radius + 10
     guard = create_hollow_cylinder(guard_radius, wheel_radius + 5, 15,
                                    (0, 50, 100))
@@ -218,10 +219,15 @@ def create_cutting_head_assembly(doc, name="Cutting_Head_Assembly"):
     shaft = create_cylinder(12, 80, (0, 0, 100))
     parts.append(shaft)
     
-    shape = doc.addObject("Part::Feature", name)
-    shape.Shape = parts[0]
+    combined = parts[0].Shape
     for p in parts[1:]:
-        shape.Shape = shape.Shape.fuse(p.Shape)
+        if hasattr(p, "Shape"):
+            combined = combined.fuse(p.Shape)
+        else:
+            combined = combined.fuse(p)
+
+    shape = doc.addObject("Part::Feature", name)
+    shape.Shape = combined
     
     return shape
 

@@ -1,0 +1,514 @@
+{
+  "orders": [
+    {
+      "order_id": "10414-1",
+      "width": 603.0,
+      "height": 1022.0,
+      "quantity": 1,
+      "thickness": 4.0,
+      "glass_type": "float",
+      "priority": 1,
+      "rotate_allowed": true,
+      "grinding_allowance": "none",
+      "blade_delete_enabled": false,
+      "trimming_enabled": true,
+      "source_system": "herofis",
+      "source_order_no": "10414",
+      "customer_name": "ABT Pencere A.Ş.",
+      "edge_processing": "",
+      "process_code": "LIVE_HEROFIS",
+      "herofis_options": {
+        "group_code": "362",
+        "batch_no": "",
+        "package_id": null,
+        "is_warranty": true,
+        "is_shape": false,
+        "shape_base_string": null,
+        "is_laminated": false,
+        "blade_delete_enabled": false,
+        "trimming_enabled": true,
+        "line_note": "1",
+        "single_glass_count": 2,
+        "parameter_keys": [
+          "CombineSpacer",
+          "Convertible",
+          "ExportExcel",
+          "GlassGrossRaise",
+          "GlassOverSize",
+          "GlassOverSizePriceRaiseRate",
+          "MaxCutSize",
+          "MinCutSize",
+          "MinRaiseAmount",
+          "PrintLabel",
+          "RaiseAmount",
+          "RaiseType",
+          "RoundAmount",
+          "RoundType",
+          "WasteRate"
+        ],
+        "parameters": {
+          "MinRaiseAmount": [
+            "0,2"
+          ],
+          "GlassGrossRaise": [
+            "0",
+            "50"
+          ],
+          "RaiseAmount": [
+            "50",
+            "20"
+          ],
+          "RaiseType": [
+            "1",
+            "2"
+          ],
+          "CombineSpacer": [
+            "true"
+          ],
+          "Convertible": [
+            "true"
+          ],
+          "ExportExcel": [
+            "true"
+          ],
+          "MaxCutSize": [
+            "6000"
+          ],
+          "MinCutSize": [
+            "50"
+          ],
+          "PrintLabel": [
+            "true"
+          ],
+          "RoundAmount": [
+            "0"
+          ],
+          "RoundType": [
+            "0"
+          ],
+          "WasteRate": [
+            "0"
+          ],
+          "GlassOverSizePriceRaiseRate": [
+            "50"
+          ],
+          "GlassOverSize": [
+            "3"
+          ]
+        },
+        "upper_thickness": 0.0,
+        "lower_thickness": 0.0
+      },
+      "film_type": "",
+      "film_thickness": 0.0
+    },
+    {
+      "order_id": "10414-2",
+      "width": 603.0,
+      "height": 1022.0,
+      "quantity": 1,
+      "thickness": 4.0,
+      "glass_type": "float",
+      "priority": 1,
+      "rotate_allowed": true,
+      "grinding_allowance": "none",
+      "blade_delete_enabled": false,
+      "trimming_enabled": true,
+      "source_system": "herofis",
+      "source_order_no": "10414",
+      "customer_name": "ABT Pencere A.Ş.",
+      "edge_processing": "",
+      "process_code": "LIVE_HEROFIS",
+      "herofis_options": {
+        "group_code": "362",
+        "batch_no": "",
+        "package_id": null,
+        "is_warranty": true,
+        "is_shape": false,
+        "shape_base_string": null,
+        "is_laminated": false,
+        "blade_delete_enabled": false,
+        "trimming_enabled": true,
+        "line_note": "1",
+        "single_glass_count": 2,
+        "parameter_keys": [
+          "CombineSpacer",
+          "Convertible",
+          "ExportExcel",
+          "GlassGrossRaise",
+          "GlassOverSize",
+          "GlassOverSizePriceRaiseRate",
+          "MaxCutSize",
+          "MinCutSize",
+          "MinRaiseAmount",
+          "PrintLabel",
+          "RaiseAmount",
+          "RaiseType",
+          "RoundAmount",
+          "RoundType",
+          "WasteRate"
+        ],
+        "parameters": {
+          "MinRaiseAmount": [
+            "0,2"
+          ],
+          "GlassGrossRaise": [
+            "0",
+            "50"
+          ],
+          "RaiseAmount": [
+            "50",
+            "20"
+          ],
+          "RaiseType": [
+            "1",
+            "2"
+          ],
+          "CombineSpacer": [
+            "true"
+          ],
+          "Convertible": [
+            "true"
+          ],
+          "ExportExcel": [
+            "true"
+          ],
+          "MaxCutSize": [
+            "6000"
+          ],
+          "MinCutSize": [
+            "50"
+          ],
+          "PrintLabel": [
+            "true"
+          ],
+          "RoundAmount": [
+            "0"
+          ],
+          "RoundType": [
+            "0"
+          ],
+          "WasteRate": [
+            "0"
+          ],
+          "GlassOverSizePriceRaiseRate": [
+            "50"
+          ],
+          "GlassOverSize": [
+            "3"
+          ]
+        },
+        "upper_thickness": 0.0,
+        "lower_thickness": 0.0
+      },
+      "film_type": "",
+      "film_thickness": 0.0
+    },
+    {
+      "order_id": "10414-3",
+      "width": 724.0,
+      "height": 912.0,
+      "quantity": 1,
+      "thickness": 4.0,
+      "glass_type": "float",
+      "priority": 1,
+      "rotate_allowed": true,
+      "grinding_allowance": "none",
+      "blade_delete_enabled": false,
+      "trimming_enabled": true,
+      "source_system": "herofis",
+      "source_order_no": "10414",
+      "customer_name": "ABT Pencere A.Ş.",
+      "edge_processing": "",
+      "process_code": "LIVE_HEROFIS",
+      "herofis_options": {
+        "group_code": "362",
+        "batch_no": "",
+        "package_id": null,
+        "is_warranty": true,
+        "is_shape": false,
+        "shape_base_string": null,
+        "is_laminated": false,
+        "blade_delete_enabled": false,
+        "trimming_enabled": true,
+        "line_note": "2",
+        "single_glass_count": 2,
+        "parameter_keys": [
+          "CombineSpacer",
+          "Convertible",
+          "ExportExcel",
+          "GlassGrossRaise",
+          "GlassOverSize",
+          "GlassOverSizePriceRaiseRate",
+          "MaxCutSize",
+          "MinCutSize",
+          "MinRaiseAmount",
+          "PrintLabel",
+          "RaiseAmount",
+          "RaiseType",
+          "RoundAmount",
+          "RoundType",
+          "WasteRate"
+        ],
+        "parameters": {
+          "MinRaiseAmount": [
+            "0,2"
+          ],
+          "GlassGrossRaise": [
+            "0",
+            "50"
+          ],
+          "RaiseAmount": [
+            "50",
+            "20"
+          ],
+          "RaiseType": [
+            "1",
+            "2"
+          ],
+          "CombineSpacer": [
+            "true"
+          ],
+          "Convertible": [
+            "true"
+          ],
+          "ExportExcel": [
+            "true"
+          ],
+          "MaxCutSize": [
+            "6000"
+          ],
+          "MinCutSize": [
+            "50"
+          ],
+          "PrintLabel": [
+            "true"
+          ],
+          "RoundAmount": [
+            "0"
+          ],
+          "RoundType": [
+            "0"
+          ],
+          "WasteRate": [
+            "0"
+          ],
+          "GlassOverSizePriceRaiseRate": [
+            "50"
+          ],
+          "GlassOverSize": [
+            "3"
+          ]
+        },
+        "upper_thickness": 0.0,
+        "lower_thickness": 0.0
+      },
+      "film_type": "",
+      "film_thickness": 0.0
+    },
+    {
+      "order_id": "10414-4",
+      "width": 856.0,
+      "height": 1996.0,
+      "quantity": 1,
+      "thickness": 4.0,
+      "glass_type": "float",
+      "priority": 1,
+      "rotate_allowed": false,
+      "grinding_allowance": "none",
+      "blade_delete_enabled": false,
+      "trimming_enabled": true,
+      "source_system": "herofis",
+      "source_order_no": "10414",
+      "customer_name": "ABT Pencere A.Ş.",
+      "edge_processing": "",
+      "process_code": "LIVE_HEROFIS",
+      "herofis_options": {
+        "group_code": "362",
+        "batch_no": "",
+        "package_id": null,
+        "is_warranty": true,
+        "is_shape": true,
+        "shape_base_string": null,
+        "is_laminated": false,
+        "blade_delete_enabled": false,
+        "trimming_enabled": true,
+        "line_note": "3",
+        "single_glass_count": 2,
+        "parameter_keys": [
+          "CombineSpacer",
+          "Convertible",
+          "ExportExcel",
+          "GlassGrossRaise",
+          "GlassOverSize",
+          "GlassOverSizePriceRaiseRate",
+          "MaxCutSize",
+          "MinCutSize",
+          "MinRaiseAmount",
+          "PrintLabel",
+          "RaiseAmount",
+          "RaiseType",
+          "RoundAmount",
+          "RoundType",
+          "WasteRate"
+        ],
+        "parameters": {
+          "MinRaiseAmount": [
+            "0,2"
+          ],
+          "GlassGrossRaise": [
+            "0",
+            "50"
+          ],
+          "RaiseAmount": [
+            "50",
+            "20"
+          ],
+          "RaiseType": [
+            "1",
+            "2"
+          ],
+          "CombineSpacer": [
+            "true"
+          ],
+          "Convertible": [
+            "true"
+          ],
+          "ExportExcel": [
+            "true"
+          ],
+          "MaxCutSize": [
+            "6000"
+          ],
+          "MinCutSize": [
+            "50"
+          ],
+          "PrintLabel": [
+            "true"
+          ],
+          "RoundAmount": [
+            "0"
+          ],
+          "RoundType": [
+            "0"
+          ],
+          "WasteRate": [
+            "0"
+          ],
+          "GlassOverSizePriceRaiseRate": [
+            "50"
+          ],
+          "GlassOverSize": [
+            "3"
+          ]
+        },
+        "upper_thickness": 0.0,
+        "lower_thickness": 0.0
+      },
+      "film_type": "",
+      "film_thickness": 0.0
+    },
+    {
+      "order_id": "10414-5",
+      "width": 810.0,
+      "height": 1010.0,
+      "quantity": 1,
+      "thickness": 4.0,
+      "glass_type": "float",
+      "priority": 1,
+      "rotate_allowed": true,
+      "grinding_allowance": "none",
+      "blade_delete_enabled": false,
+      "trimming_enabled": true,
+      "source_system": "herofis",
+      "source_order_no": "10414",
+      "customer_name": "ABT Pencere A.Ş.",
+      "edge_processing": "",
+      "process_code": "LIVE_HEROFIS",
+      "herofis_options": {
+        "group_code": "362",
+        "batch_no": "",
+        "package_id": null,
+        "is_warranty": true,
+        "is_shape": false,
+        "shape_base_string": null,
+        "is_laminated": false,
+        "blade_delete_enabled": false,
+        "trimming_enabled": true,
+        "line_note": "3",
+        "single_glass_count": 2,
+        "parameter_keys": [
+          "CombineSpacer",
+          "Convertible",
+          "ExportExcel",
+          "GlassGrossRaise",
+          "GlassOverSize",
+          "GlassOverSizePriceRaiseRate",
+          "MaxCutSize",
+          "MinCutSize",
+          "MinRaiseAmount",
+          "PrintLabel",
+          "RaiseAmount",
+          "RaiseType",
+          "RoundAmount",
+          "RoundType",
+          "WasteRate"
+        ],
+        "parameters": {
+          "MinRaiseAmount": [
+            "0,2"
+          ],
+          "GlassGrossRaise": [
+            "0",
+            "50"
+          ],
+          "RaiseAmount": [
+            "50",
+            "20"
+          ],
+          "RaiseType": [
+            "1",
+            "2"
+          ],
+          "CombineSpacer": [
+            "true"
+          ],
+          "Convertible": [
+            "true"
+          ],
+          "ExportExcel": [
+            "true"
+          ],
+          "MaxCutSize": [
+            "6000"
+          ],
+          "MinCutSize": [
+            "50"
+          ],
+          "PrintLabel": [
+            "true"
+          ],
+          "RoundAmount": [
+            "0"
+          ],
+          "RoundType": [
+            "0"
+          ],
+          "WasteRate": [
+            "0"
+          ],
+          "GlassOverSizePriceRaiseRate": [
+            "50"
+          ],
+          "GlassOverSize": [
+            "3"
+          ]
+        },
+        "upper_thickness": 0.0,
+        "lower_thickness": 0.0
+      },
+      "film_type": "",
+      "film_thickness": 0.0
+    }
+  ]
+}

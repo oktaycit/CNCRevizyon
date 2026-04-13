@@ -1,0 +1,134 @@
+### Create integration job and payload
+POST http://localhost:5001/api/orders/export-to-optimizer
+Content-Type: application/json
+
+{
+  "orderId": "12345",
+  "orderNo": "GC-2026-00125",
+  "triggeredBy": "oktaycit@gmail.com",
+  "forceReoptimize": false
+}
+
+### Read normalized export payload
+GET http://localhost:5001/api/orders/12345/export-payload
+
+### Save optimization result
+POST http://localhost:5001/api/optimizations/result
+Content-Type: application/json
+
+{
+  "jobId": "JOB-REPLACE-ME",
+  "orderId": "12345",
+  "optimizationRunId": "OPT-8891",
+  "status": "optimized",
+  "summary": {
+    "totalSheetsUsed": 14,
+    "totalWasteArea": 12.8,
+    "efficiency": 87.4
+  },
+  "lineResults": [
+    {
+      "lineId": "12345-1",
+      "optimized": true,
+      "assignedBatchNo": "BATCH-01",
+      "sheetCount": 4,
+      "wasteArea": 2.1,
+      "efficiency": 89.2
+    }
+  ],
+  "files": [
+    {
+      "type": "cut-list",
+      "name": "OPT-8891-cutlist.pdf",
+      "url": "/files/OPT-8891-cutlist.pdf"
+    }
+  ],
+  "message": "Optimization completed successfully"
+}
+
+### Query optimization result
+GET http://localhost:5001/api/optimizations/OPT-8891
+
+### Mark order as optimized in Herofis
+POST http://localhost:5001/api/orders/12345/mark-optimized
+Content-Type: application/json
+
+{
+  "optimizationRunId": "OPT-8891",
+  "updatedBy": "system"
+}
+
+### Import Herofis CSV and build payloads
+POST http://localhost:5002/api/herofis/import-csv
+Content-Type: application/json
+
+{
+  "filePath": "/Users/oktaycit/Projeler/CNCRevizyon/AI/GlassCuttingProgram/data/herofis/sample_herofis_import.csv",
+  "encoding": "auto",
+  "delimiter": "auto",
+  "skipHeader": true
+}
+
+### Import Herofis JSON and build payloads
+POST http://localhost:5002/api/herofis/import-json
+Content-Type: application/json
+
+{
+  "filePath": "/Users/oktaycit/Projeler/CNCRevizyon/AI/GlassCuttingProgram/data/herofis/herofis_orders_20260411_151113.json"
+}
+
+### Fetch live Herofis/CamCAD order
+POST http://localhost:5002/api/herofis/fetch-live-order
+Content-Type: application/json
+
+{
+  "username": "oktaycit@gmail.com",
+  "password": "camcad1",
+  "orderNo": "10414",
+  "baseUrl": "https://herofis.com",
+  "verifySsl": false
+}
+
+### Update live Herofis status directly
+POST http://localhost:5002/api/herofis/update-live-status
+Content-Type: application/json
+
+{
+  "username": "oktaycit@gmail.com",
+  "password": "camcad1",
+  "liveOrderId": 3047885,
+  "orderNo": "10414",
+  "statusId": 20,
+  "baseUrl": "https://herofis.com",
+  "verifySsl": false
+}
+
+### Full live flow: fetch + optimize + save + mark + update Herofis status
+### If targetStatusId is omitted, the API now defaults to 20 (Production).
+POST http://localhost:5002/api/integration/herofis-live-optimize
+Content-Type: application/json
+
+{
+  "username": "oktaycit@gmail.com",
+  "password": "camcad1",
+  "orderNo": "10414",
+  "triggeredBy": "oktaycit@gmail.com",
+  "baseUrl": "https://herofis.com",
+  "verifySsl": false,
+  "autoMarkOptimized": true
+}
+
+### Full live flow with explicit target status override
+POST http://localhost:5002/api/integration/herofis-live-optimize
+Content-Type: application/json
+
+{
+  "username": "oktaycit@gmail.com",
+  "password": "camcad1",
+  "orderNo": "10414",
+  "triggeredBy": "oktaycit@gmail.com",
+  "baseUrl": "https://herofis.com",
+  "verifySsl": false,
+  "autoMarkOptimized": true,
+  "targetStatusId": 3
+}

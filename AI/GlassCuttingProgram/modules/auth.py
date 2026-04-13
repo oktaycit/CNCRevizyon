@@ -14,6 +14,7 @@ Features:
 """
 
 import hashlib
+import os
 import secrets
 from datetime import datetime, timedelta
 from typing import Optional, Dict
@@ -36,7 +37,6 @@ except ImportError:
 
 
 # JWT Configuration
-JWT_SECRET = secrets.token_hex(32)  # In production, use environment variable
 JWT_ALGORITHM = 'HS256'
 JWT_EXPIRY_HOURS = 24
 JWT_REFRESH_EXPIRY_DAYS = 7
@@ -69,24 +69,21 @@ class User:
 
 class AuthManager:
     """Manage user authentication"""
-    
-    # Default admin credentials (change in production!)
-    DEFAULT_ADMIN = {
-        'username': 'admin',
-        'password': 'admin123',  # Change this!
-        'email': 'admin@localhost',
-        'role': 'admin'
-    }
+    DEFAULT_ADMIN_USERNAME = 'admin'
+    DEFAULT_ADMIN_EMAIL = 'admin@localhost'
     
     def __init__(self, data_path: Optional[str] = None):
         self.data_path = Path(data_path) if data_path else Path(__file__).parent.parent / 'data'
         self.users_file = self.data_path / 'users.json'
         self.sessions_file = self.data_path / 'sessions.json'
+        self.jwt_secret_file = self.data_path / 'jwt_secret.txt'
+        self.bootstrap_admin_file = self.data_path / 'bootstrap_admin.json'
         self.users: Dict[int, Dict] = {}
         self.sessions: Dict[str, Dict] = {}
         
         # Create data directory
         self.data_path.mkdir(parents=True, exist_ok=True)
+        self.jwt_secret = self._load_or_create_jwt_secret()
         
         # Load existing data
         self.load()
@@ -134,6 +131,21 @@ class AuthManager:
         
         if expired:
             self.save()
+
+    def _load_or_create_jwt_secret(self) -> str:
+        """Load a stable JWT secret from env or disk."""
+        env_secret = os.getenv('JWT_SECRET')
+        if env_secret:
+            return env_secret
+
+        if self.jwt_secret_file.exists():
+            secret = self.jwt_secret_file.read_text(encoding='utf-8').strip()
+            if secret:
+                return secret
+
+        secret = secrets.token_hex(32)
+        self.jwt_secret_file.write_text(secret, encoding='utf-8')
+        return secret
     
     def _hash_password(self, password: str) -> str:
         """Hash password using bcrypt or fallback to SHA-256"""
@@ -152,14 +164,24 @@ class AuthManager:
             return hashlib.sha256(password.encode('utf-8')).hexdigest() == hashed
     
     def create_default_admin(self):
-        """Create default admin user"""
+        """Create default admin user with a generated bootstrap password."""
+        bootstrap_password = os.getenv('GLASSCUTTING_BOOTSTRAP_ADMIN_PASSWORD') or secrets.token_urlsafe(18)
         admin = self.create_user(
-            username=self.DEFAULT_ADMIN['username'],
-            password=self.DEFAULT_ADMIN['password'],
-            email=self.DEFAULT_ADMIN['email'],
-            role=self.DEFAULT_ADMIN['role']
+            username=self.DEFAULT_ADMIN_USERNAME,
+            password=bootstrap_password,
+            email=self.DEFAULT_ADMIN_EMAIL,
+            role='admin'
         )
-        print(f"✅ Default admin created: {self.DEFAULT_ADMIN['username']} / {self.DEFAULT_ADMIN['password']}")
+        if admin:
+            self.bootstrap_admin_file.write_text(
+                json.dumps({
+                    'username': self.DEFAULT_ADMIN_USERNAME,
+                    'password': bootstrap_password,
+                    'created_at': datetime.now().isoformat()
+                }, indent=2),
+                encoding='utf-8'
+            )
+            print(f"✅ Default admin created. Bootstrap credentials saved to: {self.bootstrap_admin_file}")
     
     def create_user(self, username: str, password: str, 
                     email: str = '', role: str = 'operator') -> Optional[User]:
@@ -259,7 +281,7 @@ class AuthManager:
             'type': 'access'
         }
         
-        return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+        return jwt.encode(payload, self.jwt_secret, algorithm=JWT_ALGORITHM)
     
     def _generate_refresh_token(self, user: Dict) -> str:
         """Generate JWT refresh token"""
@@ -274,7 +296,7 @@ class AuthManager:
             'type': 'refresh'
         }
         
-        return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+        return jwt.encode(payload, self.jwt_secret, algorithm=JWT_ALGORITHM)
     
     def verify_token(self, token: str) -> Optional[Dict]:
         """Verify JWT token and return user info"""
@@ -294,7 +316,7 @@ class AuthManager:
             return None
         
         try:
-            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            payload = jwt.decode(token, self.jwt_secret, algorithms=[JWT_ALGORITHM])
             
             # Check token type
             if payload.get('type') != 'access':
@@ -319,7 +341,7 @@ class AuthManager:
             return None
         
         try:
-            payload = jwt.decode(refresh_token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            payload = jwt.decode(refresh_token, self.jwt_secret, algorithms=[JWT_ALGORITHM])
             
             if payload.get('type') != 'refresh':
                 return None

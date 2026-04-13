@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200">
+  <defs>
+    <style>
+      .bg { fill: #f8f7f4; }
+      .outline { fill: #ffffff; stroke: #222; stroke-width: 3; }
+      .accent { fill: #e8edf3; stroke: #222; stroke-width: 2; }
+      .glass { fill: #d9eaf7; stroke: #222; stroke-width: 2; }
+      .shadow { fill: #dfe5ea; stroke: #222; stroke-width: 2; }
+      .dim { stroke: #777; stroke-width: 1.5; marker-start: url(#a); marker-end: url(#a); }
+      .tick { stroke: #777; stroke-width: 1.5; }
+      .title { font-family: Arial, sans-serif; font-size: 32px; font-weight: bold; fill: #111; }
+      .text { font-family: Arial, sans-serif; font-size: 20px; fill: #111; }
+      .small { font-family: Arial, sans-serif; font-size: 16px; fill: #222; }
+      .tiny { font-family: Arial, sans-serif; font-size: 14px; fill: #333; }
+    </style>
+    <marker id="a" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#777"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="1200"/>
+  <text class="title" x="800" y="60" text-anchor="middle">Ayakli Operator Terminali - Konsept SVG</text>
+  <text class="text" x="800" y="95" text-anchor="middle">LiSEC saha ergonomisi + Beckhoff benzeri sade panel dili</text>
+
+  <text class="text" x="360" y="150" text-anchor="middle">On Gorunus</text>
+  <rect class="outline" x="170" y="980" width="380" height="34" rx="4"/>
+  <rect class="shadow" x="300" y="890" width="120" height="90" rx="4"/>
+  <rect class="accent" x="285" y="350" width="150" height="540" rx="8"/>
+  <rect class="accent" x="255" y="310" width="210" height="70" rx="10"/>
+  <rect class="outline" x="150" y="70" width="420" height="340" rx="12"/>
+  <rect class="glass" x="213" y="120" width="294" height="234" rx="6"/>
+  <circle cx="500" cy="330" r="28" fill="#d62828" stroke="#8b0000" stroke-width="4"/>
+  <circle cx="500" cy="330" r="36" fill="none" stroke="#f1c40f" stroke-width="10"/>
+  <rect class="shadow" x="260" y="185" width="50" height="120" rx="4"/>
+  <rect class="shadow" x="320" y="185" width="50" height="120" rx="4"/>
+  <rect class="shadow" x="380" y="185" width="50" height="120" rx="4"/>
+  <text class="small" x="360" y="395" text-anchor="middle">DOP-110CS</text>
+  <text class="tiny" x="500" y="384" text-anchor="middle">S0 E-STOP</text>
+  <text class="small" x="360" y="942" text-anchor="middle">Agir taban</text>
+  <text class="small" x="360" y="635" text-anchor="middle">Kablo kolonu</text>
+
+  <line class="dim" x1="150" y1="35" x2="570" y2="35"/>
+  <line class="tick" x1="150" y1="55" x2="150" y2="15"/>
+  <line class="tick" x1="570" y1="55" x2="570" y2="15"/>
+  <text class="small" x="360" y="28" text-anchor="middle">420 mm baslik genisligi</text>
+
+  <line class="dim" x1="115" y1="70" x2="115" y2="410"/>
+  <line class="tick" x1="135" y1="70" x2="90" y2="70"/>
+  <line class="tick" x1="135" y1="410" x2="90" y2="410"/>
+  <text class="small" x="95" y="240" transform="rotate(-90 95,240)" text-anchor="middle">340 mm</text>
+
+  <line class="dim" x1="620" y1="70" x2="620" y2="1014"/>
+  <line class="tick" x1="600" y1="70" x2="645" y2="70"/>
+  <line class="tick" x1="600" y1="1014" x2="645" y2="1014"/>
+  <text class="small" x="645" y="542" transform="rotate(-90 645,542)" text-anchor="middle">yakl. 1200 mm toplam yukseklik</text>
+
+  <text class="text" x="1180" y="150" text-anchor="middle">Yan Gorunus</text>
+  <rect class="outline" x="1040" y="120" width="220" height="300" rx="12" transform="skewX(-10)"/>
+  <rect class="glass" x="1080" y="165" width="145" height="210" rx="6" transform="skewX(-10)"/>
+  <rect class="accent" x="1130" y="360" width="95" height="530" rx="8"/>
+  <rect class="shadow" x="1060" y="930" width="250" height="34" rx="4"/>
+  <polygon class="shadow" points="1085,360 1260,360 1225,310 1120,310"/>
+  <text class="small" x="1150" y="470">One egimli baslik</text>
+  <text class="small" x="1160" y="650">Kolon ici kablo rotasi</text>
+  <text class="small" x="1185" y="985" text-anchor="middle">520 x 420 mm taban niyeti</text>
+
+  <line class="dim" x1="1040" y1="80" x2="1260" y2="80"/>
+  <line class="tick" x1="1040" y1="100" x2="1040" y2="55"/>
+  <line class="tick" x1="1260" y1="100" x2="1260" y2="55"/>
+  <text class="small" x="1150" y="72" text-anchor="middle">220 mm baslik derinligi</text>
+
+  <line class="dim" x1="1330" y1="120" x2="1330" y2="964"/>
+  <line class="tick" x1="1310" y1="120" x2="1355" y2="120"/>
+  <line class="tick" x1="1310" y1="964" x2="1355" y2="964"/>
+  <text class="small" x="1350" y="542" transform="rotate(-90 1350,542)" text-anchor="middle">HMI merkezi ~1100-1200 mm</text>
+
+  <rect x="680" y="760" width="250" height="190" fill="#fff" stroke="#aaa" stroke-width="1.5"/>
+  <text class="text" x="700" y="790">Form Notlari</text>
+  <text class="tiny" x="700" y="822">- bagimsiz ayakli operator istasyonu</text>
+  <text class="tiny" x="700" y="847">- duz / ince cerceveli on yuz</text>
+  <text class="tiny" x="700" y="872">- DOP-110CS cutout merkezli</text>
+  <text class="tiny" x="700" y="897">- kolon icinde 24V, PE, ETH</text>
+  <text class="tiny" x="700" y="922">- S0 E-STOP operator paneli uzerinde</text>
+  <text class="tiny" x="700" y="947">- kopru home bolgesine yakin kullanim</text>
+
+  <text class="small" x="40" y="1160">Dosya: Operator_Terminal_Concept.svg</text>
+  <text class="small" x="1560" y="1160" text-anchor="end">Rev. 12.04.2026</text>
+</svg>

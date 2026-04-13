@@ -1,0 +1,64 @@
+{
+  "generated_at": "2026-04-13 09:16:56",
+  "nc_path": "/Users/oktaycit/Projeler/CNCRevizyon/Firmware/NC300/GCode/Standard_Cut.nc",
+  "moves": 15,
+  "cut_moves": 6,
+  "rapid_moves": 9,
+  "arc_moves": 0,
+  "total_path_mm": 12499.9,
+  "total_cut_length_mm": 11660.0,
+  "total_rapid_length_mm": 945.9,
+  "estimated_duration_s": 369.849,
+  "estimated_cut_duration_s": 355.2,
+  "estimated_rapid_duration_s": 14.649,
+  "final_position": {
+    "X": 0.0,
+    "Y": 0.0,
+    "Z": 300.0,
+    "V": 0.0
+  },
+  "event_log": [
+    {
+      "time_s": 0.0,
+      "move_index": 1,
+      "event": "spindle_off",
+      "source": "G28 X0 Y0 Z0"
+    },
+    {
+      "time_s": 0.0,
+      "move_index": 1,
+      "event": "vacuum_off",
+      "source": "G28 X0 Y0 Z0"
+    },
+    {
+      "time_s": 3.283,
+      "move_index": 4,
+      "event": "spindle_on",
+      "source": "M03"
+    },
+    {
+      "time_s": 177.943,
+      "move_index": 7,
+      "event": "spindle_off",
+      "source": "M05"
+    },
+    {
+      "time_s": 186.943,
+      "move_index": 10,
+      "event": "spindle_on",
+      "source": "M03"
+    },
+    {
+      "time_s": 361.603,
+      "move_index": 13,
+      "event": "spindle_off",
+      "source": "M05"
+    },
+    {
+      "time_s": 369.849,
+      "move_index": 15,
+      "event": "cycle_complete",
+      "source": "simulation_end"
+    }
+  ]
+}

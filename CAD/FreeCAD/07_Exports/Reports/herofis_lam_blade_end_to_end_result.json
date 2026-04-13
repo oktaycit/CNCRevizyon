@@ -1,0 +1,68 @@
+{
+  "doc_name": "GFB_60_30RE_S_Complete1",
+  "objects": 128,
+  "nc_path": "/Users/oktaycit/Projeler/CNCRevizyon/AI/GlassCuttingProgram/output/gcode/herofis_lam_blade_e2e_fresh_1776062863_20260413_094743.nc",
+  "simulation_moves": 43,
+  "simulation_cut_moves": 16,
+  "simulation_rapid_moves": 23,
+  "estimated_duration_s": 927.258,
+  "total_cut_length_mm": 14080.6,
+  "blade_delete_event_count": 4,
+  "heating_event_count": 4,
+  "blade_delete_events": [
+    {
+      "time_s": 0.0,
+      "move_index": 4,
+      "event": "blade_delete_on",
+      "source": "M10"
+    },
+    {
+      "time_s": 1.5,
+      "move_index": 6,
+      "event": "blade_delete_off",
+      "source": "M11"
+    },
+    {
+      "time_s": 464.623,
+      "move_index": 25,
+      "event": "blade_delete_on",
+      "source": "M10"
+    },
+    {
+      "time_s": 466.123,
+      "move_index": 27,
+      "event": "blade_delete_off",
+      "source": "M11"
+    }
+  ],
+  "heating_events": [
+    {
+      "time_s": 0.0,
+      "move_index": 5,
+      "event": "dwell",
+      "source": "G04 P1.5 ; Blade wipe contact",
+      "duration_s": 1.5
+    },
+    {
+      "time_s": 225.184,
+      "move_index": 14,
+      "event": "dwell",
+      "source": "G04 P4.0 ; Heat for 4 seconds",
+      "duration_s": 4.0
+    },
+    {
+      "time_s": 464.623,
+      "move_index": 26,
+      "event": "dwell",
+      "source": "G04 P1.5 ; Blade wipe contact",
+      "duration_s": 1.5
+    },
+    {
+      "time_s": 690.526,
+      "move_index": 35,
+      "event": "dwell",
+      "source": "G04 P4.0 ; Heat for 4 seconds",
+      "duration_s": 4.0
+    }
+  ]
+}

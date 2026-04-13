@@ -15,6 +15,7 @@ LiSEC GFB-60/30RE cam kesme makinesinin tam revizyonu. Delta Electronics EtherCA
 | Özellik | Değer |
 |---------|-------|
 | Model | LiSEC GFB-60/30RE |
+| Hat Konfigürasyonu | ATH-60/30D veya BSK-60/30 RE-S yükleme + GFB-60/30RE-S kesim + VB-45/VB-60 lamine kesim + BTS-60/30 boşaltma/kırma |
 | Maksimum Cam Boyutu | 6000 x 3000 mm |
 | Minimum Cam Boyutu | 300 x 200 mm |
 | Cam Kalınlığı | 2-25 mm |
@@ -22,6 +23,24 @@ LiSEC GFB-60/30RE cam kesme makinesinin tam revizyonu. Delta Electronics EtherCA
 | Konumlandırma Hassasiyeti | ±0.05 mm (24-bit encoder) |
 | Eksen Sayısı | 5 (X, Y, Z, Alt, C/Rodaj) |
 | EtherCAT Cycle Time | 100 μs |
+
+### 1.2 Makine Modeli Tamamlama Notu
+
+`GFB-60/30RE` proje icinde temel kesim masasi modeli olarak geciyor; ancak internet taramasi ve yerel orijinal PDF referanslari, sistemin pratikte tek bir govdeden degil bir hat konfigurationsundan olustugunu gosteriyor.
+
+**Dogrulanan moduller:**
+
+| Rol | Model |
+|-----|-------|
+| Yukleme istasyonu | LiSEC ATH-60/30D veya BSK-60/30 RE-S |
+| Float / Low-E kesim masasi | LiSEC GFB-60/30RE-S |
+| Lamine kesim modulu | LiSEC VB-45 veya VB-60 |
+| Kirma / bosaltma masasi | LiSEC BTS-60/30 |
+
+**Kaynak notu:**
+- LiSEC'in guncel resmi urun sayfasi, float cam kesim icin `ESL-RS` adlandirmasini kullaniyor; bu model, ikinci el pazarda `GFB-60/30RE(-S)` ailesiyle ayni 6000 x 3000 mm kesim hattinin guncel adlandirmasi olarak goruluyor.
+- Yerel `Documentation/Manuals/gfb_EP034-047170.pdf` ve `Documentation/Manuals/okandan_gfb_vb_EP034-033781.pdf` dosyalarinda `GFB`, `VB`, `BTS`, `ATH` etiketleri birlikte goruluyor.
+- Internet uzerindeki makina ilanlarinda ayni hat, `ATH-60/30A3D + GFB-60/30RE-S + VB-45 + BTS-60/30`, `BSK-60/30 RE-S + VB-60 + BTS-60/30` ve `ESL-60/30 RS + VB-60` kombinasyonlariyla listeleniyor.
 
 ---
 

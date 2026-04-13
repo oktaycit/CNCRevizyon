@@ -114,6 +114,35 @@
                         </div>
                     </div>
 
+                    <!-- Lama ve Rodaj Opsi̇yonlari -->
+                    <div class="form-row blade-options-row">
+                        <div class="form-group">
+                            <label for="grindingAllowance">Rodaj/Taşlama Payı</label>
+                            <select id="grindingAllowance">
+                                <option value="none">İşlem Yok</option>
+                                <option value="grinding">Kaba Taşlama (+4mm)</option>
+                                <option value="fine_grinding">İnce Taşlama (+2mm)</option>
+                                <option value="polishing">Parlatma (+3mm)</option>
+                                <option value="bevelling">Pah Kırma (+6mm)</option>
+                                <option value="edge_sealing">Kenar Contası (+1mm)</option>
+                            </select>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="bladeDeleteEnabled" />
+                                <span class="checkbox-label">Lama Silme Aktif</span>
+                            </label>
+                            <small class="help-text">Bıçak ömrü takibi ile silme</small>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="trimmingEnabled" />
+                                <span class="checkbox-label">Rodaj Aktif</span>
+                            </label>
+                            <small class="help-text">Kenar rodaj işlemi</small>
+                        </div>
+                    </div>
+
                     <div class="form-actions">
                         <button type="submit" class="btn primary">
                             <span class="icon">➕</span> Sipariş Ekle

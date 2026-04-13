@@ -1,0 +1,24 @@
+{
+  "doc_name": "GFB_60_30RE_S_Complete1",
+  "objects": 128,
+  "orders_path": "/Users/oktaycit/Projeler/CNCRevizyon/AI/GlassCuttingProgram/data/runtime/current_orders_live_10414.json",
+  "gcode_file": "/Users/oktaycit/Projeler/CNCRevizyon/AI/GlassCuttingProgram/output/gcode/live_10414_e2e_20260413_094946.nc",
+  "glass_type": "float",
+  "parts_loaded": 5,
+  "parts_placed": 5,
+  "utilization": 0.24552755555555555,
+  "simulation_moves": 32,
+  "simulation_cut_moves": 25,
+  "simulation_rapid_moves": 7,
+  "estimated_duration_s": 1330.806,
+  "total_cut_length_mm": 21212.0,
+  "blade_delete_event_count": 0,
+  "heating_event_count": 0,
+  "nc_checks": {
+    "has_laminated_sequence": false,
+    "has_blade_delete_sequence": false,
+    "m10_count": 0,
+    "m11_count": 0,
+    "g04_count": 0
+  }
+}

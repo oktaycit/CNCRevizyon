@@ -18,6 +18,8 @@ print("=" * 60)
 print("GFB-60/30RE-S HİBRİT SİSTEM MODELİ")
 print("=" * 60)
 
+default_nc = os.path.expanduser("~/Projeler/CNCRevizyon/Firmware/NC300/GCode/Standard_Cut.nc")
+
 try:
     # Model scriptini yükle
     print(f"Model yükleniyor: {model_script}")
@@ -30,8 +32,11 @@ try:
     print("\n" + "=" * 60)
     print("MONTAJ TAMAMLANDI!")
     print("=" * 60)
-    print("\nSimülasyon için Python konsolunda şunu çalıştırın:")
+    print("\nLamine simülasyonu için Python konsolunda şunu çalıştırın:")
     print("  run_lamine_cutting_simulation(App.ActiveDocument, MachineParameters(), 30)")
+    print("\nNC dosyası oynatımı için:")
+    print(f"  result = run_nc_file_simulation(App.ActiveDocument, '{default_nc}')")
+    print("  export_nc_simulation_report(result)")
     print("=" * 60)
     
 except Exception as e:

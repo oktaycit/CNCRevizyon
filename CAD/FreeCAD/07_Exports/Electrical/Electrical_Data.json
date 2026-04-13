@@ -1,0 +1,427 @@
+{
+  "metadata": {
+    "project": "GFB-60/30RE CNC Revizyon",
+    "document": "Operator Terminal Electrical Connections",
+    "date": "2026-04-12 20:15:54",
+    "version": "1.0"
+  },
+  "devices": [
+    {
+      "Device_ID": "U2",
+      "Type": "HMI_Panel",
+      "Manufacturer": "Delta",
+      "Model": "DOP-110CS",
+      "Power_Rating": "15W",
+      "Voltage": "24VDC",
+      "Location": "Operator_Terminal",
+      "IP_Rating": "IP65 (front)",
+      "Connection_Count": 0
+    },
+    {
+      "Device_ID": "U3",
+      "Type": "EtherCAT_Bus_Coupler",
+      "Manufacturer": "Delta",
+      "Model": "R1-EC01",
+      "Power_Rating": "5W",
+      "Voltage": "24VDC",
+      "Location": "Operator_Terminal",
+      "IP_Rating": "IP20",
+      "Connection_Count": 0
+    },
+    {
+      "Device_ID": "U4",
+      "Type": "32-CH_Digital_Input",
+      "Manufacturer": "Delta",
+      "Model": "R1-EC0902D",
+      "Power_Rating": "3W",
+      "Voltage": "24VDC",
+      "Location": "Operator_Terminal",
+      "IP_Rating": "IP20",
+      "Connection_Count": 0
+    },
+    {
+      "Device_ID": "U5",
+      "Type": "32-CH_Relay_Output",
+      "Manufacturer": "Delta",
+      "Model": "R1-EC0902O",
+      "Power_Rating": "5W",
+      "Voltage": "24VDC/250VAC",
+      "Location": "Operator_Terminal",
+      "IP_Rating": "IP20",
+      "Connection_Count": 0
+    },
+    {
+      "Device_ID": "U1",
+      "Type": "CNC_Controller",
+      "Manufacturer": "Delta",
+      "Model": "NC300",
+      "Power_Rating": "50W",
+      "Voltage": "24VDC",
+      "Location": "Main_Cabinet",
+      "IP_Rating": "IP20",
+      "Connection_Count": 0
+    },
+    {
+      "Device_ID": "PS1",
+      "Type": "Power_Supply",
+      "Manufacturer": "Delta",
+      "Model": "DVP-PS02",
+      "Power_Rating": "240W",
+      "Voltage": "24VDC/10A",
+      "Location": "Main_Cabinet",
+      "IP_Rating": "IP20",
+      "Connection_Count": 0
+    }
+  ],
+  "terminals": [
+    {
+      "Terminal_ID": "X1",
+      "Type": "Power_Distribution",
+      "Poles": 8,
+      "Voltage_V": 48,
+      "Current_A": 24,
+      "Wire_Range_mm2": "0.5-4.0",
+      "Torque_Nm": 0.6,
+      "Manufacturer": "Phoenix Contact",
+      "Part_Number": "MSTB 2.5/8-ST",
+      "Connection_Count": 0
+    },
+    {
+      "Terminal_ID": "X2",
+      "Type": "Ethernet_RJ45",
+      "Poles": 8,
+      "Voltage_V": 0,
+      "Current_A": 0,
+      "Wire_Range_mm2": "CAT6",
+      "Torque_Nm": 0,
+      "Manufacturer": "Phoenix Contact",
+      "Part_Number": "VS-RJ45-RJ45-945/5m",
+      "Connection_Count": 0
+    },
+    {
+      "Terminal_ID": "X3",
+      "Type": "Ethernet_RJ45",
+      "Poles": 8,
+      "Voltage_V": 0,
+      "Current_A": 0,
+      "Wire_Range_mm2": "CAT6",
+      "Torque_Nm": 0,
+      "Manufacturer": "Phoenix Contact",
+      "Part_Number": "VS-RJ45-RJ45-945/5m",
+      "Connection_Count": 0
+    },
+    {
+      "Terminal_ID": "X4",
+      "Type": "Signal_DI",
+      "Poles": 16,
+      "Voltage_V": 48,
+      "Current_A": 2,
+      "Wire_Range_mm2": "0.25-1.5",
+      "Torque_Nm": 0.5,
+      "Manufacturer": "Phoenix Contact",
+      "Part_Number": "MSTB 2.5/16-ST",
+      "Connection_Count": 0
+    },
+    {
+      "Terminal_ID": "X5",
+      "Type": "Signal_DO",
+      "Poles": 12,
+      "Voltage_V": 250,
+      "Current_A": 2,
+      "Wire_Range_mm2": "0.25-1.5",
+      "Torque_Nm": 0.5,
+      "Manufacturer": "Phoenix Contact",
+      "Part_Number": "MSTB 2.5/12-ST",
+      "Connection_Count": 0
+    },
+    {
+      "Terminal_ID": "X6",
+      "Type": "PE_Ground_Bar",
+      "Poles": 10,
+      "Voltage_V": 0,
+      "Current_A": 100,
+      "Wire_Range_mm2": "1.5-6.0",
+      "Torque_Nm": 1.5,
+      "Manufacturer": "Phoenix Contact",
+      "Part_Number": "PTTB 2.5-PE",
+      "Connection_Count": 0
+    }
+  ],
+  "connections": [
+    {
+      "Wire_ID": "W001",
+      "Source_Device": "PS1",
+      "Source_Terminal": "+24V",
+      "Target_Device": "X1",
+      "Target_Terminal": "1",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 2.5,
+      "Color": "Red",
+      "Length_m": 20
+    },
+    {
+      "Wire_ID": "W002",
+      "Source_Device": "PS1",
+      "Source_Terminal": "0V",
+      "Target_Device": "X1",
+      "Target_Terminal": "2",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 2.5,
+      "Color": "Black",
+      "Length_m": 20
+    },
+    {
+      "Wire_ID": "W003",
+      "Source_Device": "PS1",
+      "Source_Terminal": "PE",
+      "Target_Device": "X6",
+      "Target_Terminal": "1",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 4.0,
+      "Color": "Green/Yellow",
+      "Length_m": 20
+    },
+    {
+      "Wire_ID": "W004",
+      "Source_Device": "X1",
+      "Source_Terminal": "3",
+      "Target_Device": "U2",
+      "Target_Terminal": "+24V",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 1.5,
+      "Color": "Red",
+      "Length_m": 0.5
+    },
+    {
+      "Wire_ID": "W005",
+      "Source_Device": "X1",
+      "Source_Terminal": "4",
+      "Target_Device": "U2",
+      "Target_Terminal": "0V",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 1.5,
+      "Color": "Black",
+      "Length_m": 0.5
+    },
+    {
+      "Wire_ID": "W006",
+      "Source_Device": "X6",
+      "Source_Terminal": "2",
+      "Target_Device": "U2",
+      "Target_Terminal": "PE",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 1.5,
+      "Color": "Green/Yellow",
+      "Length_m": 0.5
+    },
+    {
+      "Wire_ID": "W007",
+      "Source_Device": "X1",
+      "Source_Terminal": "5",
+      "Target_Device": "U3",
+      "Target_Terminal": "V+",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 1.5,
+      "Color": "Red",
+      "Length_m": 0.3
+    },
+    {
+      "Wire_ID": "W008",
+      "Source_Device": "X1",
+      "Source_Terminal": "6",
+      "Target_Device": "U3",
+      "Target_Terminal": "0V",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 1.5,
+      "Color": "Black",
+      "Length_m": 0.3
+    },
+    {
+      "Wire_ID": "W009",
+      "Source_Device": "X6",
+      "Source_Terminal": "3",
+      "Target_Device": "U3",
+      "Target_Terminal": "PE",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 1.5,
+      "Color": "Green/Yellow",
+      "Length_m": 0.3
+    },
+    {
+      "Wire_ID": "W010",
+      "Source_Device": "U1",
+      "Source_Terminal": "CN1 (EtherCAT)",
+      "Target_Device": "X2",
+      "Target_Terminal": "RJ45",
+      "Cable_Type": "CAT6 SF/UTP",
+      "Cross_Section_mm2": 0.14,
+      "Color": "Blue",
+      "Length_m": 20
+    },
+    {
+      "Wire_ID": "W011",
+      "Source_Device": "X2",
+      "Source_Terminal": "RJ45",
+      "Target_Device": "U3",
+      "Target_Terminal": "ECAT IN",
+      "Cable_Type": "CAT6 SF/UTP",
+      "Cross_Section_mm2": 0.14,
+      "Color": "Blue",
+      "Length_m": 0.5
+    },
+    {
+      "Wire_ID": "W012",
+      "Source_Device": "U1",
+      "Source_Terminal": "CN3 (Ethernet)",
+      "Target_Device": "X3",
+      "Target_Terminal": "RJ45",
+      "Cable_Type": "CAT5e UTP",
+      "Cross_Section_mm2": 0.14,
+      "Color": "Gray",
+      "Length_m": 20
+    },
+    {
+      "Wire_ID": "W013",
+      "Source_Device": "X3",
+      "Source_Terminal": "RJ45",
+      "Target_Device": "U2",
+      "Target_Terminal": "ETH",
+      "Cable_Type": "CAT5e UTP",
+      "Cross_Section_mm2": 0.14,
+      "Color": "Gray",
+      "Length_m": 0.5
+    },
+    {
+      "Wire_ID": "W014",
+      "Source_Device": "X4",
+      "Source_Terminal": "1",
+      "Target_Device": "X1",
+      "Target_Terminal": "7",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 0.5,
+      "Color": "Green",
+      "Length_m": 0.5
+    },
+    {
+      "Wire_ID": "W015",
+      "Source_Device": "U4",
+      "Source_Terminal": "DI_0",
+      "Target_Device": "X4",
+      "Target_Terminal": "2",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 0.5,
+      "Color": "Blue",
+      "Length_m": 0.3
+    },
+    {
+      "Wire_ID": "W016",
+      "Source_Device": "X4",
+      "Source_Terminal": "3",
+      "Target_Device": "X1",
+      "Target_Terminal": "7",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 0.5,
+      "Color": "Green",
+      "Length_m": 0.5
+    },
+    {
+      "Wire_ID": "W017",
+      "Source_Device": "U4",
+      "Source_Terminal": "DI_1",
+      "Target_Device": "X4",
+      "Target_Terminal": "4",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 0.5,
+      "Color": "Blue",
+      "Length_m": 0.3
+    },
+    {
+      "Wire_ID": "W018",
+      "Source_Device": "X4",
+      "Source_Terminal": "5",
+      "Target_Device": "X1",
+      "Target_Terminal": "8",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 0.5,
+      "Color": "Yellow",
+      "Length_m": 0.5
+    },
+    {
+      "Wire_ID": "W019",
+      "Source_Device": "U4",
+      "Source_Terminal": "DI_2",
+      "Target_Device": "X4",
+      "Target_Terminal": "6",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 0.5,
+      "Color": "Blue",
+      "Length_m": 0.3
+    },
+    {
+      "Wire_ID": "W020",
+      "Source_Device": "X4",
+      "Source_Terminal": "7",
+      "Target_Device": "X1",
+      "Target_Terminal": "7",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 0.5,
+      "Color": "Green",
+      "Length_m": 0.5
+    },
+    {
+      "Wire_ID": "W021",
+      "Source_Device": "U4",
+      "Source_Terminal": "DI_3",
+      "Target_Device": "X4",
+      "Target_Terminal": "8",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 0.5,
+      "Color": "Blue",
+      "Length_m": 0.3
+    },
+    {
+      "Wire_ID": "W022",
+      "Source_Device": "U5",
+      "Source_Terminal": "DO_0",
+      "Target_Device": "X5",
+      "Target_Terminal": "1",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 0.5,
+      "Color": "Green",
+      "Length_m": 0.3
+    },
+    {
+      "Wire_ID": "W023",
+      "Source_Device": "X5",
+      "Source_Terminal": "2",
+      "Target_Device": "X1",
+      "Target_Terminal": "7",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 0.5,
+      "Color": "Green",
+      "Length_m": 0.5
+    },
+    {
+      "Wire_ID": "W024",
+      "Source_Device": "U5",
+      "Source_Terminal": "DO_1",
+      "Target_Device": "X5",
+      "Target_Terminal": "3",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 0.5,
+      "Color": "Red",
+      "Length_m": 0.3
+    },
+    {
+      "Wire_ID": "W025",
+      "Source_Device": "X5",
+      "Source_Terminal": "4",
+      "Target_Device": "X1",
+      "Target_Terminal": "7",
+      "Cable_Type": "H07V-K",
+      "Cross_Section_mm2": 0.5,
+      "Color": "Red",
+      "Length_m": 0.5
+    }
+  ]
+}

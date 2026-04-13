@@ -1,0 +1,59 @@
+{
+  "orders": [
+    {
+      "order_id": "HERO-LAM-BLADE-001-1",
+      "width": 1000.0,
+      "height": 800.0,
+      "quantity": 2,
+      "thickness": 4.0,
+      "glass_type": "laminated",
+      "priority": 1,
+      "rotate_allowed": true,
+      "grinding_allowance": "none",
+      "blade_delete_enabled": true,
+      "trimming_enabled": true,
+      "source_system": "herofis",
+      "source_order_no": "HERO-LAM-BLADE-001",
+      "customer_name": "Test Musteri Lama",
+      "edge_processing": "rodaj",
+      "process_code": "LIVE_HEROFIS",
+      "herofis_options": {
+        "group_code": null,
+        "batch_no": null,
+        "package_id": null,
+        "is_warranty": false,
+        "is_shape": false,
+        "shape_base_string": null,
+        "is_laminated": true,
+        "blade_delete_enabled": true,
+        "trimming_enabled": true,
+        "line_note": "Lama sıyırma aktif, rodajli lamine",
+        "single_glass_count": 0,
+        "parameter_keys": [
+          "FilmThickness",
+          "FilmType",
+          "LamaSiyirma",
+          "RoundAmount"
+        ],
+        "parameters": {
+          "LamaSiyirma": [
+            "true"
+          ],
+          "RoundAmount": [
+            "1"
+          ],
+          "FilmType": [
+            "PVB"
+          ],
+          "FilmThickness": [
+            "0.76"
+          ]
+        },
+        "upper_thickness": 1.62,
+        "lower_thickness": 1.62
+      },
+      "film_type": "PVB",
+      "film_thickness": 0.76
+    }
+  ]
+}

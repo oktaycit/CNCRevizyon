@@ -14,5 +14,37 @@
     "skipped_count": 0,
     "errors": [],
     "success_rate": "5/5"
+  },
+  {
+    "timestamp": "2026-04-12T10:56:24.478428",
+    "source_file": "/Users/oktaycit/Projeler/CNCRevizyon/AI/GlassCuttingProgram/data/herofis/sample_herofis_import.csv",
+    "imported_count": 5,
+    "skipped_count": 0,
+    "errors": [],
+    "success_rate": "5/5"
+  },
+  {
+    "timestamp": "2026-04-12T10:56:35.984694",
+    "source_file": "/Users/oktaycit/Projeler/CNCRevizyon/AI/GlassCuttingProgram/data/herofis/sample_herofis_import.csv",
+    "imported_count": 5,
+    "skipped_count": 0,
+    "errors": [],
+    "success_rate": "5/5"
+  },
+  {
+    "timestamp": "2026-04-12T10:59:34.040035",
+    "source_file": "/Users/oktaycit/Projeler/CNCRevizyon/AI/GlassCuttingProgram/data/herofis/herofis_orders_20260411_151113.json",
+    "imported_count": 5,
+    "skipped_count": 0,
+    "errors": [],
+    "success_rate": "5/5"
+  },
+  {
+    "timestamp": "2026-04-12T10:59:55.763716",
+    "source_file": "/Users/oktaycit/Projeler/CNCRevizyon/AI/GlassCuttingProgram/data/herofis/herofis_orders_20260411_151113.json",
+    "imported_count": 5,
+    "skipped_count": 0,
+    "errors": [],
+    "success_rate": "5/5"
   }
 ]

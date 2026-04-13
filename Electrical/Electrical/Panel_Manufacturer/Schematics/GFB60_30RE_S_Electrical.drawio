@@ -1,0 +1,785 @@
+<mxfile host="app.diagrams.net" agent="Codex" pages="6">
+  <diagram id="page-1" name="01 Ana Guc ve 24VDC">
+    <mxGraphModel dx="1947" dy="1473" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=26;fontStyle=1;" value="GFB60/30RE-S&#xa;01 Ana Guc ve 24VDC Dagitimi" vertex="1">
+          <mxGeometry height="60" width="420" x="40" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;" value="Orijinal GFB dokumani ve Delta/Pilz referanslarina gore guc dagitim omurgasi" vertex="1">
+          <mxGeometry height="30" width="620" x="40" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="purpose1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;verticalAlign=top;" value="Amac&#xa;Makinenin ana enerji girisi, 24VDC uretimi ve alt sayfalara dagitilan kontrol beslemelerini tek bakista gostermek." vertex="1">
+          <mxGeometry height="60" width="360" x="40" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="pageTag1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontColor=#4b3863;fontStyle=1;" value="PAGE 01 / POWER" vertex="1">
+          <mxGeometry height="32" width="150" x="1330" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="x1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f5f5f5;strokeColor=#666666;" value="X1&#xa;AC GIRIS&#xa;L1&#xa;L2&#xa;L3&#xa;N&#xa;PE" vertex="1">
+          <mxGeometry height="180" width="110" x="60" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="q1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f5f5f5;strokeColor=#666666;" value="Q1&#xa;ANA SALTER&#xa;32A / 3P" vertex="1">
+          <mxGeometry height="120" width="120" x="230" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="f1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f5f5f5;strokeColor=#666666;" value="F1&#xa;ANA SIGORTA&#xa;3A" vertex="1">
+          <mxGeometry height="120" width="120" x="410" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="k1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f8cecc;strokeColor=#b85450;" value="K1&#xa;ANA KONTAKTOR&#xa;24VDC COIL" vertex="1">
+          <mxGeometry height="140" width="140" x="590" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="ps1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="PS1&#xa;24VDC POWER SUPPLY&#xa;20A" vertex="1">
+          <mxGeometry height="140" width="150" x="800" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="f2f6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="F2-F6&#xa;DC DAGITIM SIGORTALARI&#xa;NC300&#xa;R1-EC&#xa;SENS&#xa;SAFETY&#xa;HMI" vertex="1">
+          <mxGeometry height="200" width="160" x="1030" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="x2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="X2&#xa;24V DAGITIM TERMINALI&#xa;1 +24V_NC300&#xa;2 +24V_R1EC&#xa;3 +24V_SENS&#xa;4 +24V_SAFETY&#xa;5 +24V_HMI&#xa;6 0V_COMMON&#xa;7 0V_SENS&#xa;8 PE_SHIELD" vertex="1">
+          <mxGeometry height="280" width="210" x="1270" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="bus24" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#cc0000;fontColor=#cc0000;fillColor=none;align=left;verticalAlign=middle;" value="+24V BUS" vertex="1">
+          <mxGeometry height="30" width="140" x="60" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="bus0v" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#222222;fontColor=#222222;fillColor=none;align=left;verticalAlign=middle;" value="0V BUS" vertex="1">
+          <mxGeometry height="30" width="140" x="60" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="buspe" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#0a7a0a;fontColor=#0a7a0a;fillColor=none;align=left;verticalAlign=middle;" value="PE / SHIELD BAR" vertex="1">
+          <mxGeometry height="30" width="180" x="60" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="legend1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="LEJANT&#xa;Gri: AC guc&#xa;Mavi: 24VDC / kontrol&#xa;Kirmizi hat: +24V&#xa;Siyah hat: 0V&#xa;Yesil hat: PE / shield" vertex="1">
+          <mxGeometry height="120" width="210" x="340" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="note1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Kablo notlari&#xa;AC: 6 mm2&#xa;24VDC dagitim: 2.5 mm2&#xa;Kontrol/I-O: 0.5 - 1.5 mm2&#xa;PE: min 2 mm2" vertex="1">
+          <mxGeometry height="120" width="240" x="60" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="note2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Sayfa cikislari&#xa;Page 02 -&gt; Safety 24V&#xa;Page 03 -&gt; NC300 besleme&#xa;Page 05 -&gt; R1-EC besleme&#xa;Page 06 -&gt; Sensor 24V" vertex="1">
+          <mxGeometry height="120" width="210" x="1270" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="x1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" target="q1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="q1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" target="f1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="f1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" target="k1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="k1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" target="ps1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="ps1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" target="f2f6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="f2f6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" target="x2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="el1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;" value="3F AC" vertex="1">
+          <mxGeometry height="20" width="52" x="174" y="188" as="geometry" />
+        </mxCell>
+        <mxCell id="el2" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" value="protected AC" vertex="1">
+          <mxGeometry height="20" width="78" x="355" y="188" as="geometry" />
+        </mxCell>
+        <mxCell id="el3" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" value="main feed" vertex="1">
+          <mxGeometry height="20" width="66" x="536" y="188" as="geometry" />
+        </mxCell>
+        <mxCell id="el4" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" value="to PSU" vertex="1">
+          <mxGeometry height="20" width="50" x="736" y="188" as="geometry" />
+        </mxCell>
+        <mxCell id="el5" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" value="+24V distribution" vertex="1">
+          <mxGeometry height="20" width="104" x="946" y="188" as="geometry" />
+        </mxCell>
+        <mxCell id="el6" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" value="field power" vertex="1">
+          <mxGeometry height="20" width="68" x="1198" y="188" as="geometry" />
+        </mxCell>
+        <mxCell id="thead1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6c8ebf;strokeColor=#6c8ebf;fontColor=#ffffff;fontStyle=1;align=center;" value="DAGITIM OZETI" vertex="1">
+          <mxGeometry height="24" width="210" x="1270" y="424" as="geometry" />
+        </mxCell>
+        <mxCell id="thead1b" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d6b656;strokeColor=#d6b656;fontColor=#ffffff;fontStyle=1;align=center;" value="SAHA NOTLARI" vertex="1">
+          <mxGeometry height="24" width="490" x="60" y="696" as="geometry" />
+        </mxCell>
+        <mxCell id="x1map" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;align=left;verticalAlign=top;" value="X1 PIN MAP&#xa;1 L1 -&gt; Q1:1&#xa;2 L2 -&gt; Q1:3&#xa;3 L3 -&gt; Q1:5&#xa;4 N -&gt; PS1:N&#xa;5 PE -&gt; PE BAR" vertex="1">
+          <mxGeometry height="110" width="170" x="60" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="k1coil" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top;" value="K1 COIL CHAIN&#xa;A1 &lt;- +24V_SAFETY&#xa;A2 -&gt; 0V via Page 02 safe enable&#xa;13-14 aux -&gt; PSU ON confirm" vertex="1">
+          <mxGeometry height="110" width="180" x="590" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="ps1map" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" value="PS1 TERMINALS&#xa;L / N -&gt; from K1 output&#xa;PE -&gt; panel PE bar&#xa;+V / -V -&gt; F2-F6 bank&#xa;ADJ -&gt; 24.2V target" vertex="1">
+          <mxGeometry height="110" width="190" x="800" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="fusemap" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" value="FUSE MAP&#xa;F2 4A -&gt; NC300&#xa;F3 4A -&gt; R1-EC&#xa;F4 2A -&gt; Sensors&#xa;F5 2A -&gt; Safety&#xa;F6 2A -&gt; HMI" vertex="1">
+          <mxGeometry height="110" width="160" x="1030" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="distbus1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" value="DISTRIBUTION BUS DETAIL&#xa;+24V_NC300 -&gt; Page 03 X30:1&#xa;+24V_R1EC -&gt; Page 05 X50:+24V&#xa;+24V_SENS -&gt; field connectors&#xa;+24V_SAFETY -&gt; Page 02 X10:5&#xa;+24V_HMI -&gt; HMI panel supply" vertex="1">
+          <mxGeometry height="140" width="210" x="1270" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="pebar1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0a7a0a;align=left;verticalAlign=top;" value="PE BAR DETAIL&#xa;Cabinet PE stud&#xa;PS1 chassis&#xa;Servo shields&#xa;EtherCAT shields&#xa;Sensor shield drain" vertex="1">
+          <mxGeometry height="120" width="190" x="570" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="x2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;dashed=1;strokeColor=#b85450;" target="k1coil">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="k1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;dashed=1;strokeColor=#6c8ebf;" target="k1coil">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="ps1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;dashed=1;strokeColor=#6c8ebf;" target="ps1map">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="f2f6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;dashed=1;strokeColor=#6c8ebf;" target="fusemap">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="line24" parent="1" style="shape=line;html=1;strokeColor=#cc0000;strokeWidth=3;" vertex="1">
+          <mxGeometry height="10" width="1130" x="60" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="line0v" parent="1" style="shape=line;html=1;strokeColor=#222222;strokeWidth=3;" vertex="1">
+          <mxGeometry height="10" width="1130" x="60" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="linepe" parent="1" style="shape=line;html=1;strokeColor=#0a7a0a;strokeWidth=3;" vertex="1">
+          <mxGeometry height="10" width="1130" x="60" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="footer1a" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" value="Rev A  |  Draw.io electrical package  |  Source: GFB60/30RE-S reference docs" vertex="1">
+          <mxGeometry height="28" width="980" x="40" y="1010" as="geometry" />
+        </mxCell>
+        <mxCell id="footer1b" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" value="Prepared in Codex workspace  |  For PDF issue / review use" vertex="1">
+          <mxGeometry height="28" width="350" x="1020" y="1010" as="geometry" />
+        </mxCell>
+        <mxCell id="footer1c" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;fontStyle=1;" value="Sheet 1 / 6" vertex="1">
+          <mxGeometry height="28" width="110" x="1370" y="1010" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-2" name="02 Emniyet Zinciri ve STO">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0-2" />
+        <mxCell id="1-2" parent="0-2" />
+        <mxCell id="title-2" value="GFB60/30RE-S&#xa;02 Emniyet Zinciri ve STO" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=26;fontStyle=1;" vertex="1" parent="1-2">
+          <mxGeometry x="40" y="30" width="420" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle-2" value="Pilz PNOZ X2.8P uzerinden cift kanalli E-STOP, kapi guvenligi ve 5 eksen STO dagitimi" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1-2">
+          <mxGeometry x="40" y="90" width="760" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="purpose2" value="Amac&#xa;Safety loop mantigini, reset davranisini ve servo STO dagitimini tek sayfada okunur hale getirmek." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;verticalAlign=top;" vertex="1" parent="1-2">
+          <mxGeometry x="40" y="120" width="360" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pageTag2" value="PAGE 02 / SAFETY" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontColor=#7a4a00;fontStyle=1;" vertex="1" parent="1-2">
+          <mxGeometry x="1310" y="30" width="170" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="x10" value="X10&#xa;SAFETY INPUTS&#xa;1 E-STOP CH1&#xa;2 E-STOP CH2&#xa;3 DOOR SAFE&#xa;4 RESET&#xa;5 +24V SAFETY&#xa;6 0V SAFETY" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1-2">
+          <mxGeometry x="50" y="170" width="150" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="s0" value="S0&#xa;E-STOP&#xa;2 CHANNEL NC" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1-2">
+          <mxGeometry x="270" y="190" width="120" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="s1" value="S1&#xa;SAFETY DOOR&#xa;NC" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1-2">
+          <mxGeometry x="450" y="190" width="120" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="k10" value="K10&#xa;PILZ PNOZ X2.8P&#xa;SAFETY RELAY" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1-2">
+          <mxGeometry x="650" y="160" width="180" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="x11" value="X11&#xa;STO OUTPUTS&#xa;1 STO_A_X&#xa;2 STO_B_X&#xa;3 STO_A_Y&#xa;4 STO_B_Y&#xa;5 STO_A_ALT&#xa;6 STO_B_ALT&#xa;7 STO_A_Z&#xa;8 STO_B_Z&#xa;9 STO_A_CNC&#xa;10 STO_B_CNC" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1-2">
+          <mxGeometry x="910" y="120" width="210" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" value="S2&#xa;RESET&#xa;NO PUSHBUTTON" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1-2">
+          <mxGeometry x="270" y="420" width="120" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="x12" value="X12&#xa;AUX SIGNALS&#xa;1 SAFE_FB&#xa;2 SERVO_ENABLE_CHAIN" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1-2">
+          <mxGeometry x="910" y="460" width="210" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="note21" value="+24V_SAFETY" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#cc0000;fontColor=#cc0000;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1-2">
+          <mxGeometry x="60" y="620" width="180" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="note22" value="0V_SAFETY" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#222222;fontColor=#222222;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1-2">
+          <mxGeometry x="60" y="690" width="180" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="note23" value="Notlar&#xa;Manual reset required&#xa;PL e / SIL 3 hedefi&#xa;STO wiring: shielded twisted pair&#xa;Safety kablolari sari" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1-2">
+          <mxGeometry x="1260" y="150" width="220" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="note24" value="Sayfa referanslari&#xa;Page 01 -&gt; +24V_SAFETY&#xa;Page 04 -&gt; servo STO1/STO2&#xa;Page 03 -&gt; SAFE_FB / enable zinciri" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1-2">
+          <mxGeometry x="1260" y="360" width="220" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="thead2a" value="SAFETY NOTES" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d6b656;strokeColor=#d6b656;fontColor=#ffffff;fontStyle=1;align=center;" vertex="1" parent="1-2">
+          <mxGeometry x="1260" y="126" width="220" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="thead2b" value="CROSS REFERENCES" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6c8ebf;strokeColor=#6c8ebf;fontColor=#ffffff;fontStyle=1;align=center;" vertex="1" parent="1-2">
+          <mxGeometry x="1260" y="336" width="220" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="pnozterm" value="K10 TERMINALS&#xa;A1 +24V_SAFETY&#xa;A2 0V_SAFETY&#xa;S11/S12 E-STOP CH1&#xa;S21/S22 E-STOP CH2&#xa;Y1/Y2 manual reset&#xa;13/14 safety out A&#xa;23/24 safety out B&#xa;41/42 feedback" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;align=left;verticalAlign=top;" vertex="1" parent="1-2">
+          <mxGeometry x="650" y="350" width="210" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="stomap2" value="STO CHANNEL MAP&#xa;X11:1-2 -&gt; X axis U41 CN1:29/30&#xa;X11:3-4 -&gt; Y axis U42 CN1:29/30&#xa;X11:5-6 -&gt; Alt axis U43 CN1:29/30&#xa;X11:7-8 -&gt; Z axis U44 CN1:29/30&#xa;X11:9-10 -&gt; C axis U45 CN1:29/30" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;align=left;verticalAlign=top;" vertex="1" parent="1-2">
+          <mxGeometry x="910" y="590" width="310" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="feedback2" value="FEEDBACK CHAIN&#xa;SAFE_FB -&gt; NC300 safe monitor DI&#xa;SERVO_ENABLE_CHAIN -&gt; K1 coil permissive&#xa;Alarm reset remains outside safety loop" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" vertex="1" parent="1-2">
+          <mxGeometry x="1260" y="520" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="safebus2" value="SAFETY POWER DETAIL&#xa;Page 01 X2:4 -&gt; X10:5 +24V_SAFETY&#xa;Page 01 X2:6 -&gt; X10:6 0V_SAFETY&#xa;Page 02 output contacts switch only safety channels" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" vertex="1" parent="1-2">
+          <mxGeometry x="60" y="750" width="300" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="e27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;dashed=1;strokeColor=#d6b656;" edge="1" parent="1-2" source="k10" target="pnozterm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;dashed=1;strokeColor=#d6b656;" edge="1" parent="1-2" source="x11" target="stomap2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;dashed=1;strokeColor=#6c8ebf;" edge="1" parent="1-2" source="x12" target="feedback2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sel7" value="safety relay terminals" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;" vertex="1" parent="1-2">
+          <mxGeometry x="736" y="332" width="130" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="sel8" value="axis-by-axis STO destinations" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-2">
+          <mxGeometry x="962" y="570" width="180" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="sel9" value="feedback to control layer" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-2">
+          <mxGeometry x="1154" y="510" width="126" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="e21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1-2" source="x10" target="s0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1-2" source="s0" target="s1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1-2" source="s1" target="k10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1-2" source="k10" target="x11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1-2" source="s2" target="k10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1-2" source="k10" target="x12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sel1" value="channel 1/2" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;" vertex="1" parent="1-2">
+          <mxGeometry x="206" y="212" width="74" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="sel2" value="safe stop loop" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-2">
+          <mxGeometry x="394" y="212" width="88" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="sel3" value="relay inputs" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-2">
+          <mxGeometry x="576" y="212" width="76" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="sel4" value="STO A / STO B" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;" vertex="1" parent="1-2">
+          <mxGeometry x="838" y="212" width="90" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="sel5" value="manual reset" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-2">
+          <mxGeometry x="446" y="388" width="82" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="sel6" value="feedback / enable" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-2">
+          <mxGeometry x="834" y="388" width="102" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="line21" style="shape=line;html=1;strokeColor=#cc0000;strokeWidth=3;" vertex="1" parent="1-2">
+          <mxGeometry x="60" y="650" width="1420" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="line22" style="shape=line;html=1;strokeColor=#222222;strokeWidth=3;" vertex="1" parent="1-2">
+          <mxGeometry x="60" y="720" width="1420" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="footer2a" value="Rev A  |  Safety and STO functional wiring summary" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1-2">
+          <mxGeometry x="40" y="1010" width="1080" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="footer2b" value="Pilz / Delta reference alignment" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1-2">
+          <mxGeometry x="1120" y="1010" width="250" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="footer2c" value="Sheet 2 / 6" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;fontStyle=1;" vertex="1" parent="1-2">
+          <mxGeometry x="1370" y="1010" width="110" height="28" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-3" name="03 NC300 ve EtherCAT">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0-3" />
+        <mxCell id="1-3" parent="0-3" />
+        <mxCell id="title-3" value="GFB60/30RE-S&#xa;03 NC300 ve EtherCAT Omurgasi" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=26;fontStyle=1;" vertex="1" parent="1-3">
+          <mxGeometry x="40" y="30" width="520" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle-3" value="NC300, HMI ethernet, field I/O ve EtherCAT zinciri" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1-3">
+          <mxGeometry x="40" y="90" width="620" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="purpose3" value="Amac&#xa;NC300 kontrolorunun besleme, haberlesme ve saha I/O kirilim noktalarini gostermek." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;verticalAlign=top;" vertex="1" parent="1-3">
+          <mxGeometry x="40" y="120" width="360" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pageTag3" value="PAGE 03 / CONTROL NETWORK" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#2d5c2d;fontStyle=1;" vertex="1" parent="1-3">
+          <mxGeometry x="1230" y="30" width="250" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="x30" value="X30&#xa;24VDC IN&#xa;+24V&#xa;0V" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1-3">
+          <mxGeometry x="60" y="180" width="110" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="nc300" value="NC300&#xa;CNC CONTROLLER&#xa;24VDC / 2A&#xa;CN1 EtherCAT Master&#xa;CN2 EtherCAT Loop&#xa;CN3 HMI ETH&#xa;CN5 I/O" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1-3">
+          <mxGeometry x="260" y="130" width="220" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="j301" value="J301&#xa;CN1&#xa;EtherCAT Master" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1-3">
+          <mxGeometry x="580" y="120" width="120" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="j302" value="J302&#xa;CN2&#xa;EtherCAT Loop" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1-3">
+          <mxGeometry x="580" y="250" width="120" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="j303" value="J303&#xa;CN3&#xa;HMI Ethernet" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1-3">
+          <mxGeometry x="580" y="380" width="120" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="x31" value="X31&#xa;CN5 FIELD I/O&#xa;DI_0..DI_7&#xa;DO_0..DO_7&#xa;AI_0..AI_3&#xa;AO_0..AO_1&#xa;GND / SHIELD" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1-3">
+          <mxGeometry x="820" y="160" width="180" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="ecat-chain" value="EtherCAT NODE CHAIN&#xa;1 X Servo&#xa;2 Y Servo&#xa;3 ALT Servo&#xa;4 Z Servo&#xa;5 CNC Servo&#xa;6 R1-EC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1-3">
+          <mxGeometry x="1100" y="130" width="180" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="hmi-box" value="DOP-110CS&#xa;HMI PANEL&#xa;10/100 Mbps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1-3">
+          <mxGeometry x="820" y="430" width="160" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="note31" value="CN1/CN2 RJ45 pinout&#xa;1 TX+&#xa;2 TX-&#xa;3 RX+&#xa;6 RX-" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1-3">
+          <mxGeometry x="1100" y="360" width="180" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="note32" value="Grounding&#xa;FG &lt; 100 ohm&#xa;PE to panel bar&#xa;Shield single-point termination" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1-3">
+          <mxGeometry x="1100" y="500" width="180" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="thead3a" value="NETWORK NOTES" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#82b366;strokeColor=#82b366;fontColor=#ffffff;fontStyle=1;align=center;" vertex="1" parent="1-3">
+          <mxGeometry x="1100" y="336" width="180" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="nc300pwr" value="NC300 POWER TERMINALS&#xa;X30:1 +24V from Page 01 F2&#xa;X30:2 0V common&#xa;FG -&gt; PE bar&#xa;Consumption approx. 2A" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" vertex="1" parent="1-3">
+          <mxGeometry x="60" y="330" width="180" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="nc300ports" value="NC300 PORT MAP&#xa;CN1 -&gt; EtherCAT to X axis&#xa;CN2 -&gt; downstream loop / spare&#xa;CN3 -&gt; HMI Ethernet&#xa;CN5 -&gt; mixed field I/O&#xa;SAFE_FB -&gt; dedicated DI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" vertex="1" parent="1-3">
+          <mxGeometry x="260" y="370" width="220" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="cn5detail" value="CN5 TERMINAL DETAIL&#xa;1 +24V_EXT&#xa;2-5 DI home sensors&#xa;6-9 DI limits / feedback&#xa;10-13 DO valve / pump&#xa;14-17 DO lamps / buzzer&#xa;18 GND_I/O&#xa;19-22 AI spare&#xa;27-30 AO spare" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;align=left;verticalAlign=top;" vertex="1" parent="1-3">
+          <mxGeometry x="820" y="390" width="220" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="ecatmap3" value="ETHERCAT ORDER&#xa;CN1 -&gt; U41 X axis&#xa;U41 -&gt; U42 -&gt; U43 -&gt; U44 -&gt; U45 -&gt; U50 R1-EC&#xa;Last node spare out reserved" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;verticalAlign=top;" vertex="1" parent="1-3">
+          <mxGeometry x="1100" y="620" width="220" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="hmimap3" value="HMI LINK DETAIL&#xa;CN3 RJ45 direct to DOP-110CS&#xa;Static IP pair&#xa;Shield to cabinet PE near panel entry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;verticalAlign=top;" vertex="1" parent="1-3">
+          <mxGeometry x="820" y="540" width="180" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="e31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1-3" source="x30" target="nc300">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1-3" source="nc300" target="j301">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1-3" source="nc300" target="j302">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1-3" source="nc300" target="j303">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1-3" source="nc300" target="x31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1-3" source="j303" target="hmi-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;" edge="1" parent="1-3" source="j301" target="ecat-chain">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;strokeColor=#6c8ebf;" edge="1" parent="1-3" source="x30" target="nc300pwr">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;strokeColor=#6c8ebf;" edge="1" parent="1-3" source="nc300" target="nc300ports">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e310" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;strokeColor=#b85450;" edge="1" parent="1-3" source="x31" target="cn5detail">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e311" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;strokeColor=#82b366;" edge="1" parent="1-3" source="hmi-box" target="hmimap3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e312" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;strokeColor=#82b366;" edge="1" parent="1-3" source="ecat-chain" target="ecatmap3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cel1" value="24VDC" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;" vertex="1" parent="1-3">
+          <mxGeometry x="176" y="214" width="58" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="cel2" value="master" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-3">
+          <mxGeometry x="510" y="150" width="46" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="cel3" value="loop" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-3">
+          <mxGeometry x="516" y="280" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="cel4" value="HMI link" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-3">
+          <mxGeometry x="502" y="410" width="54" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="cel5" value="CN5 breakout" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-3">
+          <mxGeometry x="710" y="246" width="74" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="cel6" value="power terminals" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-3">
+          <mxGeometry x="116" y="308" width="82" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="cel7" value="controller I/O assignment" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-3">
+          <mxGeometry x="330" y="350" width="126" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="cel8" value="field signals" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-3">
+          <mxGeometry x="872" y="370" width="88" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="footer3a" value="Rev A  |  NC300 control, EtherCAT and CN5 field I/O references" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1-3">
+          <mxGeometry x="40" y="1010" width="1330" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="footer3c" value="Sheet 3 / 6" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;fontStyle=1;" vertex="1" parent="1-3">
+          <mxGeometry x="1370" y="1010" width="110" height="28" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-4" name="04 Servo Suruculer">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0-4" />
+        <mxCell id="1-4" parent="0-4" />
+        <mxCell id="title-4" value="GFB60/30RE-S&#xa;04 Servo Suruculer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=26;fontStyle=1;" vertex="1" parent="1-4">
+          <mxGeometry x="40" y="30" width="420" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle-4" value="5 eksen icin guc, EtherCAT ve STO omurgasi" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1-4">
+          <mxGeometry x="40" y="90" width="520" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="purpose4" value="Amac&#xa;Servo suruculerin ortak AC besleme ve STO/Enable baglantilarini eksen bazinda gostermek." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;verticalAlign=top;" vertex="1" parent="1-4">
+          <mxGeometry x="40" y="120" width="390" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pageTag4" value="PAGE 04 / SERVO AXES" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#6b1d1d;fontStyle=1;" vertex="1" parent="1-4">
+          <mxGeometry x="1290" y="30" width="190" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="x40" value="X40&#xa;SERVO AC BUS&#xa;R/S/T/PE" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1-4">
+          <mxGeometry x="60" y="140" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="x41" value="X41&#xa;STO / ENABLE BUS&#xa;STO1&#xa;STO2&#xa;S-ON" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1-4">
+          <mxGeometry x="60" y="340" width="120" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="u41" value="U41&#xa;X SERVO&#xa;ASD-A3-4523-E&#xa;4.5kW" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1-4">
+          <mxGeometry x="230" y="130" width="140" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="u42" value="U42&#xa;Y SERVO&#xa;ASD-A3-2023-E&#xa;2.0kW" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1-4">
+          <mxGeometry x="410" y="130" width="140" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="u43" value="U43&#xa;ALT SERVO&#xa;ASD-A3-2023-E&#xa;2.0kW" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1-4">
+          <mxGeometry x="590" y="130" width="140" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="u44" value="U44&#xa;Z SERVO&#xa;ASD-A3-1023-E&#xa;1.0kW&#xa;BRAKE" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1-4">
+          <mxGeometry x="770" y="130" width="140" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="u45" value="U45&#xa;C SERVO&#xa;ASD-A3-1523-E&#xa;1.5kW" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1-4">
+          <mxGeometry x="950" y="130" width="140" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="sto-notes" value="CN1 kritikler&#xa;6 S-ON&#xa;29 STO1&#xa;30 STO2&#xa;36 ALM&#xa;37 ZSPD&#xa;38 POS&#xa;40 BRK&#xa;43 STO_COM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1-4">
+          <mxGeometry x="1180" y="140" width="180" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="regen" value="Rejeneratif direnc&#xa;X 60R / 100W&#xa;Y 60R / 50W&#xa;ALT 60R / 50W&#xa;Z 120R / 50W&#xa;C 80R / 50W" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1-4">
+          <mxGeometry x="1180" y="360" width="180" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="cn1map4" value="CN1 SIGNALS&#xa;6 S-ON &lt;- enable chain&#xa;29 STO1 / 30 STO2 &lt;- Page 02 X11&#xa;36 ALM -&gt; NC300 DI&#xa;37 ZSPD -&gt; ready status&#xa;40 BRK -&gt; only Z axis brake output&#xa;43 STO_COM common" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;align=left;verticalAlign=top;" vertex="1" parent="1-4">
+          <mxGeometry x="1180" y="530" width="220" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="cn2map4" value="CN2 / MOTOR DETAIL&#xa;Motor U/V/W + PE from X40 bus&#xa;Encoder to drive feedback input&#xa;Shield clamp near drive entry&#xa;Brake pair only on U44 Z axis" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" vertex="1" parent="1-4">
+          <mxGeometry x="60" y="520" width="220" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="axismap4" value="AXIS MAP&#xa;U41 X axis main gantry&#xa;U42 Y axis traverse&#xa;U43 ALT auxiliary axis&#xa;U44 Z axis with brake&#xa;U45 C axis spindle orient" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;align=left;verticalAlign=top;" vertex="1" parent="1-4">
+          <mxGeometry x="330" y="520" width="220" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="alarmmap4" value="ALARM / READY RETURN&#xa;Each drive ALM output -&gt; R1-EC / NC300 DI group&#xa;ZSPD or ready used for servo healthy chain&#xa;Common 0V reference on control side" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" vertex="1" parent="1-4">
+          <mxGeometry x="600" y="520" width="230" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="e41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1-4" source="x40" target="u41">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1-4" source="x40" target="u42">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e43" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1-4" source="x40" target="u43">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1-4" source="x40" target="u44">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1-4" source="x40" target="u45">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;" edge="1" parent="1-4" source="x41" target="u41">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e47" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;" edge="1" parent="1-4" source="x41" target="u42">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e48" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;" edge="1" parent="1-4" source="x41" target="u43">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e49" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;" edge="1" parent="1-4" source="x41" target="u44">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e410" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;" edge="1" parent="1-4" source="x41" target="u45">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e411" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;strokeColor=#d6b656;" edge="1" parent="1-4" source="sto-notes" target="cn1map4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e412" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;strokeColor=#6c8ebf;" edge="1" parent="1-4" source="x40" target="cn2map4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e413" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;strokeColor=#b85450;" edge="1" parent="1-4" source="u43" target="axismap4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e414" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;strokeColor=#6c8ebf;" edge="1" parent="1-4" source="u45" target="alarmmap4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sv1" value="AC power bus" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontStyle=1;" vertex="1" parent="1-4">
+          <mxGeometry x="60" y="112" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="sv2" value="STO / Enable bus" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontStyle=1;" vertex="1" parent="1-4">
+          <mxGeometry x="60" y="314" width="110" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="sv3" value="motor / encoder cabling" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-4">
+          <mxGeometry x="84" y="500" width="128" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="sv4" value="axis function summary" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-4">
+          <mxGeometry x="386" y="500" width="118" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="sv5" value="alarm and ready return" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-4">
+          <mxGeometry x="656" y="500" width="126" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="thead4a" value="SERVO REFERENCE" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#b85450;strokeColor=#b85450;fontColor=#ffffff;fontStyle=1;align=center;" vertex="1" parent="1-4">
+          <mxGeometry x="1180" y="116" width="180" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="thead4b" value="BRAKE / REGEN" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6c8ebf;strokeColor=#6c8ebf;fontColor=#ffffff;fontStyle=1;align=center;" vertex="1" parent="1-4">
+          <mxGeometry x="1180" y="336" width="180" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="footer4a" value="Rev A  |  Servo power, STO and drive signal summary" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1-4">
+          <mxGeometry x="40" y="1010" width="1330" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="footer4c" value="Sheet 4 / 6" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;fontStyle=1;" vertex="1" parent="1-4">
+          <mxGeometry x="1370" y="1010" width="110" height="28" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-5" name="05 R1-EC I-O">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0-5" />
+        <mxCell id="1-5" parent="0-5" />
+        <mxCell id="title-5" value="GFB60/30RE-S&#xa;05 R1-EC I/O" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=26;fontStyle=1;" vertex="1" parent="1-5">
+          <mxGeometry x="40" y="30" width="360" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle-5" value="Bus coupler, DI/DO modulleri ve saha dagitimi" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1-5">
+          <mxGeometry x="40" y="90" width="520" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="purpose5" value="Amac&#xa;R1-EC coupler uzerinden EtherCAT, DI modulleri ve role cikisli DO modullerinin saha dagitimini gostermek." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;verticalAlign=top;" vertex="1" parent="1-5">
+          <mxGeometry x="40" y="120" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pageTag5" value="PAGE 05 / REMOTE I-O" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#2d5c2d;fontStyle=1;" vertex="1" parent="1-5">
+          <mxGeometry x="1290" y="30" width="190" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="j500" value="J500&#xa;ECAT FROM C AXIS" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1-5">
+          <mxGeometry x="60" y="200" width="120" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="u50" value="U50&#xa;R1-EC01&#xa;BUS COUPLER" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1-5">
+          <mxGeometry x="250" y="180" width="150" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="u51" value="U51&#xa;R1-EC0902D&#xa;DI MODULE #1&#xa;%IX0.0..%IX1.15" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1-5">
+          <mxGeometry x="470" y="170" width="150" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="u52" value="U52&#xa;R1-EC0902D&#xa;DI MODULE #2&#xa;%IX2.0..%IX3.15" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1-5">
+          <mxGeometry x="690" y="170" width="150" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="u53" value="U53&#xa;R1-EC0902O&#xa;DO MODULE #1&#xa;%QX0.0..%QX1.15" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1-5">
+          <mxGeometry x="910" y="170" width="150" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="j501" value="J501&#xa;ECAT SPARE OUT" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1-5">
+          <mxGeometry x="1130" y="200" width="130" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="x50" value="X50&#xa;24VDC COUPLER SUPPLY&#xa;+24V&#xa;0V" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1-5">
+          <mxGeometry x="60" y="430" width="140" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="di-map" value="DI Gruplari&#xa;X/Y/Z/ALT home-limit&#xa;Door / vacuum / glass sensors&#xa;Safety feedback / spare DI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1-5">
+          <mxGeometry x="470" y="430" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="do-map" value="DO Gruplari&#xa;Servo enable&#xa;Vacuum pump&#xa;Cutting oil&#xa;Warning light&#xa;Buzzer&#xa;Clamp / breaker" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1-5">
+          <mxGeometry x="910" y="430" width="180" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="thead5a" value="FIELD I/O MAP" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6c8ebf;strokeColor=#6c8ebf;fontColor=#ffffff;fontStyle=1;align=center;" vertex="1" parent="1-5">
+          <mxGeometry x="470" y="406" width="620" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="x50map5" value="COUPLER POWER DETAIL&#xa;X50:1 +24V from Page 01 F3&#xa;X50:2 0V common&#xa;PE / shield drain at cabinet bar&#xa;Bus coupler and slices share same 24V rail" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" vertex="1" parent="1-5">
+          <mxGeometry x="60" y="560" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="dimap5a" value="DI CHANNEL MAP U51&#xa;IX0.0 X_HOME&#xa;IX0.1 X_LIMIT-&#xa;IX0.2 Y_HOME&#xa;IX0.3 Y_LIMIT-&#xa;IX0.4 ALT_HOME&#xa;IX0.5 ALT_LIMIT-&#xa;IX0.6 Z_HOME&#xa;IX0.7 Z_LIMIT-" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" vertex="1" parent="1-5">
+          <mxGeometry x="470" y="570" width="180" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="dimap5b" value="DI CHANNEL MAP U52&#xa;IX2.0 C_HOME&#xa;IX2.1 C_LIMIT-&#xa;IX2.2 DOOR_SAFE_FB&#xa;IX2.3 VACUUM_OK&#xa;IX2.4 OIL_LEVEL&#xa;IX2.5 AIR_OK&#xa;IX2.6 SERVO_RDY_SUM&#xa;IX2.7 SAFETY_FB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" vertex="1" parent="1-5">
+          <mxGeometry x="690" y="570" width="180" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="domap5" value="DO CHANNEL MAP U53&#xa;QX0.0 SERVO_ENABLE&#xa;QX0.1 VACUUM_PUMP&#xa;QX0.2 CUT_OIL&#xa;QX0.3 STACK_LIGHT_G&#xa;QX0.4 STACK_LIGHT_R&#xa;QX0.5 BUZZER&#xa;QX0.6 CLAMP_SOL&#xa;QX0.7 BREAKER_RESET" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;verticalAlign=top;" vertex="1" parent="1-5">
+          <mxGeometry x="910" y="590" width="180" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="fieldterm5" value="FIELD TERMINAL LINKS&#xa;X20 sensor returns -&gt; U51/U52 DI&#xa;X21 actuator coils -&gt; U53 DO relays&#xa;X11 safety feedback references U52 inputs&#xa;0V returns grouped on terminal strip" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;align=left;verticalAlign=top;" vertex="1" parent="1-5">
+          <mxGeometry x="1140" y="430" width="220" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="ethex5" value="NETWORK / BUS NOTES&#xa;Node address fixed by slice order&#xa;Bus coupler at chain end before spare RJ45 out&#xa;Service laptop can monitor I/O online" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;verticalAlign=top;" vertex="1" parent="1-5">
+          <mxGeometry x="1140" y="600" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="e51" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1-5" source="j500" target="u50">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e52" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1-5" source="u50" target="u51">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1-5" source="u51" target="u52">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e54" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1-5" source="u52" target="u53">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e55" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1-5" source="u53" target="j501">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e56" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;" edge="1" parent="1-5" source="x50" target="u50">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e57" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;strokeColor=#6c8ebf;" edge="1" parent="1-5" source="x50" target="x50map5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e58" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;strokeColor=#6c8ebf;" edge="1" parent="1-5" source="u51" target="dimap5a">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;strokeColor=#6c8ebf;" edge="1" parent="1-5" source="u52" target="dimap5b">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e510" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;strokeColor=#82b366;" edge="1" parent="1-5" source="u53" target="domap5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e511" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;strokeColor=#b85450;" edge="1" parent="1-5" source="u53" target="fieldterm5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e512" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;strokeColor=#82b366;" edge="1" parent="1-5" source="j501" target="ethex5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="iol1" value="EtherCAT chain" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;" vertex="1" parent="1-5">
+          <mxGeometry x="178" y="190" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="iol2" value="24VDC supply" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-5">
+          <mxGeometry x="180" y="438" width="90" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="iol3" value="sensor channels" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-5">
+          <mxGeometry x="514" y="548" width="92" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="iol4" value="machine status inputs" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-5">
+          <mxGeometry x="714" y="548" width="132" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="iol5" value="actuator outputs" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1-5">
+          <mxGeometry x="944" y="568" width="112" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="footer5a" value="Rev A  |  Remote I/O slices, channel map and field links" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1-5">
+          <mxGeometry x="40" y="1010" width="1330" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="footer5c" value="Sheet 5 / 6" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;fontStyle=1;" vertex="1" parent="1-5">
+          <mxGeometry x="1370" y="1010" width="110" height="28" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-6" name="06 Terminal ve Pin Plani">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0-6" />
+        <mxCell id="1-6" parent="0-6" />
+        <mxCell id="title-6" value="GFB60/30RE-S&#xa;06 Terminal ve Pin Plani" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=26;fontStyle=1;" vertex="1" parent="1-6">
+          <mxGeometry x="40" y="30" width="460" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle-6" value="Terminal, konnektor ve kritik pin ozetleri" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1-6">
+          <mxGeometry x="40" y="90" width="520" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="purpose6" value="Amac&#xa;Saha montaji ve baglanti kontrolu icin terminal ve kritik pin bilgilerini tek sayfada toplamak." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;verticalAlign=top;" vertex="1" parent="1-6">
+          <mxGeometry x="40" y="120" width="380" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="note61" value="Kullanim&#xa;Bu sayfa saha kablolama kontrol listesi gibi okunabilir." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1-6">
+          <mxGeometry x="60" y="640" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="note62" value="Pratik kural&#xa;Once terminal etiketi, sonra pin fonksiyonu, sonra renk ve ekran baglantisi kontrol edilir." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1-6">
+          <mxGeometry x="360" y="640" width="360" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="pageTag6" value="PAGE 06 / TERMINALS &amp; PINS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;" vertex="1" parent="1-6">
+          <mxGeometry x="1240" y="30" width="240" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="terminals" value="Terminal Gruplari&#xa;X1 AC INPUT&#xa;X2 24V DISTRIBUTION&#xa;X10 SAFETY INPUTS&#xa;X11 STO OUTPUTS&#xa;X20 DI TERMINAL&#xa;X30 NC300 POWER&#xa;X31 NC300 FIELD I/O" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1-6">
+          <mxGeometry x="60" y="160" width="240" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="m12" value="M12 Sensor 4-pin&#xa;1 Brown +24V&#xa;2 White Output&#xa;3 Blue 0V&#xa;4 Black NO/NC Select" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1-6">
+          <mxGeometry x="380" y="160" width="220" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="rj45" value="RJ45 EtherCAT&#xa;1 TX+&#xa;2 TX-&#xa;3 RX+&#xa;6 RX-&#xa;Shield -&gt; PE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1-6">
+          <mxGeometry x="660" y="160" width="220" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="cn1" value="Servo CN1 kritikler&#xa;6 S-ON&#xa;29 STO1&#xa;30 STO2&#xa;36 ALM&#xa;37 ZSPD&#xa;38 POS&#xa;40 BRK&#xa;43 STO_COM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1-6">
+          <mxGeometry x="940" y="140" width="220" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="cn2" value="Servo CN2 encoder&#xa;1 +5V&#xa;2 /A&#xa;3 A&#xa;4 /B&#xa;5 B&#xa;6 Z" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1-6">
+          <mxGeometry x="1220" y="160" width="180" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="nc300cn5" value="NC300 CN5 ozet&#xa;1 +24V_EXT&#xa;2-9 DI&#xa;10-17 DO&#xa;18 GND_I/O&#xa;19-26 AI&#xa;27-30 AO&#xa;31 GND_A&#xa;41-45 Shield GND" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1-6">
+          <mxGeometry x="380" y="400" width="260" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="colors" value="Renk Kodu&#xa;AC: BN / BK / GY / BU / GN-YE&#xa;DC: RD +24V / BK 0V&#xa;Safety: YE&#xa;Sensor: Mavi tabanli saha kablosu" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1-6">
+          <mxGeometry x="720" y="420" width="240" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="shield" value="Shield / PE&#xa;Tum ekranlar tek noktadan PE barasina&#xa;Motor ve encoder ekranlari ayri kelepce ile sonlandirilir" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1-6">
+          <mxGeometry x="1040" y="420" width="260" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="x20map6" value="X20 SENSOR TERMINALS&#xa;1 X_HOME&#xa;2 X_LIMIT-&#xa;3 Y_HOME&#xa;4 Y_LIMIT-&#xa;5 ALT_HOME&#xa;6 ALT_LIMIT-&#xa;7 Z_HOME&#xa;8 Z_LIMIT-&#xa;9 C_HOME&#xa;10 C_LIMIT-" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" vertex="1" parent="1-6">
+          <mxGeometry x="60" y="430" width="240" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="x21map6" value="X21 ACTUATOR TERMINALS&#xa;1 SERVO_ENABLE&#xa;2 VACUUM_PUMP&#xa;3 CUT_OIL&#xa;4 STACK_LIGHT_G&#xa;5 STACK_LIGHT_R&#xa;6 BUZZER&#xa;7 CLAMP_SOL&#xa;8 BREAKER_RESET" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;verticalAlign=top;" vertex="1" parent="1-6">
+          <mxGeometry x="60" y="830" width="240" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="diquick6" value="DI QUICK REF&#xa;U51 IX0.0..0.7 -&gt; home / limit set&#xa;U52 IX2.0..2.7 -&gt; status / feedback set&#xa;SAFETY_FB and SERVO_RDY_SUM are critical startup inputs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=top;" vertex="1" parent="1-6">
+          <mxGeometry x="720" y="580" width="260" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="doquick6" value="DO QUICK REF&#xa;U53 QX0.0..0.7 -&gt; machine actuators&#xa;Outputs are relay isolated&#xa;Inductive loads need suppression at field side" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;verticalAlign=top;" vertex="1" parent="1-6">
+          <mxGeometry x="1040" y="580" width="260" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="svref6" value="SERVO STATUS LINK&#xa;ALM outputs return to control DI group&#xa;ZSPD / ready chain supports startup permissive&#xa;Z brake line must be checked separately" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;align=left;verticalAlign=top;" vertex="1" parent="1-6">
+          <mxGeometry x="1040" y="720" width="260" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="thead6e" value="FIELD TERMINALS" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6c8ebf;strokeColor=#6c8ebf;fontColor=#ffffff;fontStyle=1;align=center;" vertex="1" parent="1-6">
+          <mxGeometry x="60" y="406" width="240" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="thead6f" value="CONTROL REFERENCES" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#666666;strokeColor=#666666;fontColor=#ffffff;fontStyle=1;align=center;" vertex="1" parent="1-6">
+          <mxGeometry x="720" y="556" width="580" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="thead6a" value="TERMINAL GROUPS" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6c8ebf;strokeColor=#6c8ebf;fontColor=#ffffff;fontStyle=1;align=center;" vertex="1" parent="1-6">
+          <mxGeometry x="60" y="136" width="240" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="thead6b" value="FIELD CONNECTORS" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#82b366;strokeColor=#82b366;fontColor=#ffffff;fontStyle=1;align=center;" vertex="1" parent="1-6">
+          <mxGeometry x="380" y="136" width="500" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="thead6c" value="CRITICAL DEVICE PINS" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d6b656;strokeColor=#d6b656;fontColor=#ffffff;fontStyle=1;align=center;" vertex="1" parent="1-6">
+          <mxGeometry x="940" y="116" width="460" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="thead6d" value="INSTALL CHECKLIST" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#666666;strokeColor=#666666;fontColor=#ffffff;fontStyle=1;align=center;" vertex="1" parent="1-6">
+          <mxGeometry x="60" y="616" width="660" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="check61" value="1  AC giris ve PE surekliligi teyit edildi" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc;align=left;spacingLeft=10;" vertex="1" parent="1-6">
+          <mxGeometry x="320" y="724" width="400" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="check62" value="2  24VDC polarite ve fuse cikislari dogrulandi" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc;align=left;spacingLeft=10;" vertex="1" parent="1-6">
+          <mxGeometry x="320" y="752" width="400" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="check63" value="3  Safety reset, STO A/B ve feedback zinciri kontrol edildi" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc;align=left;spacingLeft=10;" vertex="1" parent="1-6">
+          <mxGeometry x="320" y="780" width="400" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="check64" value="4  EtherCAT ve encoder ekranlari tek noktadan PE&#39;ye baglandi" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc;align=left;spacingLeft=10;" vertex="1" parent="1-6">
+          <mxGeometry x="320" y="808" width="400" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="check65" value="5  X20 home/limit sinyalleri I/O monitorunda dogrulandi" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc;align=left;spacingLeft=10;" vertex="1" parent="1-6">
+          <mxGeometry x="320" y="836" width="400" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="check66" value="6  X21 actuator cikislari kuru test ile dogrulandi" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc;align=left;spacingLeft=10;" vertex="1" parent="1-6">
+          <mxGeometry x="320" y="864" width="400" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="footer6a" value="Rev A  |  Terminal, connector and commissioning reference sheet" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" vertex="1" parent="1-6">
+          <mxGeometry x="40" y="1010" width="1330" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="footer6c" value="Sheet 6 / 6" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;fontStyle=1;" vertex="1" parent="1-6">
+          <mxGeometry x="1370" y="1010" width="110" height="28" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

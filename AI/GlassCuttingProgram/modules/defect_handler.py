@@ -255,7 +255,7 @@ class DefectAvoidanceOptimizer:
                 # Part intersects defect zone
                 # Calculate severity of intersection
                 overlap_x = min(px_max, x_max) - max(px_min, x_min)
-                overlap_y = min(py_max, y_max) - max(py_min, py_min)
+                overlap_y = min(py_max, y_max) - max(py_min, y_min)
                 overlap_area = overlap_x * overlap_y
 
                 score = defect.severity * overlap_area / (width * height)

@@ -1,0 +1,324 @@
+{
+  "orders": [
+    {
+      "order_id": "10416-1",
+      "width": 600.0,
+      "height": 900.0,
+      "quantity": 6,
+      "thickness": 4.0,
+      "glass_type": "float",
+      "priority": 1,
+      "rotate_allowed": false,
+      "grinding_allowance": "none",
+      "blade_delete_enabled": false,
+      "trimming_enabled": false,
+      "source_system": "herofis",
+      "source_order_no": "10416",
+      "customer_name": "AHSEN PVC CAM VE İNŞ.TAAH SAN.TİC.LTD.ŞTİ",
+      "edge_processing": "",
+      "process_code": "LIVE_HEROFIS",
+      "herofis_options": {
+        "group_code": "362",
+        "batch_no": "ML451,ML451",
+        "package_id": 102,
+        "is_warranty": true,
+        "is_shape": true,
+        "line_note": "P1",
+        "single_glass_count": 2,
+        "parameter_keys": [
+          "CombineSpacer",
+          "Convertible",
+          "ExportExcel",
+          "GlassGrossRaise",
+          "GlassOverSize",
+          "GlassOverSizePriceRaiseRate",
+          "MaxCutSize",
+          "MinCutSize",
+          "MinRaiseAmount",
+          "PrintLabel",
+          "RaiseAmount",
+          "RaiseType",
+          "RoundAmount",
+          "RoundType",
+          "WasteRate"
+        ],
+        "parameters": {
+          "MinRaiseAmount": [
+            "0,2"
+          ],
+          "GlassGrossRaise": [
+            "0",
+            "50"
+          ],
+          "RaiseAmount": [
+            "50",
+            "20"
+          ],
+          "RaiseType": [
+            "1",
+            "2"
+          ],
+          "CombineSpacer": [
+            "true"
+          ],
+          "Convertible": [
+            "true"
+          ],
+          "ExportExcel": [
+            "true"
+          ],
+          "MaxCutSize": [
+            "6000"
+          ],
+          "MinCutSize": [
+            "50"
+          ],
+          "PrintLabel": [
+            "true"
+          ],
+          "RoundAmount": [
+            "0"
+          ],
+          "RoundType": [
+            "0"
+          ],
+          "WasteRate": [
+            "0"
+          ],
+          "GlassOverSizePriceRaiseRate": [
+            "50"
+          ],
+          "GlassOverSize": [
+            "3"
+          ]
+        }
+      }
+    },
+    {
+      "order_id": "10416-2",
+      "width": 777.0,
+      "height": 1200.0,
+      "quantity": 5,
+      "thickness": 4.0,
+      "glass_type": "float",
+      "priority": 1,
+      "rotate_allowed": true,
+      "grinding_allowance": "none",
+      "blade_delete_enabled": false,
+      "trimming_enabled": false,
+      "source_system": "herofis",
+      "source_order_no": "10416",
+      "customer_name": "AHSEN PVC CAM VE İNŞ.TAAH SAN.TİC.LTD.ŞTİ",
+      "edge_processing": "",
+      "process_code": "LIVE_HEROFIS",
+      "herofis_options": {
+        "group_code": "362",
+        "batch_no": "ML451,ML451",
+        "package_id": 102,
+        "is_warranty": true,
+        "is_shape": false,
+        "line_note": "P2",
+        "single_glass_count": 2,
+        "parameter_keys": [
+          "CombineSpacer",
+          "Convertible",
+          "ExportExcel",
+          "GlassGrossRaise",
+          "GlassOverSize",
+          "GlassOverSizePriceRaiseRate",
+          "MaxCutSize",
+          "MinCutSize",
+          "MinRaiseAmount",
+          "PrintLabel",
+          "RaiseAmount",
+          "RaiseType",
+          "RoundAmount",
+          "RoundType",
+          "WasteRate"
+        ],
+        "parameters": {
+          "MinRaiseAmount": [
+            "0,2"
+          ],
+          "GlassGrossRaise": [
+            "0",
+            "50"
+          ],
+          "RaiseAmount": [
+            "50",
+            "20"
+          ],
+          "RaiseType": [
+            "1",
+            "2"
+          ],
+          "CombineSpacer": [
+            "true"
+          ],
+          "Convertible": [
+            "true"
+          ],
+          "ExportExcel": [
+            "true"
+          ],
+          "MaxCutSize": [
+            "6000"
+          ],
+          "MinCutSize": [
+            "50"
+          ],
+          "PrintLabel": [
+            "true"
+          ],
+          "RoundAmount": [
+            "0"
+          ],
+          "RoundType": [
+            "0"
+          ],
+          "WasteRate": [
+            "0"
+          ],
+          "GlassOverSizePriceRaiseRate": [
+            "50"
+          ],
+          "GlassOverSize": [
+            "3"
+          ]
+        }
+      }
+    },
+    {
+      "order_id": "10416-3",
+      "width": 1000.0,
+      "height": 1200.0,
+      "quantity": 2,
+      "thickness": 4.0,
+      "glass_type": "float",
+      "priority": 1,
+      "rotate_allowed": false,
+      "grinding_allowance": "none",
+      "blade_delete_enabled": false,
+      "trimming_enabled": false,
+      "source_system": "herofis",
+      "source_order_no": "10416",
+      "customer_name": "AHSEN PVC CAM VE İNŞ.TAAH SAN.TİC.LTD.ŞTİ",
+      "edge_processing": "",
+      "process_code": "LIVE_HEROFIS",
+      "herofis_options": {
+        "group_code": "362",
+        "batch_no": "ML451,ML451",
+        "package_id": 102,
+        "is_warranty": true,
+        "is_shape": true,
+        "line_note": "P3",
+        "single_glass_count": 2,
+        "parameter_keys": [
+          "CombineSpacer",
+          "Convertible",
+          "ExportExcel",
+          "GlassGrossRaise",
+          "GlassOverSize",
+          "GlassOverSizePriceRaiseRate",
+          "MaxCutSize",
+          "MinCutSize",
+          "MinRaiseAmount",
+          "PrintLabel",
+          "RaiseAmount",
+          "RaiseType",
+          "RoundAmount",
+          "RoundType",
+          "WasteRate"
+        ],
+        "parameters": {
+          "MinRaiseAmount": [
+            "0,2"
+          ],
+          "GlassGrossRaise": [
+            "0",
+            "50"
+          ],
+          "RaiseAmount": [
+            "50",
+            "20"
+          ],
+          "RaiseType": [
+            "1",
+            "2"
+          ],
+          "CombineSpacer": [
+            "true"
+          ],
+          "Convertible": [
+            "true"
+          ],
+          "ExportExcel": [
+            "true"
+          ],
+          "MaxCutSize": [
+            "6000"
+          ],
+          "MinCutSize": [
+            "50"
+          ],
+          "PrintLabel": [
+            "true"
+          ],
+          "RoundAmount": [
+            "0"
+          ],
+          "RoundType": [
+            "0"
+          ],
+          "WasteRate": [
+            "0"
+          ],
+          "GlassOverSizePriceRaiseRate": [
+            "50"
+          ],
+          "GlassOverSize": [
+            "3"
+          ]
+        }
+      }
+    },
+    {
+      "order_id": "LAM-TEST-ORD-005",
+      "width": 1000.0,
+      "height": 800.0,
+      "quantity": 2,
+      "thickness": 8.0,
+      "glass_type": "laminated",
+      "priority": 1,
+      "rotate_allowed": false,
+      "grinding_allowance": "none",
+      "blade_delete_enabled": false,
+      "trimming_enabled": false,
+      "source_system": "laminated_test",
+      "source_order_no": "ORD-005",
+      "customer_name": "Customer D",
+      "edge_processing": "",
+      "process_code": "LAMINATED_AUTO_TEST",
+      "film_type": "PVB",
+      "film_thickness": 0.76,
+      "herofis_options": {
+        "is_shape": false,
+        "is_laminated": true,
+        "line_note": "LAM-AUTO",
+        "single_glass_count": 2,
+        "parameter_keys": [
+          "FilmType",
+          "FilmThickness"
+        ],
+        "parameters": {
+          "FilmType": [
+            "PVB"
+          ],
+          "FilmThickness": [
+            "0.76"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -242,23 +242,38 @@ function updateCharts(data) {
 // ==================== Report History ====================
 
 async function loadReportHistory() {
-    // TODO: Implement API endpoint for history
     const historyDiv = document.getElementById('reportHistory');
     if (!historyDiv) return;
-    
-    // Sample history
-    historyDiv.innerHTML = `
-        <div class="history-item">
-            <span class="history-icon">📄</span>
-            <span class="history-info">
-                <strong>Günlük Rapor</strong><br>
-                <small>${new Date().toLocaleDateString('tr-TR')}</small>
-            </span>
-            <button class="btn small" onclick="downloadHistory()">⬇️</button>
-        </div>
-    `;
+
+    try {
+        const response = await fetch('/api/reports/history');
+        const result = await response.json();
+
+        if (!result.success || !result.history?.length) {
+            historyDiv.innerHTML = '<div class="empty-state">Henüz rapor geçmişi yok.</div>';
+            return;
+        }
+
+        historyDiv.innerHTML = result.history.map(item => `
+            <div class="history-item">
+                <span class="history-icon">📄</span>
+                <span class="history-info">
+                    <strong>${item.title}</strong><br>
+                    <small>${new Date(item.created).toLocaleString('tr-TR')}</small>
+                </span>
+                <button class="btn small" onclick="downloadHistory('${item.filename}')">⬇️</button>
+            </div>
+        `).join('');
+    } catch (error) {
+        historyDiv.innerHTML = '<div class="empty-state">Rapor geçmişi yüklenemedi.</div>';
+    }
 }
 
-function downloadHistory() {
-    showToast('İndiriliyor...', 'info');
+function downloadHistory(filename) {
+    if (!filename) {
+        showToast('Rapor dosyası bulunamadı', 'warning');
+        return;
+    }
+
+    window.open(`/api/reports/download/${filename}`, '_blank');
 }

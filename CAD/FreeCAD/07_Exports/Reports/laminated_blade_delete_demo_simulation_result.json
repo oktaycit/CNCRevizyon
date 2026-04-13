@@ -1,0 +1,43 @@
+{
+  "doc_name": "GFB_60_30RE_S_Complete1",
+  "objects": 128,
+  "nc_path": "/Users/oktaycit/Projeler/CNCRevizyon/AI/GlassCuttingProgram/output/gcode/laminated_blade_delete_demo_20260413_094241.nc",
+  "moves": 22,
+  "cut_moves": 8,
+  "rapid_moves": 12,
+  "estimated_duration_s": 459.368,
+  "total_cut_length_mm": 6840.3,
+  "event_log_count": 8,
+  "blade_delete_event_count": 2,
+  "blade_delete_events": [
+    {
+      "time_s": 10.2,
+      "move_index": 4,
+      "event": "blade_delete_on",
+      "source": "M10"
+    },
+    {
+      "time_s": 11.7,
+      "move_index": 6,
+      "event": "blade_delete_off",
+      "source": "M11"
+    }
+  ],
+  "heating_event_count": 2,
+  "heating_events": [
+    {
+      "time_s": 10.2,
+      "move_index": 5,
+      "event": "dwell",
+      "source": "G04 P1.5 ; Blade wipe contact",
+      "duration_s": 1.5
+    },
+    {
+      "time_s": 236.584,
+      "move_index": 14,
+      "event": "dwell",
+      "source": "G04 P4.0 ; Heat for 4 seconds",
+      "duration_s": 4.0
+    }
+  ]
+}

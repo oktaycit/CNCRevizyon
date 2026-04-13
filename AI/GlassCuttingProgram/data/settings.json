@@ -1,0 +1,70 @@
+{
+  "api_key": "",
+  "api_endpoint": "https://coding-intl.dashscope.aliyuncs.com/v1",
+  "mode": "offline",
+  "models": [
+    {
+      "model_id": "qwen3.5-plus",
+      "enabled": true,
+      "temperature": 0.7,
+      "max_tokens": 2048,
+      "use_case": "general"
+    },
+    {
+      "model_id": "qwen3-max-2026-01-23",
+      "enabled": true,
+      "temperature": 0.5,
+      "max_tokens": 4096,
+      "use_case": "complex"
+    },
+    {
+      "model_id": "qwen3-coder-plus",
+      "enabled": true,
+      "temperature": 0.2,
+      "max_tokens": 8192,
+      "use_case": "code"
+    },
+    {
+      "model_id": "qwen3-coder-next",
+      "enabled": true,
+      "temperature": 0.3,
+      "max_tokens": 4096,
+      "use_case": "general"
+    },
+    {
+      "model_id": "glm-4.7",
+      "enabled": true,
+      "temperature": 0.6,
+      "max_tokens": 2048,
+      "use_case": "general"
+    },
+    {
+      "model_id": "kimi-k2.5",
+      "enabled": true,
+      "temperature": 0.5,
+      "max_tokens": 4096,
+      "use_case": "general"
+    }
+  ],
+  "routing": {
+    "nesting": "qwen3-max-2026-01-23,qwen3-coder-plus",
+    "gcode": "qwen3-coder-plus,qwen3-coder-next",
+    "lamine": "qwen3.5-plus",
+    "validation": "glm-4.7,kimi-k2.5"
+  },
+  "integration": {
+    "herofis_base_url": "https://herofis.com",
+    "herofis_username": "oktaycit@gmail.com",
+    "herofis_password": "camcad1",
+    "verify_ssl": false,
+    "default_target_status_id": 20,
+    "test_order_no": "10416",
+    "status_override": ""
+  },
+  "parallel": {
+    "max_parallel": 3,
+    "timeout": 90,
+    "retry": 2,
+    "fallback": true
+  }
+}

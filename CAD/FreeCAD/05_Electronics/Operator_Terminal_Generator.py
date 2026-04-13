@@ -250,15 +250,17 @@ def create_dop_110cs_panel_cutout(doc, name="DOP-110CS_Panel_Cutout"):
 
 def create_terminal_enclosure(doc, name="Operator_Terminal_Enclosure"):
     """
-    Operatör Terminal Kutusu Ana Gövde
-    
-    DOP-110CS HMI + R1-EC modülleri için entegre kutu
-    IP65 koruma sınıfı
+    Operatör Terminal Başlığı Ana Gövde
+
+    Tasarım dili:
+    - LiSEC operatör istasyonu ergonomisi
+    - Beckhoff benzeri ince çerçeveli, sade endüstriyel yüzey
+    - Ayaklı terminal üst başlığı olarak kullanılacak kompakt gövde
     """
-    # Ana kutu dış ölçüler
-    width = 400
-    height = 500
-    depth = 250
+    # Terminal başlığı dış ölçüler
+    width = 420
+    height = 340
+    depth = 220
     wall_thickness = 5
     
     # Ana gövde (arkası kapalı)
@@ -267,7 +269,7 @@ def create_terminal_enclosure(doc, name="Operator_Terminal_Enclosure"):
     
     # Ön panel montaj yüzeyi (DOP-110CS için)
     front_mount_width = 320
-    front_mount_height = 260
+    front_mount_height = 250
     front_mount_thickness = 10
     
     front_mount = create_box(front_mount_width, front_mount_height, front_mount_thickness,
@@ -298,37 +300,42 @@ def create_terminal_enclosure(doc, name="Operator_Terminal_Enclosure"):
     din_rail_length = width - 40
     
     din_rail = create_box(din_rail_length, din_rail_height, din_rail_width,
-                         (-din_rail_length/2, 20, -din_rail_width/2))
+                         (-din_rail_length/2, 25, -din_rail_width/2))
     
     # DIN ray oluğu (TS 35 standardı)
     din_channel = create_box(din_rail_length - 4, din_rail_height + 5, din_rail_width - 5,
-                            (-din_rail_length/2 + 2, 20, -din_rail_width/2 + 2.5))
+                            (-din_rail_length/2 + 2, 25, -din_rail_width/2 + 2.5))
     din_rail = din_rail.cut(din_channel)
-    
+
     enclosure = enclosure.fuse(din_rail)
+
+    # Operatora bakan ust baslikta yumusak bir omuz olusturur
+    crown = create_box(width - 40, 18, depth - 30,
+                       (-(width - 40)/2, height - 10, -(depth - 30)/2))
+    enclosure = enclosure.fuse(crown)
     
-    # Kablo girişleri (alt tarafta)
-    cable_hole_diameter = 40
+    # Kablo girişleri (alt tarafta, kolon icine dusen bolge)
+    cable_hole_diameter = 36
     cable_hole_positions = [
-        (-width/4, 0, -depth/2),
-        (width/4, 0, -depth/2),
-        (0, 0, -depth/2)
+        (-70, 0, -depth/2 + 30),
+        (0, 0, -depth/2 + 30),
+        (70, 0, -depth/2 + 30)
     ]
     
     for pos in cable_hole_positions:
         hole = create_cylinder(cable_hole_diameter/2, wall_thickness + 5, pos)
         enclosure = enclosure.cut(hole)
     
-    # Havalandırma delikleri (yan duvarlarda, IP65 için filtereli)
-    vent_radius = 5
-    vent_rows = 3
-    vent_cols = 5
+    # Havalandırma delikleri (yan duvarlarda, IP65 için filtreli)
+    vent_radius = 4
+    vent_rows = 2
+    vent_cols = 4
     
     for row in range(vent_rows):
         for col in range(vent_cols):
             # Sol yan
             vent_x_left = -width/2 + 30 + col * 60
-            vent_y_left = 100 + row * 150
+            vent_y_left = 95 + row * 110
             vent_left = create_cylinder(vent_radius, wall_thickness + 2,
                                        (vent_x_left, vent_y_left, -depth/2 - 1), (0, 0, 1))
             enclosure = enclosure.cut(vent_left)
@@ -345,8 +352,8 @@ def create_terminal_enclosure(doc, name="Operator_Terminal_Enclosure"):
     hinge_mount_depth = 40
     
     hinge_positions = [
-        (-width/2, height/2, -depth/2 + 40),
-        (-width/2, height/2, -depth/2 + depth - 40)
+        (-width/2, height/2, -depth/2 + 35),
+        (-width/2, height/2, -depth/2 + depth - 35)
     ]
     
     for pos in hinge_positions:
@@ -366,39 +373,39 @@ def create_terminal_enclosure(doc, name="Operator_Terminal_Enclosure"):
 
 def create_terminal_door(doc, name="Operator_Terminal_Door"):
     """
-    Operatör Terminal Kutusu Kapağı
-    
-    DOP-110CS ekranını içerir
-    IP65 contalı
+    Operatör terminal başlığı ön kapağı
+
+    Beckhoff benzeri sade bir yüzey için
+    ekran penceresi etrafında daha ince bordür kullanılır.
     """
-    width = 400
-    height = 500
+    width = 420
+    height = 340
     thickness = 5
     
     # Ana kapak
-    door = create_box(width, thickness, 490, (-width/2, 0, -245))
+    door = create_box(width, thickness, height - 10, (-width/2, 0, -(height - 10)/2))
     
     # DOP-110CS ekran penceresi
-    screen_width = 280
-    screen_height = 220
+    screen_width = 294
+    screen_height = 234
     screen_window = create_box(screen_width, thickness + 2, screen_height,
                               (-screen_width/2, -1, 0))
     door = door.cut(screen_window)
     
     # Conta kanalı (IP65 için)
     gasket_channel_width = width - 20
-    gasket_channel_height = 490 - 20
+    gasket_channel_height = height - 30
     gasket_depth = 3
     gasket_width = 10
     
     # Üst kanal
     top_gasket = create_box(gasket_channel_width, gasket_depth, gasket_width,
-                           (-gasket_channel_width/2, thickness, 245 - gasket_width/2))
+                           (-gasket_channel_width/2, thickness, (height - 10)/2 - gasket_width/2))
     door = door.fuse(top_gasket)
     
     # Alt kanal
     bottom_gasket = create_box(gasket_channel_width, gasket_depth, gasket_width,
-                              (-gasket_channel_width/2, thickness, -245 + gasket_width/2))
+                              (-gasket_channel_width/2, thickness, -(height - 10)/2 + gasket_width/2))
     door = door.fuse(bottom_gasket)
     
     # Yan kanallar
@@ -413,8 +420,8 @@ def create_terminal_door(doc, name="Operator_Terminal_Door"):
     # Menteşe delikleri (sol tarafta)
     hinge_hole_radius = 6
     hinge_hole_positions = [
-        (-width/2 + 30, 0, 200),
-        (-width/2 + 30, 0, -200)
+        (-width/2 + 30, 0, 110),
+        (-width/2 + 30, 0, -110)
     ]
     
     for pos in hinge_hole_positions:
@@ -428,6 +435,59 @@ def create_terminal_door(doc, name="Operator_Terminal_Door"):
     shape = doc.addObject("Part::Feature", name)
     shape.Shape = door
     
+    return shape
+
+
+def create_terminal_pedestal_base(doc, name="Operator_Terminal_Base"):
+    """
+    Ayaklı terminal için ağır taban.
+    Makine yanında devrilmeye dirençli, ince ama geniş bir ayak formu.
+    """
+    width = 520
+    depth = 420
+    height = 18
+
+    base = create_box(width, height, depth, (-width/2, 0, -depth/2))
+
+    # Kolon oturma pabucu
+    plinth = create_box(180, 70, 140, (-90, height, -70))
+    base = base.fuse(plinth)
+
+    shape = doc.addObject("Part::Feature", name)
+    shape.Shape = base
+    return shape
+
+
+def create_terminal_pedestal_column(doc, name="Operator_Terminal_Column"):
+    """
+    Kabloyu gizleyen kolon.
+    LiSEC benzeri saha ergonomisi ile Beckhoff benzeri sade geometri arasında bir form.
+    """
+    outer = create_box(150, 1080, 110, (-75, 0, -55))
+    inner = create_box(110, 1060, 70, (-55, 10, -35))
+    column = outer.cut(inner)
+
+    # Uste dogru hafif daralan omuz
+    shoulder = create_box(210, 120, 150, (-105, 1080, -75))
+    column = column.fuse(shoulder)
+
+    shape = doc.addObject("Part::Feature", name)
+    shape.Shape = column
+    return shape
+
+
+def create_terminal_head_support(doc, name="Operator_Terminal_Head_Support"):
+    """
+    Terminal basligini operatora dogru tasiyan one egimli destek.
+    """
+    support = create_box(220, 120, 150, (-110, 0, -75))
+
+    # Egimli gorunus vermek icin ustte ikinci bir kademeli kitle
+    wedge = create_box(180, 90, 120, (-90, 90, -60))
+    support = support.fuse(wedge)
+
+    shape = doc.addObject("Part::Feature", name)
+    shape.Shape = support
     return shape
 
 def create_r1_ec_mounting_plate(doc, name="R1-EC_Mounting_Plate"):
@@ -583,30 +643,42 @@ def create_complete_terminal_assembly(doc, name="Operator_Terminal_Complete"):
     """
     parts = []
     
-    # 1. Ana kutu
+    # 1. Ayak tabani
+    base = create_terminal_pedestal_base(doc, "Pedestal_Base")
+    parts.append(base)
+
+    # 2. Kolon
+    column = create_terminal_pedestal_column(doc, "Pedestal_Column")
+    parts.append(column)
+
+    # 3. Baslik tasiyici
+    head_support = create_terminal_head_support(doc, "Head_Support")
+    parts.append(head_support)
+
+    # 4. Ana kutu / terminal basligi
     enclosure = create_terminal_enclosure(doc, "Enclosure")
     parts.append(enclosure)
     
-    # 2. Kapak
+    # 5. Kapak
     door = create_terminal_door(doc, "Door")
     parts.append(door)
     
-    # 3. DOP-110CS HMI
+    # 6. DOP-110CS HMI
     hmi = create_dop_110cs_housing(doc, "HMI")
     parts.append(hmi)
     
-    # 4. R1-EC montaj plakası
+    # 7. R1-EC montaj plakası
     r1_plate = create_r1_ec_mounting_plate(doc, "R1-EC_Plate")
     parts.append(r1_plate)
     
-    # 5. Kablo giriş rakorları
+    # 8. Kablo giriş rakorları
     gland1 = create_cable_gland(doc, "Gland_1", "M40")
     parts.append(gland1)
     
     gland2 = create_cable_gland(doc, "Gland_2", "M32")
     parts.append(gland2)
     
-    # 6. IP65 filtreler
+    # 9. IP65 filtreler
     filter1 = create_ip65_filter(doc, "Filter_Left")
     parts.append(filter1)
     
@@ -615,13 +687,14 @@ def create_complete_terminal_assembly(doc, name="Operator_Terminal_Complete"):
     
     # Tüm parçaları birleştir (basit montaj)
     if len(parts) > 0:
-        combined = parts[0]
+        combined = parts[0].Shape if hasattr(parts[0], "Shape") else parts[0]
         for part in parts[1:]:
-            combined = combined.fuse(part)
-        
+            part_shape = part.Shape if hasattr(part, "Shape") else part
+            combined = combined.fuse(part_shape)
+
         shape = doc.addObject("Part::Feature", name)
         shape.Shape = combined
-        
+
         return shape
     
     return None

@@ -16,6 +16,8 @@ import os
 import sys
 import json
 import asyncio
+import re
+from functools import wraps
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -32,6 +34,16 @@ from glass_cutting_orchestrator import (
     GlassOrder,
     DefectPoint
 )
+from web.backend.backend_services import (
+    build_cutting_history,
+    build_report_dataset,
+    build_report_history,
+    load_json_file,
+    parse_iso_date,
+    persist_imported_shapes,
+    save_json_file,
+)
+from web.backend.integration_api import create_integration_blueprint
 
 from modules import (
     NestingOptimizer, NestingAlgorithm, Part,
@@ -45,8 +57,10 @@ from modules import (
     AuthManager,
     ReportGenerator, AnalyticsEngine,
     BatchOptimizer, CuttingQueue, GlassSheet, CuttingOrder, OrderPriority,
-    WebSocketManager, MachineStatus, MachinePosition, ws_manager, init_socketio
+    WebSocketManager, MachineStatus, MachinePosition, ws_manager, init_socketio,
+    HerofisConnector
 )
+from modules.reports import REPORTLAB_AVAILABLE, OPENPYXL_AVAILABLE
 
 # Create Flask app
 app = Flask(__name__,
@@ -54,6 +68,7 @@ app = Flask(__name__,
             static_folder=str(MODULES_PATH / 'web' / 'frontend' / 'static'))
 
 CORS(app)
+app.register_blueprint(create_integration_blueprint(MODULES_PATH))
 
 # Initialize SocketIO
 socketio = init_socketio(app)
@@ -90,6 +105,343 @@ analytics_engine = AnalyticsEngine()
 # Initialize batch optimizer
 batch_optimizer = BatchOptimizer()
 cutting_queue = CuttingQueue(str(MODULES_PATH / 'data' / 'queue'))
+REPORTS_DIR = MODULES_PATH / 'output' / 'reports'
+SETTINGS_FILE = MODULES_PATH / 'data' / 'settings.json'
+DXF_IMPORTS_FILE_DIR = MODULES_PATH / 'data'
+ORDERS_STATE_FILE = MODULES_PATH / 'data' / 'runtime' / 'current_orders.json'
+
+
+def _deep_merge_dict(base: Dict, override: Dict) -> Dict:
+    """Recursively merge settings dictionaries while preserving defaults."""
+    merged = dict(base)
+    for key, value in (override or {}).items():
+        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = _deep_merge_dict(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
+
+
+def _infer_glass_type_from_line(line: Dict) -> str:
+    """Infer a local glass type from a Herofis payload line."""
+    text = " ".join(
+        str(part)
+        for part in [
+            line.get("stockCode", ""),
+            line.get("stockName", ""),
+            line.get("formulaCode", ""),
+            line.get("processCode", ""),
+            json.dumps(line.get("glassItems", []), ensure_ascii=False),
+        ]
+    ).lower()
+    if "lamine" in text or "laminated" in text or "pvb" in text or "eva" in text:
+        return "laminated"
+    if "temper" in text:
+        return "tempered"
+    return "float"
+
+
+def _infer_thickness_from_line(line: Dict) -> float:
+    """Best-effort thickness inference from stock code or stock name."""
+    candidates = [
+        str(line.get("stockName") or ""),
+        str(line.get("formulaCode") or ""),
+        str(line.get("stockCode") or ""),
+    ]
+    for candidate in candidates:
+        matches = re.findall(r"(\d+(?:[.,]\d+)?)", candidate)
+        for raw in matches:
+            value = float(raw.replace(",", "."))
+            if 2 <= value <= 25:
+                return value
+    return 4.0
+
+
+def _infer_laminated_details_from_line(line: Dict, thickness: float) -> Dict:
+    """Extract film metadata from Herofis payload lines when available."""
+    parameter_map = {}
+    for item in line.get("parameters", []) or []:
+        name = str(item.get("ParameterName") or "").strip()
+        value = item.get("ParameterValue")
+        if not name:
+            continue
+        parameter_map.setdefault(name, [])
+        if value not in parameter_map[name]:
+            parameter_map[name].append(value)
+
+    def _first_value(*keys: str) -> str:
+        for key in keys:
+            values = parameter_map.get(key) or []
+            if values:
+                return str(values[0]).strip()
+            direct = line.get(key)
+            if direct not in (None, ""):
+                return str(direct).strip()
+        return ""
+
+    film_type = _first_value("FilmType", "filmType", "film_type")
+    if not film_type:
+        film_text = " ".join(
+            str(part)
+            for part in [
+                line.get("stockName", ""),
+                line.get("formulaCode", ""),
+                json.dumps(line.get("glassItems", []), ensure_ascii=False),
+            ]
+        ).upper()
+        for candidate in ("PVB", "EVA", "SGP"):
+            if candidate in film_text:
+                film_type = candidate
+                break
+
+    film_thickness_raw = _first_value("FilmThickness", "filmThickness", "film_thickness")
+    film_thickness = 0.0
+    if film_thickness_raw:
+        try:
+            film_thickness = float(film_thickness_raw.replace(",", "."))
+        except ValueError:
+            film_thickness = 0.0
+
+    if film_type and film_thickness <= 0:
+        film_thickness = 0.76
+
+    if not film_type and str(_infer_glass_type_from_line(line)).lower() == "laminated":
+        film_type = "PVB"
+        film_thickness = film_thickness or 0.76
+
+    upper_thickness = lower_thickness = 0.0
+    if str(_infer_glass_type_from_line(line)).lower() == "laminated" and thickness > 0:
+        interlayer = film_thickness or 0.76
+        monolithic = max(0.0, thickness - interlayer)
+        upper_thickness = round(monolithic / 2.0, 3)
+        lower_thickness = round(monolithic / 2.0, 3)
+
+    return {
+        "film_type": film_type,
+        "film_thickness": film_thickness,
+        "upper_thickness": upper_thickness,
+        "lower_thickness": lower_thickness,
+        "parameter_map": parameter_map,
+    }
+
+
+def _value_is_truthy(raw_value) -> bool:
+    text = str(raw_value).strip().lower()
+    return text not in ("", "0", "0.0", "0,0", "false", "hayir", "hayır", "no", "off", "pasif", "none", "null")
+
+
+def _infer_processing_flags_from_line(line: Dict, parameter_map: Dict) -> Dict:
+    """Infer blade delete and trimming flags from Herofis payload fields."""
+    line_text = " ".join(
+        str(part)
+        for part in [
+            line.get("lineNote", ""),
+            line.get("edgeProcessing", ""),
+            line.get("processCode", ""),
+            json.dumps(parameter_map, ensure_ascii=False),
+        ]
+    ).lower()
+
+    blade_delete_keys = (
+        "BladeDelete",
+        "BladeDeleteEnabled",
+        "LamaSil",
+        "LamaSilme",
+        "LamaSiyirma",
+        "LamaSıyırma",
+        "BladeWipe",
+        "BladeClean",
+    )
+    trimming_keys = (
+        "RoundAmount",
+        "RoundType",
+        "Trimming",
+        "TrimmingEnabled",
+        "Rodaj",
+        "RodajAktif",
+    )
+
+    blade_delete_enabled = any(
+        parameter_map.get(key) and any(_value_is_truthy(value) for value in parameter_map.get(key, []))
+        for key in blade_delete_keys
+    )
+    trimming_enabled = any(
+        parameter_map.get(key) and any(_value_is_truthy(value) for value in parameter_map.get(key, []))
+        for key in trimming_keys
+    )
+
+    if not blade_delete_enabled and any(keyword in line_text for keyword in ("lama sil", "lama sıyır", "lama siyir", "blade delete", "blade wipe")):
+        blade_delete_enabled = True
+
+    if not trimming_enabled and any(keyword in line_text for keyword in ("rodaj", "trim", "round")):
+        trimming_enabled = True
+
+    return {
+        "blade_delete_enabled": blade_delete_enabled,
+        "trimming_enabled": trimming_enabled,
+    }
+
+
+def _import_live_payload_to_current_orders(payload: Dict) -> List[GlassOrder]:
+    """Convert normalized Herofis payload into local order list."""
+    imported_orders: List[GlassOrder] = []
+    order_no = str(payload.get("order", {}).get("orderNo") or "HERO")
+    customer_name = str(payload.get("order", {}).get("customerName") or "")
+    for line in payload.get("lines", []):
+        thickness = _infer_thickness_from_line(line)
+        glass_type = _infer_glass_type_from_line(line)
+        lamine_meta = _infer_laminated_details_from_line(line, thickness)
+        parameter_map = lamine_meta["parameter_map"]
+        process_flags = _infer_processing_flags_from_line(line, parameter_map)
+
+        edge_processing = str(line.get("edgeProcessing") or "").strip()
+        if not edge_processing:
+            if parameter_map.get("RoundAmount") and any(str(value) not in ("0", "0,0", "0.0") for value in parameter_map["RoundAmount"]):
+                edge_processing = "rodaj"
+            elif parameter_map.get("RoundType") and any(str(value) not in ("0", "0,0", "0.0") for value in parameter_map["RoundType"]):
+                edge_processing = "rodaj"
+
+        imported_orders.append(
+            GlassOrder(
+                order_id=str(line.get("lineId") or f"{order_no}-{line.get('rowNo') or len(imported_orders) + 1}"),
+                width=float(line.get("width") or 0),
+                height=float(line.get("height") or 0),
+                quantity=int(float(line.get("quantity") or 1)),
+                thickness=thickness,
+                glass_type=glass_type,
+                priority=1,
+                rotate_allowed=not bool(line.get("isShape")),
+                blade_delete_enabled=process_flags["blade_delete_enabled"],
+                trimming_enabled=process_flags["trimming_enabled"],
+                source_system="herofis",
+                source_order_no=order_no,
+                customer_name=customer_name,
+                edge_processing=edge_processing,
+                process_code=str(line.get("processCode") or ""),
+                herofis_options={
+                    "group_code": line.get("groupCode"),
+                    "batch_no": line.get("batchNo"),
+                    "package_id": line.get("packageId"),
+                    "is_warranty": bool(line.get("isWarranty")),
+                    "is_shape": bool(line.get("isShape")),
+                    "shape_base_string": line.get("shapeBaseString"),
+                    "is_laminated": glass_type == "laminated",
+                    "blade_delete_enabled": process_flags["blade_delete_enabled"],
+                    "trimming_enabled": process_flags["trimming_enabled"],
+                    "line_note": line.get("lineNote"),
+                    "single_glass_count": len(line.get("singleGlasses") or []),
+                    "parameter_keys": sorted(parameter_map.keys()),
+                    "parameters": parameter_map,
+                    "upper_thickness": lamine_meta["upper_thickness"],
+                    "lower_thickness": lamine_meta["lower_thickness"],
+                },
+                film_type=lamine_meta["film_type"],
+                film_thickness=lamine_meta["film_thickness"],
+            )
+        )
+    return imported_orders
+
+
+def _serialize_orders(orders: List[GlassOrder]) -> List[Dict]:
+    """Convert GlassOrder objects to JSON-serializable dictionaries."""
+    return [
+        {
+            "order_id": order.order_id,
+            "width": order.width,
+            "height": order.height,
+            "quantity": order.quantity,
+            "thickness": order.thickness,
+            "glass_type": order.glass_type,
+            "priority": order.priority,
+            "rotate_allowed": order.rotate_allowed,
+            "grinding_allowance": order.grinding_allowance,
+            "blade_delete_enabled": order.blade_delete_enabled,
+            "trimming_enabled": order.trimming_enabled,
+            "source_system": order.source_system,
+            "source_order_no": order.source_order_no,
+            "customer_name": order.customer_name,
+            "edge_processing": order.edge_processing,
+            "process_code": order.process_code,
+            "herofis_options": order.herofis_options,
+            "film_type": order.film_type,
+            "film_thickness": order.film_thickness,
+        }
+        for order in orders
+    ]
+
+
+def _deserialize_orders(payload: List[Dict]) -> List[GlassOrder]:
+    """Restore GlassOrder objects from persisted JSON."""
+    orders: List[GlassOrder] = []
+    for item in payload or []:
+        orders.append(
+            GlassOrder(
+                order_id=item["order_id"],
+                width=float(item["width"]),
+                height=float(item["height"]),
+                quantity=int(item.get("quantity", 1)),
+                thickness=float(item.get("thickness", 4)),
+                glass_type=item.get("glass_type", "float"),
+                priority=int(item.get("priority", 1)),
+                rotate_allowed=bool(item.get("rotate_allowed", True)),
+                grinding_allowance=item.get("grinding_allowance", "none"),
+                blade_delete_enabled=bool(item.get("blade_delete_enabled", False)),
+                trimming_enabled=bool(item.get("trimming_enabled", False)),
+                source_system=item.get("source_system", "manual"),
+                source_order_no=item.get("source_order_no", ""),
+                customer_name=item.get("customer_name", ""),
+                edge_processing=item.get("edge_processing", ""),
+                process_code=item.get("process_code", ""),
+                herofis_options=item.get("herofis_options", {}) or {},
+                film_type=item.get("film_type", ""),
+                film_thickness=float(item.get("film_thickness", 0.0) or 0.0),
+            )
+        )
+    return orders
+
+
+def _persist_current_orders() -> None:
+    """Persist the in-memory orders list to disk for stable UI behavior."""
+    save_json_file(ORDERS_STATE_FILE, {"orders": _serialize_orders(current_orders)})
+
+
+def _ensure_current_orders_loaded() -> None:
+    """Load persisted orders back into memory if current state is empty."""
+    global current_orders
+    if current_orders:
+        return
+    stored = load_json_file(ORDERS_STATE_FILE, {"orders": []})
+    current_orders = _deserialize_orders(stored.get("orders", []))
+
+
+def _get_bearer_token() -> str:
+    """Extract bearer token from Authorization header."""
+    return request.headers.get('Authorization', '').replace('Bearer ', '').strip()
+
+
+def _get_authenticated_user() -> Optional[Dict]:
+    """Return authenticated user info if the token is valid."""
+    token = _get_bearer_token()
+    if not token:
+        return None
+    return auth_manager.verify_token(token)
+
+
+def require_auth(role: Optional[str] = None):
+    """Protect endpoints with authentication and optional role checks."""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            user_info = _get_authenticated_user()
+            if not user_info:
+                return jsonify({"success": False, "error": "Authentication required"}), 401
+
+            if role and user_info.get('role') != role:
+                return jsonify({"success": False, "error": "Insufficient permissions"}), 403
+
+            return func(*args, current_user=user_info, **kwargs)
+        return wrapper
+    return decorator
 
 
 # ==================== HTML Routes ====================
@@ -183,6 +535,7 @@ def test_api_page():
 @app.route('/api/orders', methods=['GET'])
 def get_orders():
     """Get all orders"""
+    _ensure_current_orders_loaded()
     orders_data = [
         {
             "order_id": o.order_id,
@@ -192,7 +545,16 @@ def get_orders():
             "thickness": o.thickness,
             "glass_type": o.glass_type,
             "priority": o.priority,
-            "rotate_allowed": o.rotate_allowed
+            "rotate_allowed": o.rotate_allowed,
+            "grinding_allowance": o.grinding_allowance,
+            "blade_delete_enabled": o.blade_delete_enabled,
+            "trimming_enabled": o.trimming_enabled,
+            "source_system": o.source_system,
+            "source_order_no": o.source_order_no,
+            "customer_name": o.customer_name,
+            "edge_processing": o.edge_processing,
+            "process_code": o.process_code,
+            "herofis_options": o.herofis_options,
         }
         for o in current_orders
     ]
@@ -212,10 +574,27 @@ def add_order():
         thickness=float(data.get('thickness', 4)),
         glass_type=data.get('glass_type', 'float'),
         priority=int(data.get('priority', 1)),
-        rotate_allowed=data.get('rotate_allowed', True)
+        rotate_allowed=data.get('rotate_allowed', True),
+        # Blade management options
+        grinding_allowance=data.get('grinding_allowance', 'none'),
+        blade_delete_enabled=data.get('blade_delete_enabled', False),
+        trimming_enabled=data.get('trimming_enabled', False),
+        source_system=data.get('source_system', 'manual'),
+        source_order_no=data.get('source_order_no', ''),
+        customer_name=data.get('customer_name', ''),
+        edge_processing=data.get('edge_processing', ''),
+        process_code=data.get('process_code', ''),
+        herofis_options=data.get('herofis_options', {}) or {},
     )
 
     current_orders.append(order)
+    _persist_current_orders()
+
+    # Record blade usage if blade delete is enabled
+    if order.blade_delete_enabled and blade_manager.get_active_blade():
+        # Estimate cut length (perimeter of all parts)
+        estimated_cut = (order.width + order.height) * 2 * order.quantity / 1000  # meters
+        blade_manager.record_cut(estimated_cut, order.order_id)
 
     return jsonify({
         "success": True,
@@ -223,7 +602,16 @@ def add_order():
             "order_id": order.order_id,
             "width": order.width,
             "height": order.height,
-            "quantity": order.quantity
+            "quantity": order.quantity,
+            "grinding_allowance": order.grinding_allowance,
+            "blade_delete_enabled": order.blade_delete_enabled,
+            "trimming_enabled": order.trimming_enabled,
+            "source_system": order.source_system,
+            "source_order_no": order.source_order_no,
+            "customer_name": order.customer_name,
+            "edge_processing": order.edge_processing,
+            "process_code": order.process_code,
+            "herofis_options": order.herofis_options,
         },
         "total_orders": len(current_orders)
     })
@@ -233,7 +621,9 @@ def add_order():
 def delete_order(order_id):
     """Delete order"""
     global current_orders
+    _ensure_current_orders_loaded()
     current_orders = [o for o in current_orders if o.order_id != order_id]
+    _persist_current_orders()
     return jsonify({"success": True, "remaining": len(current_orders)})
 
 
@@ -242,6 +632,7 @@ def clear_orders():
     """Clear all orders"""
     global current_orders
     current_orders = []
+    _persist_current_orders()
     return jsonify({"success": True})
 
 
@@ -273,6 +664,8 @@ def load_orders():
             )
             current_orders.append(order)
 
+        _persist_current_orders()
+
         return jsonify({
             "success": True,
             "loaded": len(current_orders),
@@ -287,10 +680,73 @@ def load_orders():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+@app.route('/api/orders/import-live-herofis', methods=['POST'])
+def import_live_herofis_orders():
+    """Fetch a live Herofis order and import its lines into the local orders list."""
+    data = request.get_json() or {}
+    username = str(data.get("username") or "").strip()
+    password = str(data.get("password") or "").strip()
+    order_no = str(data.get("orderNo") or "").strip()
+    base_url = str(data.get("baseUrl") or "https://herofis.com").strip()
+    verify_ssl = bool(data.get("verifySsl", True))
+    replace_existing = bool(data.get("replaceExisting", True))
+
+    if not username or not password or not order_no:
+        return jsonify({"success": False, "error": "username, password and orderNo are required"}), 400
+
+    connector = HerofisConnector(data_dir=str(MODULES_PATH / "data" / "herofis"))
+
+    try:
+        payload = connector.fetch_live_order_payload(
+            username=username,
+            password=password,
+            order_no=order_no,
+            base_url=base_url,
+            verify_ssl=verify_ssl,
+        )
+    except Exception as exc:
+        return jsonify({"success": False, "error": str(exc)}), 400
+
+    imported = _import_live_payload_to_current_orders(payload)
+
+    global current_orders
+    if replace_existing:
+        current_orders = imported
+    else:
+        current_orders.extend(imported)
+    _persist_current_orders()
+
+    return jsonify(
+        {
+            "success": True,
+            "orderNo": order_no,
+            "imported": len(imported),
+            "replaceExisting": replace_existing,
+            "orders": [
+                {
+                    "order_id": order.order_id,
+                    "width": order.width,
+                    "height": order.height,
+                    "quantity": order.quantity,
+                    "thickness": order.thickness,
+                    "glass_type": order.glass_type,
+                    "priority": order.priority,
+                    "rotate_allowed": order.rotate_allowed,
+                    "film_type": order.film_type,
+                    "film_thickness": order.film_thickness,
+                }
+                for order in current_orders
+            ],
+            "customerName": payload.get("order", {}).get("customerName"),
+        }
+    )
+
+
 @app.route('/api/optimize', methods=['POST'])
 def run_optimization():
     """Run optimization"""
     global current_result, current_gcode
+    _ensure_current_orders_loaded()
 
     if not current_orders:
         return jsonify({"success": False, "error": "No orders to optimize"}), 400
@@ -353,6 +809,7 @@ def run_local_optimization():
     Works offline without internet connection
     """
     global current_result, current_gcode
+    _ensure_current_orders_loaded()
 
     if not current_orders:
         return jsonify({"success": False, "error": "No orders to optimize"}), 400
@@ -396,11 +853,17 @@ def run_local_optimization():
     path_result = path_optimizer.optimize(nesting_result['placed_parts'], PathAlgorithm.TWO_OPT)
 
     # Generate G-code (local)
+    detected_glass_type = GlassType.FLOAT
+    if any(order.glass_type == GlassType.LAMINATED.value for order in current_orders):
+        detected_glass_type = GlassType.LAMINATED
+    elif any(order.glass_type == GlassType.TEMPERED.value for order in current_orders):
+        detected_glass_type = GlassType.TEMPERED
+
     gcode_gen = NC300GCodeGenerator()
     gcode_program = gcode_gen.generate(
         nesting_result['placed_parts'],
         path_result['path'],
-        GlassType.FLOAT,
+        detected_glass_type,
         "offline_cut"
     )
 
@@ -420,6 +883,7 @@ def run_local_optimization():
         "gcode_file": gcode_file,
         "report_file": None,
         "offline": True,
+        "glass_type": detected_glass_type.value,
         "algorithm": "Local Guillotine + 2-opt (Offline)"
     }
 
@@ -434,6 +898,7 @@ def run_local_optimization():
 @app.route('/api/optimize/nesting', methods=['POST'])
 def run_nesting_only():
     """Run only nesting optimization (for visualization)"""
+    _ensure_current_orders_loaded()
     if not current_orders:
         return jsonify({"success": False, "error": "No orders"}), 400
 
@@ -636,33 +1101,36 @@ def get_report(filename):
 @app.route('/api/settings', methods=['GET'])
 def get_settings():
     """Get current settings"""
-    settings_file = MODULES_PATH / 'data' / 'settings.json'
-    
-    if settings_file.exists():
-        with open(settings_file, 'r') as f:
-            settings = json.load(f)
-    else:
-        # Return defaults
-        settings = {
-            "api_key": "",
-            "api_endpoint": "https://coding-intl.dashscope.aliyuncs.com/v1",
-            "mode": "offline",
-            "models": [
-                {"model_id": "qwen3.5-plus", "enabled": True, "temperature": 0.7, "max_tokens": 2048},
-                {"model_id": "qwen3-max-2026-01-23", "enabled": True, "temperature": 0.5, "max_tokens": 4096},
-                {"model_id": "qwen3-coder-plus", "enabled": True, "temperature": 0.2, "max_tokens": 8192},
-                {"model_id": "qwen3-coder-next", "enabled": True, "temperature": 0.3, "max_tokens": 4096},
-                {"model_id": "glm-4.7", "enabled": True, "temperature": 0.6, "max_tokens": 2048},
-                {"model_id": "kimi-k2.5", "enabled": True, "temperature": 0.5, "max_tokens": 4096}
-            ],
-            "routing": {
-                "nesting": "qwen3-max-2026-01-23,qwen3-coder-plus",
-                "gcode": "qwen3-coder-plus,qwen3-coder-next",
-                "lamine": "qwen3.5-plus",
-                "validation": "glm-4.7,kimi-k2.5"
-            },
-            "parallel": {"max_parallel": 3, "timeout": 90, "retry": 2, "fallback": True}
-        }
+    defaults = {
+        "api_key": "",
+        "api_endpoint": "https://coding-intl.dashscope.aliyuncs.com/v1",
+        "mode": "offline",
+        "models": [
+            {"model_id": "qwen3.5-plus", "enabled": True, "temperature": 0.7, "max_tokens": 2048},
+            {"model_id": "qwen3-max-2026-01-23", "enabled": True, "temperature": 0.5, "max_tokens": 4096},
+            {"model_id": "qwen3-coder-plus", "enabled": True, "temperature": 0.2, "max_tokens": 8192},
+            {"model_id": "qwen3-coder-next", "enabled": True, "temperature": 0.3, "max_tokens": 4096},
+            {"model_id": "glm-4.7", "enabled": True, "temperature": 0.6, "max_tokens": 2048},
+            {"model_id": "kimi-k2.5", "enabled": True, "temperature": 0.5, "max_tokens": 4096}
+        ],
+        "routing": {
+            "nesting": "qwen3-max-2026-01-23,qwen3-coder-plus",
+            "gcode": "qwen3-coder-plus,qwen3-coder-next",
+            "lamine": "qwen3.5-plus",
+            "validation": "glm-4.7,kimi-k2.5"
+        },
+        "integration": {
+            "herofis_base_url": "https://herofis.com",
+            "herofis_username": "",
+            "herofis_password": "",
+            "verify_ssl": False,
+            "default_target_status_id": 20,
+            "test_order_no": "",
+            "status_override": ""
+        },
+        "parallel": {"max_parallel": 3, "timeout": 90, "retry": 2, "fallback": True}
+    }
+    settings = _deep_merge_dict(defaults, load_json_file(SETTINGS_FILE, {}))
     
     # Mask API key for security
     if settings.get("api_key"):
@@ -676,18 +1144,14 @@ def get_settings():
 def save_settings():
     """Save settings to file"""
     data = request.get_json()
-    
-    settings_file = MODULES_PATH / 'data' / 'settings.json'
-    
+
     # Don't overwrite API key if empty (keep existing)
-    if data.get("api_key") == "" and settings_file.exists():
-        with open(settings_file, 'r') as f:
-            existing = json.load(f)
-            if existing.get("api_key"):
-                data["api_key"] = existing["api_key"]
-    
-    with open(settings_file, 'w') as f:
-        json.dump(data, f, indent=2)
+    if data.get("api_key") == "" and SETTINGS_FILE.exists():
+        existing = load_json_file(SETTINGS_FILE, {})
+        if existing.get("api_key"):
+            data["api_key"] = existing["api_key"]
+
+    save_json_file(SETTINGS_FILE, data)
     
     return jsonify({"success": True, "message": "Settings saved"})
 
@@ -783,12 +1247,19 @@ def reset_settings():
             "lamine": "qwen3.5-plus",
             "validation": "glm-4.7,kimi-k2.5"
         },
+        "integration": {
+            "herofis_base_url": "https://herofis.com",
+            "herofis_username": "",
+            "herofis_password": "",
+            "verify_ssl": False,
+            "default_target_status_id": 20,
+            "test_order_no": "",
+            "status_override": ""
+        },
         "parallel": {"max_parallel": 3, "timeout": 90, "retry": 2, "fallback": True}
     }
-    
-    settings_file = MODULES_PATH / 'data' / 'settings.json'
-    with open(settings_file, 'w') as f:
-        json.dump(defaults, f, indent=2)
+
+    save_json_file(SETTINGS_FILE, defaults)
     
     return jsonify({"success": True, "settings": defaults, "message": "Reset to defaults"})
 
@@ -940,7 +1411,7 @@ def api_login():
 @app.route('/api/auth/logout', methods=['POST'])
 def api_logout():
     """User logout"""
-    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    token = _get_bearer_token()
     
     if token:
         auth_manager.logout(token)
@@ -949,9 +1420,9 @@ def api_logout():
 
 
 @app.route('/api/auth/register', methods=['POST'])
-def api_register():
+@require_auth(role='admin')
+def api_register(current_user: Dict):
     """Register new user (admin only)"""
-    # TODO: Add admin check
     data = request.get_json()
     
     username = data.get('username')
@@ -980,7 +1451,7 @@ def api_register():
 @app.route('/api/auth/me', methods=['GET'])
 def api_get_current_user():
     """Get current user info"""
-    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    token = _get_bearer_token()
     
     if not token:
         return jsonify({"success": False, "error": "No token provided"}), 401
@@ -1024,9 +1495,9 @@ def api_refresh_token():
 
 
 @app.route('/api/auth/users', methods=['GET'])
-def api_get_users():
+@require_auth(role='admin')
+def api_get_users(current_user: Dict):
     """Get all users (admin only)"""
-    # TODO: Add admin check
     users = [auth_manager.get_user(uid).to_dict() for uid in auth_manager.users.keys()]
     
     return jsonify({
@@ -1037,7 +1508,8 @@ def api_get_users():
 
 
 @app.route('/api/auth/statistics', methods=['GET'])
-def api_auth_statistics():
+@require_auth(role='admin')
+def api_auth_statistics(current_user: Dict):
     """Get authentication statistics"""
     stats = auth_manager.get_statistics()
     
@@ -1136,13 +1608,25 @@ def import_dxf_shapes():
             adjusted = blade_mgr.calculate_with_grinding(width, height, grinding)
             shape['adjusted_dimensions'] = adjusted
     
-    # TODO: Save to database or add to current shapes
-    # For now, just return success
+    import_record = persist_imported_shapes(
+        DXF_IMPORTS_FILE_DIR,
+        program_shapes,
+        {
+            "placement": placement,
+            "offset_x": offset_x,
+            "offset_y": offset_y,
+            "grinding_allowance": grinding,
+        }
+    )
     
     return jsonify({
         "success": True,
         "imported_count": len(program_shapes),
         "shapes": program_shapes,
+        "import_record": {
+            "imported_at": import_record["imported_at"],
+            "count": import_record["count"],
+        },
         "message": f"{len(program_shapes)} şekil aktarıldı"
     })
 
@@ -1158,20 +1642,11 @@ def api_generate_report():
     start_date = data.get('start_date')
     end_date = data.get('end_date')
     
-    # TODO: Get actual data from database
-    # For now, use sample data
-    sample_data = {
-        'total_orders': 25,
-        'completed_orders': 23,
-        'total_cuts': 150,
-        'avg_utilization': 0.87,
-        'total_waste': 2500000,
-        'total_time': 480,
-        'orders': [
-            {'order_id': 'ORD-001', 'glass_type': 'float', 'width': 500, 'height': 400, 'utilization': 0.92, 'status': 'completed'},
-            {'order_id': 'ORD-002', 'glass_type': 'laminated', 'width': 600, 'height': 400, 'utilization': 0.85, 'status': 'completed'}
-        ]
-    }
+    sample_data = build_report_dataset(
+        REPORTS_DIR,
+        parse_iso_date(start_date),
+        parse_iso_date(end_date),
+    )
     
     if report_type == 'daily':
         from datetime import datetime
@@ -1208,11 +1683,7 @@ def api_export_report(format):
     
     # Generate report
     from datetime import datetime
-    sample_data = {
-        'total_orders': 25,
-        'completed_orders': 23,
-        'avg_utilization': 0.87
-    }
+    sample_data = build_report_dataset(REPORTS_DIR)
     report = report_generator.generate_daily_report(datetime.now(), sample_data)
     
     try:
@@ -1254,34 +1725,37 @@ def api_download_report(filename):
 @app.route('/api/analytics/utilization', methods=['GET'])
 def api_utilization_analytics():
     """Get utilization analytics"""
-    # TODO: Get from database
-    sample_history = [
-        {'utilization': 0.92, 'waste_area': 100000, 'cutting_time': 30},
-        {'utilization': 0.85, 'waste_area': 150000, 'cutting_time': 45}
-    ]
-    
-    stats = analytics_engine.calculate_utilization_stats(sample_history)
+    history = build_cutting_history(REPORTS_DIR)
+    stats = analytics_engine.calculate_utilization_stats(history)
     
     return jsonify({
         "success": True,
-        "statistics": stats
+        "statistics": stats,
+        "history_count": len(history)
     })
 
 
 @app.route('/api/analytics/waste', methods=['GET'])
 def api_waste_analytics():
     """Get waste analytics"""
-    # TODO: Get from database
-    sample_history = [
-        {'utilization': 0.92, 'waste_area': 100000},
-        {'utilization': 0.85, 'waste_area': 150000}
-    ]
-    
-    stats = analytics_engine.calculate_waste_stats(sample_history)
+    history = build_cutting_history(REPORTS_DIR)
+    stats = analytics_engine.calculate_waste_stats(history)
     
     return jsonify({
         "success": True,
-        "statistics": stats
+        "statistics": stats,
+        "history_count": len(history)
+    })
+
+
+@app.route('/api/reports/history', methods=['GET'])
+def api_report_history():
+    """Return generated report history for the frontend."""
+    history = build_report_history(REPORTS_DIR)
+    return jsonify({
+        "success": True,
+        "history": history,
+        "total": len(history)
     })
 
 

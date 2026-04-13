@@ -1,0 +1,10 @@
+{
+  "doc_name": "GFB_60_30RE_S_Complete1",
+  "objects": 128,
+  "nc_moves": 29,
+  "nc_cut_moves": 16,
+  "nc_rapid_moves": 13,
+  "estimated_duration_s": 885.566,
+  "total_cut_length_mm": 13680.6,
+  "event_log_count": 4
+}

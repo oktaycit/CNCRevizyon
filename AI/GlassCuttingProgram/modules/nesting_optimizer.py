@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 """
 Nesting Optimizer Module
 Advanced 2D Bin Packing for Glass Cutting
@@ -66,6 +67,8 @@ class Part:
     priority: int = 1
     rotate_allowed: bool = True
     glass_type: str = "float"
+    blade_delete_enabled: bool = False
+    trimming_enabled: bool = False
 
     @property
     def area(self) -> float:
@@ -266,7 +269,7 @@ class GeneticOptimizer:
         population = [self._create_individual(parts) for _ in range(self.population_size)]
 
         # Evaluate fitness
-        fitness = [self._evaluate(ind) for ind in population]
+        fitness = [self._evaluate(ind, parts) for ind in population]
 
         best_individual = population[0]
         best_fitness = fitness[0]
@@ -291,7 +294,7 @@ class GeneticOptimizer:
                 new_population.append(child)
 
             population = new_population
-            fitness = [self._evaluate(ind) for ind in population]
+            fitness = [self._evaluate(ind, parts) for ind in population]
 
             # Track best
             max_idx = fitness.index(max(fitness))
@@ -315,17 +318,15 @@ class GeneticOptimizer:
             individual.append((i, x, y, rotated))
         return individual
 
-    def _evaluate(self, individual: List[Tuple]) -> float:
+    def _evaluate(self, individual: List[Tuple], parts: List[Part]) -> float:
         """Evaluate fitness (utilization - overlap penalty)"""
         placed_area = 0
         overlap_penalty = 0
 
         rects = []
         for i, x, y, rotated in individual:
-            w, h = individual[0] if not rotated else (individual[1], individual[0])
-            # Get actual part dimensions
-            # This is simplified - actual implementation needs part reference
-            w, h = 100, 100  # Placeholder
+            part = parts[i]
+            w, h = (part.height, part.width) if rotated else (part.width, part.height)
             rect = Rectangle(x, y, w, h)
 
             # Check overlap
@@ -597,12 +598,21 @@ class NestingOptimizer:
             "placed_parts": [
                 {
                     "part_id": p.part.part_id,
+                    "order_id": p.part.part_id,
                     "x": p.x,
                     "y": p.y,
                     "width": p.width,
                     "height": p.height,
+                    "placed_width": p.width,
+                    "placed_height": p.height,
                     "rotated": p.rotated,
-                    "area": p.width * p.height
+                    "area": p.width * p.height,
+                    "thickness": p.part.thickness,
+                    "priority": p.part.priority,
+                    "rotate_allowed": p.part.rotate_allowed,
+                    "glass_type": p.part.glass_type,
+                    "blade_delete_enabled": p.part.blade_delete_enabled,
+                    "trimming_enabled": p.part.trimming_enabled,
                 }
                 for p in placed
             ],

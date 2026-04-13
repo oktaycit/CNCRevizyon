@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 """
 WebSocket Module
 Real-time machine status and notifications for glass cutting program
@@ -27,6 +28,7 @@ try:
     WEBSOCKETS_AVAILABLE = True
 except ImportError:
     WEBSOCKETS_AVAILABLE = False
+    WebSocketServerProtocol = Any
     print("Warning: websockets not installed. Run: pip install websockets")
 
 try:

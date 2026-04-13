@@ -28,6 +28,25 @@ Orijinal GFB-60/30RE düz cam kesim makinesine **VB-Modul (Verbundglas-Schneidem
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
+### 1.1.1 Eksik Model Tamamlama
+
+Internet taramasi ve proje altindaki orijinal LiSEC PDF referanslarina gore `GFB-60/30RE-S` tek basina tam hattin adi degil, hibrit hattin merkez kesim moduludur. Sistemi butunleyen diger moduller asagidaki gibi okunmaktadir:
+
+| Hat Bolumu | Dogrulanan Model(ler) | Not |
+|------------|------------------------|-----|
+| Yukleme | ATH-60/30D, ATH-60/30A3D veya BSK-60/30 RE-S | Ikinci el ilanlarda iki farkli yukleme varyanti goruluyor |
+| Float / Low-E kesim | GFB-60/30RE-S | Projedeki ana referans model |
+| Lamine kesim | VB-45 veya VB-60 | Makine yilina ve opsiyonuna gore degisiyor |
+| Kirma / bosaltma | BTS-60/30 | Hat sonu transfer / breaking table |
+
+Bu nedenle bu dokumanda gecen `GFB-60/30RE-S hibrit sistem` ifadesi bundan sonra su anlamda kullanilmistir:
+
+`[Yukleme] + GFB-60/30RE-S + [VB modul] + BTS-60/30`
+
+Not:
+- Guncel LiSEC urun ailesinde float kesim tarafi resmi sitede `ESL-RS` olarak gecmektedir.
+- Internet ilanlari ile yerel PDF etiketleri birlikte okundugunda, saha tarafindaki eski adlandirmanin `ATH/BSK + GFB + VB + BTS` seklinde kuruldugu anlasilmaktadir.
+
 ### 1.2 Eksen Sayısı Artışı
 
 | Eksen | Fonksiyon | Orijinal | Yeni (VB-Modul) |
