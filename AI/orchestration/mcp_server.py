@@ -5,6 +5,12 @@ CNC AI Orchestrator - MCP Server (Enhanced for Lite Plan)
 Bu MCP server, VS Code'taki Cline'ın tüm AI modellerini
 paralel olarak kullanmasını sağlar.
 
+FreeCAD Entegrasyonu:
+- FreeCAD CLI ile script çalıştırma
+- FreeCAD Python API ile modelleme
+- Assembly4 desteği
+- STEP/DXF/STL/PNG export
+
 Kurulum:
 1. pip install -r requirements.txt
 2. Cline MCP ayarlarında bu server aktif
@@ -30,6 +36,14 @@ try:
 except ImportError:
     MCP_AVAILABLE = False
     print("MCP kütüphanesi bulunamadı. Yüklemek için: pip install mcp[cli]")
+
+# FreeCAD MCP modülünü içe aktar
+try:
+    from freecad_mcp import FreeCADController, get_freecad_tools, handle_freecad_tool
+    FREECAD_AVAILABLE = True
+except ImportError:
+    FREECAD_AVAILABLE = False
+    print("FreeCAD MCP modülü bulunamadı (freecad_mcp.py)")
 
 
 # Proje Bağlamı
@@ -373,10 +387,12 @@ class CNCOrchestrator:
 if MCP_AVAILABLE:
     app = Server("cnc-ai-orchestrator")
     orchestrator = CNCOrchestrator()
+    freecad_controller = FreeCADController() if FREECAD_AVAILABLE else None
 
     @app.list_tools()
     async def list_tools() -> List[Tool]:
-        return [
+        # Temel AI tool'ları
+        tools = [
             Tool(
                 name="ai_ask",
                 description="Tek bir AI modeline soru sor",
@@ -470,6 +486,12 @@ if MCP_AVAILABLE:
                 }
             )
         ]
+
+        # FreeCAD tool'larını ekle (eğer kullanılabilir)
+        if FREECAD_AVAILABLE and freecad_controller:
+            tools.extend(get_freecad_tools())
+
+        return tools
 
     @app.call_tool()
     async def call_tool(name: str, arguments: Any) -> List[TextContent]:
@@ -649,6 +671,11 @@ if MCP_AVAILABLE:
             
             result = orchestrator.compare_responses(formatted)
             return [TextContent(type="text", text=result)]
+
+        # FreeCAD tool'larını işle
+        elif FREECAD_AVAILABLE and freecad_controller:
+            if name.startswith("freecad_"):
+                return await handle_freecad_tool(name, arguments, freecad_controller)
 
         return [TextContent(type="text", text=f"⚠️ Bilinmeyen tool: {name}")]
 
