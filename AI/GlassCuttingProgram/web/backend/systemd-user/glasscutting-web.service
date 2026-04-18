@@ -1,0 +1,17 @@
+[Unit]
+Description=Glass Cutting Web Backend
+After=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Projeler/CNCRevizyon
+Environment=PYTHONUNBUFFERED=1
+Environment=GLASSCUTTING_HOST=127.0.0.1
+Environment=GLASSCUTTING_PORT=5001
+Environment=GLASSCUTTING_DEBUG=false
+ExecStart=%h/Projeler/CNCRevizyon/AI/GlassCuttingProgram/web/backend/start_web_backend.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

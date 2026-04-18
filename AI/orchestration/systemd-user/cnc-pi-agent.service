@@ -1,0 +1,16 @@
+[Unit]
+Description=CNC Raspberry Pi Goal Agent
+After=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Projeler/CNCRevizyon
+Environment=PYTHONUNBUFFERED=1
+Environment=PI_AGENT_INTERVAL=20
+EnvironmentFile=-%h/.config/cnc-pi-agent/env
+ExecStart=%h/Projeler/CNCRevizyon/AI/orchestration/start_pi_agent.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

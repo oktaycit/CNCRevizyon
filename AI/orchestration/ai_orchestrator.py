@@ -46,6 +46,61 @@ class ModelResponse:
             self.timestamp = datetime.now().isoformat()
 
 
+MODEL_ALIASES = {
+    "qwen35": "qwen3.5-plus",
+    "qwen3.5": "qwen3.5-plus",
+    "qwen3.5-plus": "qwen3.5-plus",
+    "qwenmax": "qwen3-max-2026-01-23",
+    "qwen3-max": "qwen3-max-2026-01-23",
+    "qwen3-max-2026-01-23": "qwen3-max-2026-01-23",
+    "coder": "qwen3-coder-plus",
+    "qwen-coder": "qwen3-coder-plus",
+    "qwen3-coder-plus": "qwen3-coder-plus",
+    "qwen3-coder-next": "qwen3-coder-next",
+    "glm": "glm-5",
+    "glm5": "glm-5",
+    "glm-5": "glm-5",
+    "kimi": "kimi-k2.5",
+    "kimi-k2.5": "kimi-k2.5",
+    "minimax": "MiniMax-M2.5",
+    "minimax-m2.5": "MiniMax-M2.5",
+    "minimax-m2": "MiniMax-M2.5",
+    "MiniMax-M2.5": "MiniMax-M2.5",
+}
+
+
+DEFAULT_PIPELINE = {
+    "analysis": ["qwen3-max-2026-01-23", "qwen3.5-plus"],
+    "implementation": ["qwen3-coder-plus", "qwen3-coder-next"],
+    "review": ["glm-5", "MiniMax-M2.5"],
+    "documentation": ["kimi-k2.5"],
+}
+
+
+def normalize_model_name(model_name: str) -> str:
+    """Normalize user-friendly aliases to canonical model ids."""
+    return MODEL_ALIASES.get(model_name.strip(), model_name.strip())
+
+
+def resolve_model_indices(configs: List["ModelConfig"], requested_models: Optional[List[str]]) -> Optional[List[int]]:
+    """Resolve requested model ids/aliases to config indices."""
+    if not requested_models:
+        return None
+
+    normalized = {normalize_model_name(model) for model in requested_models}
+    indices = [
+        idx for idx, config in enumerate(configs)
+        if config.model_id in normalized
+    ]
+    return indices or None
+
+
+def load_raw_config(config_path: str) -> Dict[str, Any]:
+    """Load raw configuration json for routing and pipeline metadata."""
+    with open(config_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
 class DashScopeClient:
     """DashScope API istemcisi"""
     
@@ -247,8 +302,7 @@ class AIOrchestrator:
 
 def load_config_from_file(config_path: str) -> List[ModelConfig]:
     """Yapılandırma dosyasından model config'leri yükle"""
-    with open(config_path, 'r', encoding='utf-8') as f:
-        config = json.load(f)
+    config = load_raw_config(config_path)
     
     api_key = config.get("api_key", "")
     api_endpoint = config.get("api_endpoint", "https://coding-intl.dashscope.aliyuncs.com/v1")
@@ -290,8 +344,36 @@ def create_default_config(output_path: str = "orchestrator_config.json"):
                 "temperature": 0.3,
                 "max_tokens": 4096,
                 "system_prompt": "Sen uzman bir yazılım geliştirme asistanısın. Kod yazma ve açıklama konusunda uzmansın."
+            },
+            {
+                "model_id": "glm-5",
+                "temperature": 0.4,
+                "max_tokens": 4096,
+                "system_prompt": "Sen eleştirel düşünen bir teknik reviewer ve doğrulama uzmanısın."
+            },
+            {
+                "model_id": "kimi-k2.5",
+                "temperature": 0.5,
+                "max_tokens": 4096,
+                "system_prompt": "Sen teknik dokümantasyon ve uzun bağlam analizi konusunda uzmansın."
+            },
+            {
+                "model_id": "MiniMax-M2.5",
+                "temperature": 0.5,
+                "max_tokens": 4096,
+                "system_prompt": "Sen alternatif çözüm üreten, karşılaştırmalı düşünen bir teknik AI asistansısın."
             }
         ],
+        "task_routing": {
+            "general_question": ["qwen3.5-plus"],
+            "code_generation": ["qwen3-coder-plus", "qwen3-coder-next"],
+            "debug": ["qwen3-max-2026-01-23", "glm-5"],
+            "optimization": ["qwen3-max-2026-01-23", "qwen3-coder-plus"],
+            "design": ["qwen3.5-plus", "MiniMax-M2.5"],
+            "documentation": ["kimi-k2.5", "qwen3.5-plus"],
+            "validation": ["glm-5", "MiniMax-M2.5"]
+        },
+        "pipeline": DEFAULT_PIPELINE,
         "default_mode": "parallel",
         "timeout_seconds": 60
     }
@@ -323,9 +405,15 @@ async def main_async():
     parser.add_argument(
         "--mode", "-m",
         type=str,
-        choices=["single", "parallel", "sequential", "voting", "aggregate"],
+        choices=["single", "parallel", "sequential", "voting", "aggregate", "pipeline"],
         default="parallel",
         help="Çalışma modu"
+    )
+    parser.add_argument(
+        "--task-type",
+        type=str,
+        default=None,
+        help="Routing anahtarı (örn: code_generation, debug, validation)"
     )
     parser.add_argument(
         "--models",
@@ -360,7 +448,9 @@ async def main_async():
         return
     
     # Yapılandırma yükle
+    raw_config = {}
     if args.config:
+        raw_config = load_raw_config(args.config)
         configs = load_config_from_file(args.config)
     else:
         # Varsayılan config
@@ -380,22 +470,54 @@ async def main_async():
                 api_key="sk-sp-1dfff295506a4cbba9c3745dd54e5796",
                 temperature=0.3,
                 system_prompt="Sen uzman bir yazılım geliştirme asistanısın."
+            ),
+            ModelConfig(
+                model_id="glm-5",
+                api_key="sk-sp-1dfff295506a4cbba9c3745dd54e5796",
+                temperature=0.4,
+                system_prompt="Sen eleştirel düşünen bir teknik reviewer ve doğrulama uzmanısın."
+            ),
+            ModelConfig(
+                model_id="kimi-k2.5",
+                api_key="sk-sp-1dfff295506a4cbba9c3745dd54e5796",
+                temperature=0.5,
+                system_prompt="Sen teknik dokümantasyon ve uzun bağlam analizi konusunda uzmansın."
+            ),
+            ModelConfig(
+                model_id="MiniMax-M2.5",
+                api_key="sk-sp-1dfff295506a4cbba9c3745dd54e5796",
+                temperature=0.5,
+                system_prompt="Sen alternatif çözüm üreten, karşılaştırmalı düşünen bir teknik AI asistansısın."
             )
         ]
-    
+        raw_config = {
+            "task_routing": {
+                "general_question": ["qwen3.5-plus"],
+                "code_generation": ["qwen3-coder-plus", "qwen3-coder-next"],
+                "debug": ["qwen3-max-2026-01-23", "glm-5"],
+                "optimization": ["qwen3-max-2026-01-23", "qwen3-coder-plus"],
+                "design": ["qwen3.5-plus", "MiniMax-M2.5"],
+                "documentation": ["kimi-k2.5", "qwen3.5-plus"],
+                "validation": ["glm-5", "MiniMax-M2.5"]
+            },
+            "pipeline": DEFAULT_PIPELINE
+        }
+
     orchestrator = AIOrchestrator(configs)
     
     # Model filtreleme
     model_indices = None
     if args.models:
-        selected_models = [m.strip() for m in args.models.split(",")]
-        model_indices = []
-        for i, config in enumerate(configs):
-            if config.model_id in selected_models:
-                model_indices.append(i)
-        if not model_indices:
-            print(f"Uyarı: Seçilen modeller yapılandırmada bulunamadı: {selected_models}")
+        requested_models = [m.strip() for m in args.models.split(",")]
+        model_indices = resolve_model_indices(configs, requested_models)
+        if model_indices is None:
+            print(f"Uyarı: Seçilen modeller yapılandırmada bulunamadı: {requested_models}")
             model_indices = list(range(len(configs)))
+    elif args.task_type:
+        routed_models = raw_config.get("task_routing", {}).get(args.task_type, [])
+        model_indices = resolve_model_indices(configs, routed_models)
+        if model_indices is None:
+            print(f"Uyarı: Routing için model bulunamadı: {args.task_type}")
     
     # Çalıştır
     print(f"Çalıştırılıyor: {args.mode} modu")
@@ -447,6 +569,66 @@ async def main_async():
         )
         print(f"Birleştirilmiş İçerik ({args.aggregate_method}):")
         print(result["aggregated_content"])
+    
+    elif args.mode == "pipeline":
+        pipeline_config = raw_config.get("pipeline", DEFAULT_PIPELINE)
+        pipeline_result = {}
+        review_input = ""
+
+        for stage_name in ["analysis", "implementation", "review", "documentation"]:
+            stage_models = pipeline_config.get(stage_name, [])
+            stage_indices = resolve_model_indices(configs, stage_models)
+            if stage_indices is None:
+                continue
+
+            if stage_name == "analysis":
+                stage_prompt = (
+                    "Aşağıdaki görevi analiz et. Kısa riskler, varsayımlar ve önerilen yaklaşımı ver.\n\n"
+                    f"Görev:\n{args.prompt}"
+                )
+            elif stage_name == "implementation":
+                stage_prompt = (
+                    "Aşağıdaki görev için uygulanabilir çözüm veya kod taslağı üret.\n\n"
+                    f"Görev:\n{args.prompt}\n\n"
+                    f"Analiz Özeti:\n{review_input or 'Henüz analiz çıktısı yok.'}"
+                )
+            elif stage_name == "review":
+                stage_prompt = (
+                    "Aşağıdaki analiz ve uygulama taslağını eleştirel gözle incele. "
+                    "Hataları, riskleri, eksik testleri ve daha güvenli alternatifleri belirt.\n\n"
+                    f"Görev:\n{args.prompt}\n\n"
+                    f"Önceki Çıktılar:\n{review_input}"
+                )
+            else:
+                stage_prompt = (
+                    "Aşağıdaki görev için kısa teslim notu veya teknik özet hazırla.\n\n"
+                    f"Görev:\n{args.prompt}\n\n"
+                    f"Önceki Çıktılar:\n{review_input}"
+                )
+
+            responses = await orchestrator.run_parallel(stage_prompt, stage_indices)
+            stage_payload = [asdict(r) for r in responses]
+            pipeline_result[stage_name] = stage_payload
+
+            successful_contents = [
+                f"[{r.model_id}]\n{r.content}"
+                for r in responses
+                if r.status == "success"
+            ]
+            if successful_contents:
+                review_input = "\n\n".join(successful_contents)
+
+            print(f"\n{'=' * 50}")
+            print(f"Pipeline Aşaması: {stage_name}")
+            print(f"{'=' * 50}")
+            for response in responses:
+                print(f"Model: {response.model_id} | Durum: {response.status} | Latency: {response.latency_ms:.0f}ms")
+                if response.error:
+                    print(f"Hata: {response.error}")
+                else:
+                    print(f"İçerik:\n{response.content[:500]}...")
+
+        result = {"pipeline": pipeline_result}
     
     # Sonuçları dosyaya kaydet
     if args.output:

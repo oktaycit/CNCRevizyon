@@ -15,6 +15,10 @@ window.API_BASE = API_BASE;  // Make global for other scripts
 let currentOrders = [];
 let currentResult = null;
 let currentGcode = '';
+let latestHerofisCandidates = [];
+let latestHerofisListLoading = false;
+let latestHerofisImportLoading = false;
+let latestHerofisLastLoadAt = 0;
 
 // Offline mode flag
 let isOffline = !navigator.onLine;
@@ -114,6 +118,39 @@ function addLogEntry(message) {
     while (log.children.length > 20) {
         log.removeChild(log.lastChild);
     }
+}
+
+async function getHerofisIntegrationConfig() {
+    let integration = {};
+
+    try {
+        const stored = localStorage.getItem('glassCuttingSettings');
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            integration = parsed.integration || {};
+        }
+    } catch (error) {
+        console.warn('Local integration settings could not be parsed:', error);
+    }
+
+    if (!integration.herofis_username || !integration.herofis_password) {
+        const response = await fetch(`${API_BASE}/settings`);
+        const result = await response.json();
+        if (result.success) {
+            integration = result.settings?.integration || integration;
+        }
+    }
+
+    if (!integration.herofis_username || !integration.herofis_password) {
+        throw new Error('Önce Ayarlar ekranında Herofis kullanıcı ve şifre bilgisini kaydedin');
+    }
+
+    return {
+        username: integration.herofis_username,
+        password: integration.herofis_password,
+        baseUrl: integration.herofis_base_url || 'https://herofis.com',
+        verifySsl: Boolean(integration.verify_ssl)
+    };
 }
 
 // ==================== Stats Functions ====================
@@ -317,6 +354,262 @@ async function loadSampleOrders() {
     }
 
     hideLoading();
+}
+
+async function fetchLatestHerofisOrders() {
+    showLoading();
+
+    try {
+        const integration = await getHerofisIntegrationConfig();
+        const response = await fetch(`${API_BASE}/orders/import-latest-herofis`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                ...integration,
+                replaceExisting: true,
+                limit: 10,
+                productionStatusThreshold: 20,
+                excludeStatusIds: [19]
+            })
+        });
+
+        const result = await response.json();
+        if (!result.success) {
+            throw new Error(result.error || 'Herofis siparişleri çekilemedi');
+        }
+
+        await loadOrders();
+
+        const orderNos = (result.sourceOrders || []).map(item => item.orderNo).filter(Boolean);
+        const summary = orderNos.length > 0 ? orderNos.join(', ') : 'uygun sipariş bulunamadı';
+        const hasErrors = Array.isArray(result.errors) && result.errors.length > 0;
+
+        showToast(
+            `${result.importedOrders || 0} siparişten ${result.importedLines || 0} satır alındı`,
+            hasErrors ? 'warning' : 'success'
+        );
+        addLogEntry(`Herofis son üretilmeyenler çekildi: ${summary}`);
+
+        if (hasErrors) {
+            console.warn('Herofis import warnings:', result.errors);
+        }
+    } catch (error) {
+        showToast(`Herofis çekme hatası: ${error.message}`, 'error');
+    }
+
+    hideLoading();
+}
+
+function showLatestHerofisModal() {
+    const modal = document.getElementById('latestHerofisModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+    if (!latestHerofisListLoading && latestHerofisCandidates.length === 0) {
+        loadLatestHerofisCandidates();
+    }
+}
+
+function closeLatestHerofisModal() {
+    const modal = document.getElementById('latestHerofisModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    latestHerofisCandidates = [];
+    latestHerofisListLoading = false;
+    latestHerofisImportLoading = false;
+    renderLatestHerofisCandidates();
+    updateLatestHerofisSelectionInfo();
+    const errors = document.getElementById('latestHerofisErrors');
+    if (errors) errors.textContent = '';
+    setLatestHerofisBusyState(false);
+}
+
+async function loadLatestHerofisCandidates() {
+    const now = Date.now();
+    if (latestHerofisListLoading || (now - latestHerofisLastLoadAt < 1500)) {
+        return;
+    }
+
+    latestHerofisListLoading = true;
+    latestHerofisLastLoadAt = now;
+    setLatestHerofisBusyState(true);
+    showLoading();
+    try {
+        const integration = await getHerofisIntegrationConfig();
+        const response = await fetch(`${API_BASE}/orders/list-latest-herofis`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                ...integration,
+                limit: 20,
+                productionStatusThreshold: 20,
+                excludeStatusIds: [19]
+            })
+        });
+        const result = await response.json();
+        if (!result.success) {
+            throw new Error(result.error || 'Herofis sipariş listesi alınamadı');
+        }
+
+        latestHerofisCandidates = (result.orders || []).map(item => ({
+            ...item,
+            selected: !item.alreadyImported
+        }));
+        renderLatestHerofisCandidates();
+        updateLatestHerofisSelectionInfo();
+        const summary = document.getElementById('latestHerofisSummary');
+        if (summary) {
+            const importedCount = latestHerofisCandidates.filter(item => item.alreadyImported).length;
+            summary.textContent = `${result.count || 0} aday bulundu, ${importedCount} tanesi daha önce alınmış`;
+        }
+        const errors = document.getElementById('latestHerofisErrors');
+        if (errors) errors.textContent = '';
+    } catch (error) {
+        latestHerofisCandidates = [];
+        renderLatestHerofisCandidates();
+        updateLatestHerofisSelectionInfo();
+        const errors = document.getElementById('latestHerofisErrors');
+        if (errors) errors.textContent = error.message;
+        showToast(`Herofis listeleme hatası: ${error.message}`, 'error');
+    } finally {
+        latestHerofisListLoading = false;
+        setLatestHerofisBusyState(false);
+        hideLoading();
+    }
+}
+
+function renderLatestHerofisCandidates() {
+    const list = document.getElementById('latestHerofisList');
+    if (!list) return;
+
+    if (!latestHerofisCandidates.length) {
+        list.innerHTML = '<div class="empty-history">Uygun sipariş bulunamadı</div>';
+        return;
+    }
+
+    list.innerHTML = latestHerofisCandidates.map((item, index) => `
+        <label class="latest-herofis-item ${item.alreadyImported ? 'already-imported' : ''}">
+            <input
+                type="checkbox"
+                ${item.selected ? 'checked' : ''}
+                onchange="setLatestHerofisSelection(${index}, this.checked)"
+            />
+            <div class="latest-herofis-item-main">
+                <div class="latest-herofis-item-row">
+                    <strong>${item.orderNo || '-'}</strong>
+                    <span class="order-meta-chip source">${item.status || 'Durum yok'}</span>
+                    ${item.alreadyImported ? '<span class="order-meta-chip">Daha önce alındı</span>' : ''}
+                </div>
+                <div class="latest-herofis-item-row muted">
+                    <span>${item.customerName || '-'}</span>
+                    <span>Teslim: ${item.expectedDeliveryDate || '-'}</span>
+                    <span>Statü ID: ${item.statusId ?? '-'}</span>
+                </div>
+                ${item.remarks ? `<div class="latest-herofis-item-row muted">${item.remarks}</div>` : ''}
+            </div>
+        </label>
+    `).join('');
+}
+
+function setLatestHerofisSelection(index, checked) {
+    if (!latestHerofisCandidates[index]) return;
+    latestHerofisCandidates[index].selected = checked;
+    updateLatestHerofisSelectionInfo();
+}
+
+function toggleLatestHerofisSelection(selected) {
+    latestHerofisCandidates = latestHerofisCandidates.map(item => ({
+        ...item,
+        selected: selected ? !item.alreadyImported : false
+    }));
+    renderLatestHerofisCandidates();
+    updateLatestHerofisSelectionInfo();
+}
+
+function updateLatestHerofisSelectionInfo() {
+    const selectedCount = latestHerofisCandidates.filter(item => item.selected).length;
+    const info = document.getElementById('latestHerofisSelectionInfo');
+    const importBtn = document.getElementById('latestHerofisImportBtn');
+    if (info) {
+        info.textContent = `${selectedCount} sipariş seçili`;
+    }
+    if (importBtn) {
+        importBtn.disabled = selectedCount === 0 || latestHerofisListLoading || latestHerofisImportLoading;
+    }
+}
+
+function setLatestHerofisBusyState(isBusy) {
+    const refreshBtn = document.getElementById('latestHerofisRefreshBtn');
+    const selectAllBtn = document.getElementById('latestHerofisSelectAllBtn');
+    const clearSelectionBtn = document.getElementById('latestHerofisClearSelectionBtn');
+    const importBtn = document.getElementById('latestHerofisImportBtn');
+
+    if (refreshBtn) refreshBtn.disabled = isBusy;
+    if (selectAllBtn) selectAllBtn.disabled = isBusy;
+    if (clearSelectionBtn) clearSelectionBtn.disabled = isBusy;
+    if (importBtn) {
+        const selectedCount = latestHerofisCandidates.filter(item => item.selected).length;
+        importBtn.disabled = isBusy || selectedCount === 0;
+    }
+}
+
+async function importSelectedLatestHerofisOrders() {
+    if (latestHerofisImportLoading) {
+        return;
+    }
+
+    const selectedOrderNos = latestHerofisCandidates
+        .filter(item => item.selected)
+        .map(item => item.orderNo)
+        .filter(Boolean);
+
+    if (!selectedOrderNos.length) {
+        showToast('Önce en az bir sipariş seçin', 'warning');
+        return;
+    }
+
+    latestHerofisImportLoading = true;
+    setLatestHerofisBusyState(true);
+    showLoading();
+    try {
+        const integration = await getHerofisIntegrationConfig();
+        const response = await fetch(`${API_BASE}/orders/import-latest-herofis`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                ...integration,
+                replaceExisting: true,
+                orderNos: selectedOrderNos
+            })
+        });
+        const result = await response.json();
+        if (!result.success) {
+            throw new Error(result.error || 'Seçilen siparişler alınamadı');
+        }
+
+        await loadOrders();
+        const hasErrors = Array.isArray(result.errors) && result.errors.length > 0;
+        showToast(
+            `${result.importedOrders || 0} siparişten ${result.importedLines || 0} satır içe alındı`,
+            hasErrors ? 'warning' : 'success'
+        );
+        addLogEntry(`Herofis seçili siparişler alındı: ${selectedOrderNos.join(', ')}`);
+
+        const errors = document.getElementById('latestHerofisErrors');
+        if (errors) {
+            errors.textContent = hasErrors ? result.errors.join(' | ') : '';
+        }
+        closeLatestHerofisModal();
+    } catch (error) {
+        const errors = document.getElementById('latestHerofisErrors');
+        if (errors) errors.textContent = error.message;
+        showToast(`Herofis içe alma hatası: ${error.message}`, 'error');
+    } finally {
+        latestHerofisImportLoading = false;
+        setLatestHerofisBusyState(false);
+        hideLoading();
+    }
 }
 
 function renderOrderList() {
@@ -888,6 +1181,13 @@ function renderHerofisHistory(history) {
 
 window.loadOrders = loadOrders;
 window.loadSampleOrders = loadSampleOrders;
+window.fetchLatestHerofisOrders = fetchLatestHerofisOrders;
+window.showLatestHerofisModal = showLatestHerofisModal;
+window.closeLatestHerofisModal = closeLatestHerofisModal;
+window.loadLatestHerofisCandidates = loadLatestHerofisCandidates;
+window.setLatestHerofisSelection = setLatestHerofisSelection;
+window.toggleLatestHerofisSelection = toggleLatestHerofisSelection;
+window.importSelectedLatestHerofisOrders = importSelectedLatestHerofisOrders;
 window.addOrder = addOrder;
 window.deleteOrder = deleteOrder;
 window.clearAllOrders = clearAllOrders;

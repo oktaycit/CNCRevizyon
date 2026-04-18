@@ -160,6 +160,9 @@
                 <div class="list-header">
                     <span id="orderCountText">0 sipariş</span>
                     <div class="list-actions">
+                        <button class="btn small" onclick="showLatestHerofisModal()">
+                            🔄 Son Üretilmeyenleri Çek
+                        </button>
                         <button class="btn small" onclick="showHerofisImport()">
                             📥 Herofis Import
                         </button>
@@ -298,6 +301,38 @@
                 <button class="btn" onclick="closeHerofisModal()">İptal</button>
                 <button class="btn primary" id="herofisImportBtn" onclick="importHerofisOrders()" disabled>
                     ✅ Import Et
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="latestHerofisModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔄 Son Üretilmeyen Herofis Siparişleri</h2>
+                <button class="modal-close" onclick="closeLatestHerofisModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="preview-summary latest-herofis-toolbar">
+                    <span id="latestHerofisSummary">Henüz taranmadı</span>
+                    <div class="list-actions">
+                        <button class="btn small" id="latestHerofisRefreshBtn" onclick="loadLatestHerofisCandidates()">🔎 Listeyi Yenile</button>
+                        <button class="btn small" id="latestHerofisSelectAllBtn" onclick="toggleLatestHerofisSelection(true)">Tümünü Seç</button>
+                        <button class="btn small" id="latestHerofisClearSelectionBtn" onclick="toggleLatestHerofisSelection(false)">Seçimi Temizle</button>
+                    </div>
+                </div>
+                <div class="latest-herofis-list" id="latestHerofisList">
+                    <div class="empty-history">Henüz liste yüklenmedi</div>
+                </div>
+                <div class="preview-summary">
+                    <span id="latestHerofisSelectionInfo">0 sipariş seçili</span>
+                    <span id="latestHerofisErrors" class="error-text"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeLatestHerofisModal()">İptal</button>
+                <button class="btn primary" id="latestHerofisImportBtn" onclick="importSelectedLatestHerofisOrders()" disabled>
+                    ✅ Seçilenleri İçe Al
                 </button>
             </div>
         </div>

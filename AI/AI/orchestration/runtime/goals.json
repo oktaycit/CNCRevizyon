@@ -1,0 +1,15 @@
+{
+  "goals": [
+    {
+      "id": "web-1776220076",
+      "title": "Web test hedefi",
+      "prompt": "Kuyruk endpoint testi",
+      "goal_type": "ai",
+      "mode": "aggregate",
+      "task_type": "review",
+      "status": "pending",
+      "created_at": "2026-04-15T05:27:56.937072+03:00",
+      "updated_at": "2026-04-15T05:27:56.937611+03:00"
+    }
+  ]
+}

@@ -280,6 +280,44 @@ MEVCUT GÜVENLİK SİSTEMİ:
 }
 
 
+MODEL_ALIASES = {
+    "qwen35": "qwen3.5-plus",
+    "qwen3.5": "qwen3.5-plus",
+    "qwen3.5-plus": "qwen3.5-plus",
+    "qwenmax": "qwen3-max-2026-01-23",
+    "qwen3-max": "qwen3-max-2026-01-23",
+    "qwen3-max-2026-01-23": "qwen3-max-2026-01-23",
+    "coder": "qwen3-coder-plus",
+    "qwen3-coder-plus": "qwen3-coder-plus",
+    "qwen3-coder-next": "qwen3-coder-next",
+    "glm": "glm-5",
+    "glm5": "glm-5",
+    "glm-5": "glm-5",
+    "kimi": "kimi-k2.5",
+    "kimi-k2.5": "kimi-k2.5",
+    "minimax": "MiniMax-M2.5",
+    "minimax-m2.5": "MiniMax-M2.5",
+    "MiniMax-M2.5": "MiniMax-M2.5",
+}
+
+
+SPECIALIZED_MODEL_ASSIGNMENTS = {
+    "code": ["qwen3-coder-plus", "glm-5"],
+    "design": ["qwen3.5-plus", "MiniMax-M2.5"],
+    "optimize": ["qwen3-max-2026-01-23", "qwen3-coder-plus", "glm-5"],
+    "debug": ["qwen3-max-2026-01-23", "glm-5"],
+    "plc": ["qwen3-coder-plus", "glm-5"],
+    "cam": ["qwen3.5-plus", "qwen3-coder-plus", "glm-5"],
+    "gcode": ["qwen3-coder-plus", "qwen3-coder-next", "glm-5"],
+    "safety": ["qwen3-max-2026-01-23", "glm-5", "MiniMax-M2.5"],
+}
+
+
+def normalize_model_name(model_name: str) -> str:
+    """Normalize user aliases to canonical model ids."""
+    return MODEL_ALIASES.get(model_name.strip(), model_name.strip())
+
+
 @dataclass
 class ModelConfig:
     """Model yapılandırma sınıfı"""
@@ -393,6 +431,14 @@ class CNCAIOrchestrator:
         self.configs = configs
         self.clients = [DashScopeClient(config) for config in configs]
         self.project_context = PROJECT_CONTEXT
+
+    def _resolve_model_indices(self, model_ids: List[str]) -> List[int]:
+        """Resolve model ids or aliases to indices in the active config."""
+        normalized_ids = {normalize_model_name(model_id) for model_id in model_ids}
+        return [
+            idx for idx, config in enumerate(self.configs)
+            if config.model_id in normalized_ids
+        ]
     
     def _create_messages(
         self, 
@@ -461,20 +507,11 @@ class CNCAIOrchestrator:
         - qwen3-max: Karmaşık analiz
         """
         results = {}
-        
-        # Görev tipine göre model ataması
-        model_assignments = {
-            "code": [2],  # qwen3-coder-plus
-            "design": [0, 2],  # qwen3.5-plus + coder
-            "optimize": [0, 2],  # qwen3.5-plus + coder
-            "debug": [0, 1],  # qwen3.5-plus + max
-            "plc": [2],  # qwen3-coder-plus
-            "cam": [0, 2],  # qwen3.5-plus + coder
-            "gcode": [2],  # qwen3-coder-plus
-            "safety": [1],  # qwen3-max
-        }
-        
-        indices = model_assignments.get(task_type, [0])
+        indices = self._resolve_model_indices(
+            SPECIALIZED_MODEL_ASSIGNMENTS.get(task_type, ["qwen3.5-plus"])
+        )
+        if not indices:
+            indices = [0]
         responses = await self.run_task(task_type, user_task, indices)
         
         for response in responses:
@@ -577,6 +614,27 @@ def get_default_configs() -> List[ModelConfig]:
             temperature=0.3,
             max_tokens=8192,
             system_prompt="Sen endüstriyel otomasyon ve CNC sistemleri konusunda uzman bir yazılım mühendisisin."
+        ),
+        ModelConfig(
+            model_id="glm-5",
+            api_key=api_key,
+            temperature=0.4,
+            max_tokens=4096,
+            system_prompt="Sen teknik doğrulama, risk analizi ve eleştirel inceleme konusunda uzmansın."
+        ),
+        ModelConfig(
+            model_id="kimi-k2.5",
+            api_key=api_key,
+            temperature=0.5,
+            max_tokens=4096,
+            system_prompt="Sen uzun dokümanlar, teslim notları ve teknik özetler hazırlayan bir AI asistansısın."
+        ),
+        ModelConfig(
+            model_id="MiniMax-M2.5",
+            api_key=api_key,
+            temperature=0.5,
+            max_tokens=4096,
+            system_prompt="Sen alternatif çözüm stratejileri ve tasarım varyantları üreten teknik bir AI asistansısın."
         )
     ]
 
@@ -685,9 +743,10 @@ GÖREV TİPLERİ:
     model_indices = None
     if args.models:
         selected = [m.strip() for m in args.models.split(",")]
+        normalized = {normalize_model_name(model_id) for model_id in selected}
         model_indices = []
         for i, c in enumerate(configs):
-            if c.model_id in selected:
+            if c.model_id in normalized:
                 model_indices.append(i)
     
     print(f"\n{'='*60}")

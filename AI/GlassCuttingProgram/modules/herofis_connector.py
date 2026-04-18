@@ -394,6 +394,99 @@ class HerofisConnector:
             },
         }
 
+    def list_live_orders(self,
+                         username: str,
+                         password: str,
+                         base_url: str = "https://herofis.com",
+                         verify_ssl: bool = True,
+                         page: int = 1,
+                         limit: int = 20,
+                         order_type: int = 1032,
+                         query: str = "") -> List[Dict[str, Any]]:
+        """Login and return raw Herofis/CamCAD order rows."""
+        success, opener, login_data = self.login_live(
+            username,
+            password,
+            base_url=base_url,
+            verify_ssl=verify_ssl,
+        )
+        if not success:
+            raise RuntimeError(f"Live login failed: {login_data}")
+
+        order_list = self.fetch_live_order_list(
+            opener=opener,
+            page=page,
+            limit=limit,
+            order_type=order_type,
+            query=query,
+            base_url=base_url,
+            verify_ssl=verify_ssl,
+        )
+        rows = order_list.get("data", [])
+        return rows if isinstance(rows, list) else []
+
+    def list_live_recent_orders(self,
+                                username: str,
+                                password: str,
+                                base_url: str = "https://herofis.com",
+                                verify_ssl: bool = True,
+                                limit: int = 10,
+                                order_type: int = 1032,
+                                query: str = "",
+                                unproduced_only: bool = False,
+                                production_status_threshold: int = 20,
+                                exclude_status_ids: Optional[List[int]] = None,
+                                max_pages: int = 5) -> List[Dict[str, Any]]:
+        """Return recent live orders with optional filtering for unproduced rows."""
+        page_size = max(limit * 2, 30)
+        rows: List[Dict[str, Any]] = []
+        for page in range(1, max_pages + 1):
+            page_rows = self.list_live_orders(
+                username=username,
+                password=password,
+                base_url=base_url,
+                verify_ssl=verify_ssl,
+                page=page,
+                limit=page_size,
+                order_type=order_type,
+                query=query,
+            )
+            if not page_rows:
+                break
+            rows.extend(page_rows)
+            if len(page_rows) < page_size:
+                break
+
+        excluded = {int(item) for item in (exclude_status_ids or [])}
+        filtered: List[Dict[str, Any]] = []
+        for row in rows:
+            raw_status_id = row.get("StatusID")
+            try:
+                status_id = int(raw_status_id)
+            except (TypeError, ValueError):
+                status_id = None
+
+            if status_id in excluded:
+                continue
+            if unproduced_only and status_id is not None and status_id >= int(production_status_threshold):
+                continue
+
+            filtered.append(
+                {
+                    "liveOrderId": row.get("ID"),
+                    "orderNo": str(row.get("OrderNo") or ""),
+                    "customerName": row.get("CustomerName") or "",
+                    "status": row.get("Status") or "",
+                    "statusId": status_id,
+                    "expectedDeliveryDate": row.get("ExpectedDeliveryDate") or "",
+                    "remarks": row.get("Remarks") or "",
+                }
+            )
+            if len(filtered) >= limit:
+                break
+
+        return filtered
+
     def update_live_order_status(self,
                                  username: str,
                                  password: str,

@@ -20,10 +20,11 @@ import re
 from functools import wraps
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from flask import Flask, render_template, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
+from flask_socketio import emit
 
 # Add module path
 MODULES_PATH = Path(__file__).parent.parent.parent  # GlassCuttingProgram directory
@@ -109,6 +110,10 @@ REPORTS_DIR = MODULES_PATH / 'output' / 'reports'
 SETTINGS_FILE = MODULES_PATH / 'data' / 'settings.json'
 DXF_IMPORTS_FILE_DIR = MODULES_PATH / 'data'
 ORDERS_STATE_FILE = MODULES_PATH / 'data' / 'runtime' / 'current_orders.json'
+REPO_ROOT = MODULES_PATH.parent
+AGENT_RUNTIME_DIR = REPO_ROOT / 'AI' / 'orchestration' / 'runtime'
+AGENT_GOALS_FILE = AGENT_RUNTIME_DIR / 'goals.json'
+AGENT_RESULTS_DIR = AGENT_RUNTIME_DIR / 'results'
 
 
 def _deep_merge_dict(base: Dict, override: Dict) -> Dict:
@@ -120,6 +125,76 @@ def _deep_merge_dict(base: Dict, override: Dict) -> Dict:
         else:
             merged[key] = value
     return merged
+
+
+def _agent_now_iso() -> str:
+    return datetime.now().astimezone().isoformat()
+
+
+def _load_agent_goals() -> Dict[str, Any]:
+    AGENT_RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
+    AGENT_RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    if not AGENT_GOALS_FILE.exists():
+        AGENT_GOALS_FILE.write_text('{\n  "goals": []\n}\n', encoding='utf-8')
+
+    try:
+        return json.loads(AGENT_GOALS_FILE.read_text(encoding='utf-8'))
+    except json.JSONDecodeError:
+        fallback = AGENT_GOALS_FILE.with_suffix('.broken.json')
+        AGENT_GOALS_FILE.replace(fallback)
+        AGENT_GOALS_FILE.write_text('{\n  "goals": []\n}\n', encoding='utf-8')
+        return {"goals": []}
+
+
+def _save_agent_goals(payload: Dict[str, Any]) -> None:
+    AGENT_RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
+    temp_file = AGENT_GOALS_FILE.with_name(f'{AGENT_GOALS_FILE.name}.tmp')
+    temp_file.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    temp_file.replace(AGENT_GOALS_FILE)
+
+
+def _load_agent_result(goal: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    result_path = goal.get('result_path')
+    if not result_path:
+        return None
+
+    candidate = Path(result_path)
+    if not candidate.exists():
+        return None
+
+    try:
+        return json.loads(candidate.read_text(encoding='utf-8'))
+    except json.JSONDecodeError:
+        return None
+
+
+def _build_agent_goal_response(goal: Dict[str, Any], include_result: bool = False) -> Dict[str, Any]:
+    response = dict(goal)
+    if include_result:
+        response['result'] = _load_agent_result(goal)
+    return response
+
+
+def _agent_summary(goals: List[Dict[str, Any]]) -> Dict[str, Any]:
+    counts = {
+        'pending': 0,
+        'running': 0,
+        'done': 0,
+        'failed': 0,
+    }
+    for goal in goals:
+        status = goal.get('status', 'pending')
+        counts[status] = counts.get(status, 0) + 1
+
+    latest_goal = None
+    if goals:
+        latest_goal = max(goals, key=lambda item: item.get('updated_at', item.get('created_at', '')))
+
+    return {
+        'counts': counts,
+        'total': len(goals),
+        'latest_goal': latest_goal,
+    }
 
 
 def _infer_glass_type_from_line(line: Dict) -> str:
@@ -524,6 +599,12 @@ def queue_page():
     return render_template('queue.html')
 
 
+@app.route('/agent')
+def agent_page():
+    """AI agent dashboard page"""
+    return render_template('agent.html')
+
+
 @app.route('/test_api')
 def test_api_page():
     """API Test Page for debugging"""
@@ -710,11 +791,12 @@ def import_live_herofis_orders():
     imported = _import_live_payload_to_current_orders(payload)
 
     global current_orders
-    if replace_existing:
-        current_orders = imported
-    else:
-        current_orders.extend(imported)
-    _persist_current_orders()
+    if imported:
+        if replace_existing:
+            current_orders = imported
+        else:
+            current_orders.extend(imported)
+        _persist_current_orders()
 
     return jsonify(
         {
@@ -738,6 +820,168 @@ def import_live_herofis_orders():
                 for order in current_orders
             ],
             "customerName": payload.get("order", {}).get("customerName"),
+        }
+    )
+
+
+@app.route('/api/orders/list-latest-herofis', methods=['POST'])
+def list_latest_herofis_orders():
+    """List latest unproduced Herofis orders before importing."""
+    data = request.get_json() or {}
+    username = str(data.get("username") or "").strip()
+    password = str(data.get("password") or "").strip()
+    base_url = str(data.get("baseUrl") or "https://herofis.com").strip()
+    verify_ssl = bool(data.get("verifySsl", True))
+    limit = max(1, min(int(data.get("limit", 20) or 20), 50))
+    production_status_threshold = int(data.get("productionStatusThreshold", 20) or 20)
+    exclude_status_ids = data.get("excludeStatusIds") or [19]
+
+    if not username or not password:
+        return jsonify({"success": False, "error": "username and password are required"}), 400
+
+    connector = HerofisConnector(data_dir=str(MODULES_PATH / "data" / "herofis"))
+    _ensure_current_orders_loaded()
+    imported_order_nos = {
+        str(order.source_order_no or "").strip()
+        for order in current_orders
+        if str(order.source_system).lower() == "herofis" and str(order.source_order_no or "").strip()
+    }
+
+    try:
+        recent_orders = connector.list_live_recent_orders(
+            username=username,
+            password=password,
+            base_url=base_url,
+            verify_ssl=verify_ssl,
+            limit=limit,
+            unproduced_only=True,
+            production_status_threshold=production_status_threshold,
+            exclude_status_ids=exclude_status_ids,
+            max_pages=10,
+        )
+    except Exception as exc:
+        return jsonify({"success": False, "error": str(exc)}), 400
+
+    return jsonify(
+        {
+            "success": True,
+            "orders": [
+                {
+                    **item,
+                    "alreadyImported": item.get("orderNo") in imported_order_nos,
+                }
+                for item in recent_orders
+            ],
+            "count": len(recent_orders),
+        }
+    )
+
+
+@app.route('/api/orders/import-latest-herofis', methods=['POST'])
+def import_latest_herofis_orders():
+    """Fetch the latest unproduced Herofis orders and import them locally."""
+    data = request.get_json() or {}
+    username = str(data.get("username") or "").strip()
+    password = str(data.get("password") or "").strip()
+    base_url = str(data.get("baseUrl") or "https://herofis.com").strip()
+    verify_ssl = bool(data.get("verifySsl", True))
+    replace_existing = bool(data.get("replaceExisting", True))
+    limit = max(1, min(int(data.get("limit", 10) or 10), 25))
+    production_status_threshold = int(data.get("productionStatusThreshold", 20) or 20)
+    exclude_status_ids = data.get("excludeStatusIds") or [19]
+    selected_order_nos = [
+        str(item).strip()
+        for item in (data.get("orderNos") or [])
+        if str(item).strip()
+    ]
+
+    if not username or not password:
+        return jsonify({"success": False, "error": "username and password are required"}), 400
+
+    connector = HerofisConnector(data_dir=str(MODULES_PATH / "data" / "herofis"))
+
+    if selected_order_nos:
+        recent_orders = [{"orderNo": order_no} for order_no in selected_order_nos]
+    else:
+        try:
+            recent_orders = connector.list_live_recent_orders(
+                username=username,
+                password=password,
+                base_url=base_url,
+                verify_ssl=verify_ssl,
+                limit=limit,
+                unproduced_only=True,
+                production_status_threshold=production_status_threshold,
+                exclude_status_ids=exclude_status_ids,
+                max_pages=10,
+            )
+        except Exception as exc:
+            return jsonify({"success": False, "error": str(exc)}), 400
+
+    imported: List[GlassOrder] = []
+    imported_order_refs: List[Dict] = []
+    errors: List[str] = []
+
+    for item in recent_orders:
+        order_no = str(item.get("orderNo") or "").strip()
+        if not order_no:
+            continue
+        try:
+            payload = connector.fetch_live_order_payload(
+                username=username,
+                password=password,
+                order_no=order_no,
+                base_url=base_url,
+                verify_ssl=verify_ssl,
+            )
+            order_lines = _import_live_payload_to_current_orders(payload)
+            imported.extend(order_lines)
+            imported_order_refs.append(
+                {
+                    "orderNo": order_no,
+                    "customerName": item.get("customerName") or "",
+                    "status": item.get("status") or "",
+                    "statusId": item.get("statusId"),
+                    "lineCount": len(order_lines),
+                }
+            )
+        except Exception as exc:
+            errors.append(f"{order_no}: {exc}")
+
+    global current_orders
+    if replace_existing:
+        current_orders = imported
+    else:
+        current_orders.extend(imported)
+    _persist_current_orders()
+
+    return jsonify(
+        {
+            "success": True,
+            "requestedLimit": limit,
+            "matchedOrders": len(recent_orders),
+            "importedOrders": len(imported_order_refs),
+            "importedLines": len(imported),
+            "replaceExisting": replace_existing,
+            "sourceOrders": imported_order_refs,
+            "errors": errors,
+            "orders": [
+                {
+                    "order_id": order.order_id,
+                    "width": order.width,
+                    "height": order.height,
+                    "quantity": order.quantity,
+                    "thickness": order.thickness,
+                    "glass_type": order.glass_type,
+                    "priority": order.priority,
+                    "rotate_allowed": order.rotate_allowed,
+                    "film_type": order.film_type,
+                    "film_thickness": order.film_thickness,
+                    "source_order_no": order.source_order_no,
+                    "customer_name": order.customer_name,
+                }
+                for order in (imported if replace_existing else current_orders)
+            ],
         }
     )
 
@@ -1110,14 +1354,17 @@ def get_settings():
             {"model_id": "qwen3-max-2026-01-23", "enabled": True, "temperature": 0.5, "max_tokens": 4096},
             {"model_id": "qwen3-coder-plus", "enabled": True, "temperature": 0.2, "max_tokens": 8192},
             {"model_id": "qwen3-coder-next", "enabled": True, "temperature": 0.3, "max_tokens": 4096},
-            {"model_id": "glm-4.7", "enabled": True, "temperature": 0.6, "max_tokens": 2048},
-            {"model_id": "kimi-k2.5", "enabled": True, "temperature": 0.5, "max_tokens": 4096}
+            {"model_id": "glm-5", "enabled": True, "temperature": 0.4, "max_tokens": 4096},
+            {"model_id": "kimi-k2.5", "enabled": True, "temperature": 0.5, "max_tokens": 4096},
+            {"model_id": "MiniMax-M2.5", "enabled": True, "temperature": 0.5, "max_tokens": 4096}
         ],
         "routing": {
             "nesting": "qwen3-max-2026-01-23,qwen3-coder-plus",
             "gcode": "qwen3-coder-plus,qwen3-coder-next",
             "lamine": "qwen3.5-plus",
-            "validation": "glm-4.7,kimi-k2.5"
+            "validation": "glm-5,MiniMax-M2.5",
+            "documentation": "kimi-k2.5,qwen3.5-plus",
+            "review": "glm-5,MiniMax-M2.5"
         },
         "integration": {
             "herofis_base_url": "https://herofis.com",
@@ -1210,7 +1457,7 @@ def test_api_connection():
                 "success": True,
                 "message": "Connection successful",
                 "rate_limit": "60 req/min",
-                "models_available": 6
+                "models_available": 7
             })
         else:
             return jsonify({"success": False, "error": result[1] if isinstance(result, tuple) else "Connection failed"})
@@ -1238,14 +1485,17 @@ def reset_settings():
             {"model_id": "qwen3-max-2026-01-23", "enabled": True, "temperature": 0.5, "max_tokens": 4096, "use_case": "complex"},
             {"model_id": "qwen3-coder-plus", "enabled": True, "temperature": 0.2, "max_tokens": 8192, "use_case": "code"},
             {"model_id": "qwen3-coder-next", "enabled": True, "temperature": 0.3, "max_tokens": 4096, "use_case": "advanced_coding"},
-            {"model_id": "glm-4.7", "enabled": True, "temperature": 0.6, "max_tokens": 2048, "use_case": "validation"},
-            {"model_id": "kimi-k2.5", "enabled": True, "temperature": 0.5, "max_tokens": 4096, "use_case": "documentation"}
+            {"model_id": "glm-5", "enabled": True, "temperature": 0.4, "max_tokens": 4096, "use_case": "validation"},
+            {"model_id": "kimi-k2.5", "enabled": True, "temperature": 0.5, "max_tokens": 4096, "use_case": "documentation"},
+            {"model_id": "MiniMax-M2.5", "enabled": True, "temperature": 0.5, "max_tokens": 4096, "use_case": "alternate"}
         ],
         "routing": {
             "nesting": "qwen3-max-2026-01-23,qwen3-coder-plus",
             "gcode": "qwen3-coder-plus,qwen3-coder-next",
             "lamine": "qwen3.5-plus",
-            "validation": "glm-4.7,kimi-k2.5"
+            "validation": "glm-5,MiniMax-M2.5",
+            "documentation": "kimi-k2.5,qwen3.5-plus",
+            "review": "glm-5,MiniMax-M2.5"
         },
         "integration": {
             "herofis_base_url": "https://herofis.com",
@@ -1906,12 +2156,102 @@ def api_queue_complete():
     })
 
 
+@app.route('/api/agent/summary', methods=['GET'])
+def api_agent_summary():
+    """Get AI agent queue summary"""
+    payload = _load_agent_goals()
+    goals = payload.get('goals', [])
+    return jsonify({
+        "success": True,
+        "summary": _agent_summary(goals),
+    })
+
+
+@app.route('/api/agent/goals', methods=['GET'])
+def api_agent_goals():
+    """List AI agent goals"""
+    payload = _load_agent_goals()
+    include_results = request.args.get('include_results', 'false').lower() == 'true'
+    goals = [
+        _build_agent_goal_response(goal, include_result=include_results)
+        for goal in reversed(payload.get('goals', []))
+    ]
+    return jsonify({
+        "success": True,
+        "goals": goals,
+        "summary": _agent_summary(payload.get('goals', [])),
+    })
+
+
+@app.route('/api/agent/goals', methods=['POST'])
+def api_agent_submit_goal():
+    """Submit a new AI agent goal"""
+    data = request.get_json(silent=True) or {}
+    title = str(data.get('title', '')).strip()
+    prompt = str(data.get('prompt', '')).strip()
+    if not title or not prompt:
+        return jsonify({
+            "success": False,
+            "error": "Başlık ve hedef açıklaması zorunlu",
+        }), 400
+
+    goal_type = str(data.get('goal_type', 'ai')).strip() or 'ai'
+    if goal_type not in ('ai', 'simulator_check'):
+        return jsonify({"success": False, "error": "Geçersiz hedef tipi"}), 400
+
+    mode = str(data.get('mode', 'parallel')).strip() or 'parallel'
+    if mode not in ('single', 'parallel', 'voting', 'aggregate'):
+        return jsonify({"success": False, "error": "Geçersiz çalışma modu"}), 400
+
+    payload = _load_agent_goals()
+    goals = payload.setdefault('goals', [])
+    goal_id = f"web-{int(datetime.now().timestamp())}"
+    while any(goal.get('id') == goal_id for goal in goals):
+        goal_id = f"{goal_id}-x"
+
+    goal = {
+        "id": goal_id,
+        "title": title,
+        "prompt": prompt,
+        "goal_type": goal_type,
+        "mode": mode,
+        "task_type": data.get('task_type') or None,
+        "status": "pending",
+        "created_at": _agent_now_iso(),
+        "updated_at": _agent_now_iso(),
+    }
+    if goal_type == 'simulator_check':
+        goal['seconds'] = int(data.get('seconds', 3) or 3)
+
+    goals.append(goal)
+    _save_agent_goals(payload)
+
+    return jsonify({
+        "success": True,
+        "goal": goal,
+        "message": "Hedef kuyruğa eklendi",
+    }), 201
+
+
+@app.route('/api/agent/goals/<goal_id>', methods=['GET'])
+def api_agent_goal_detail(goal_id: str):
+    """Get a single AI agent goal with result"""
+    payload = _load_agent_goals()
+    goal = next((item for item in payload.get('goals', []) if item.get('id') == goal_id), None)
+    if not goal:
+        return jsonify({"success": False, "error": "Hedef bulunamadı"}), 404
+
+    return jsonify({
+        "success": True,
+        "goal": _build_agent_goal_response(goal, include_result=True),
+    })
+
+
 # ==================== WebSocket API ====================
 
 @socketio.on('connect')
-def handle_connect():
+def handle_connect(auth=None):
     """Handle client connection"""
-    from flask import request
     print(f"Client connected: {request.sid}")
     emit('status', {'message': 'Connected', 'sid': request.sid})
     
@@ -2054,6 +2394,10 @@ def server_error(error):
 # ==================== Main ====================
 
 if __name__ == '__main__':
+    host = os.getenv('GLASSCUTTING_HOST', '0.0.0.0')
+    port = int(os.getenv('GLASSCUTTING_PORT', '5001'))
+    debug_enabled = os.getenv('GLASSCUTTING_DEBUG', 'false').lower() == 'true'
+
     print("=" * 60)
     print("Glass Cutting Web Interface")
     print("LiSEC GFB-60/30RE")
@@ -2062,9 +2406,15 @@ if __name__ == '__main__':
     print(f"Module path: {MODULES_PATH}")
     print(f"Template folder: {app.template_folder}")
     print(f"Static folder: {app.static_folder}")
-    print("\n🌐 HTTP: http://localhost:5001")
-    print("⚡ WebSocket: ws://localhost:5001/socket.io/")
+    print(f"\n🌐 HTTP: http://localhost:{port}")
+    print(f"⚡ WebSocket: ws://localhost:{port}/socket.io/")
     print("=" * 60)
 
     # Use socketio.run instead of app.run for WebSocket support
-    socketio.run(app, host='0.0.0.0', port=5001, debug=True, allow_unsafe_werkzeug=True)
+    socketio.run(
+        app,
+        host=host,
+        port=port,
+        debug=debug_enabled,
+        allow_unsafe_werkzeug=True,
+    )

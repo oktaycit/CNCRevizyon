@@ -1,0 +1,13 @@
+[Unit]
+Description=Projeler AI Hub Worker
+After=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Projeler/.ai-hub
+ExecStart=%h/Projeler/.ai-hub/start_projeler_ai_worker.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

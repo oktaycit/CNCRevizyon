@@ -1,0 +1,26 @@
+{
+  "goals": [
+    {
+      "id": "demo-ai-goal",
+      "title": "Simulasyon durumunu analiz et",
+      "prompt": "NC300 simülasyonuna göre sistem durumu hakkında kısa değerlendirme yap ve riskleri listele.",
+      "goal_type": "ai",
+      "mode": "aggregate",
+      "task_type": "review",
+      "status": "pending",
+      "created_at": "2026-04-15T00:00:00+03:00",
+      "updated_at": "2026-04-15T00:00:00+03:00"
+    },
+    {
+      "id": "demo-simulator-goal",
+      "title": "Simülatör sağlık kontrolü",
+      "prompt": "NC300 simülatörünü kısa test et",
+      "goal_type": "simulator_check",
+      "mode": "parallel",
+      "status": "pending",
+      "created_at": "2026-04-15T00:00:00+03:00",
+      "updated_at": "2026-04-15T00:00:00+03:00",
+      "seconds": 2
+    }
+  ]
+}

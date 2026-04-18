@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Paneli</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+        .agent-shell {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .agent-grid {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+        .agent-card {
+            background: #fff;
+            border: 1px solid #d8e1ea;
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 10px 30px rgba(19, 44, 68, 0.08);
+        }
+        .agent-card h2,
+        .agent-card h3 {
+            margin: 0 0 14px;
+        }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .stat-box {
+            background: #f4f8fb;
+            border-radius: 12px;
+            padding: 14px;
+        }
+        .stat-box strong {
+            display: block;
+            font-size: 1.6rem;
+            color: #0b4f71;
+        }
+        .agent-form label {
+            display: block;
+            font-size: 0.92rem;
+            margin-bottom: 6px;
+            color: #3d5566;
+        }
+        .agent-form input,
+        .agent-form select,
+        .agent-form textarea {
+            width: 100%;
+            border: 1px solid #c7d5e0;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            font: inherit;
+        }
+        .agent-form textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .agent-btn {
+            border: 0;
+            border-radius: 999px;
+            background: #0b7a75;
+            color: #fff;
+            padding: 11px 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .goal-list {
+            display: grid;
+            gap: 12px;
+        }
+        .goal-item {
+            border: 1px solid #d8e1ea;
+            border-radius: 12px;
+            padding: 14px;
+            background: #fbfdfe;
+        }
+        .goal-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+        .goal-title {
+            margin: 0;
+            font-size: 1rem;
+        }
+        .goal-chip {
+            display: inline-block;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .goal-chip.pending { background: #fff1c2; color: #7a5800; }
+        .goal-chip.running { background: #d7ebff; color: #0b4f71; }
+        .goal-chip.done { background: #d9f6e5; color: #12663d; }
+        .goal-chip.failed { background: #ffd9d9; color: #8f1d1d; }
+        .goal-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .link-btn {
+            background: transparent;
+            color: #0b4f71;
+            border: 1px solid #b9ccd9;
+            border-radius: 999px;
+            padding: 6px 12px;
+            cursor: pointer;
+        }
+        .result-viewer {
+            white-space: pre-wrap;
+            background: #0e1d2f;
+            color: #ebf4ff;
+            border-radius: 12px;
+            padding: 16px;
+            min-height: 280px;
+            overflow: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 0.9rem;
+        }
+        .subtle {
+            color: #5f7282;
+            font-size: 0.92rem;
+        }
+        @media (max-width: 980px) {
+            .agent-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="agent-shell">
+        <header class="header" style="margin-bottom: 18px;">
+            <div class="header-left">
+                <h1 class="logo">AI Agent Paneli</h1>
+                <span class="subtitle">Raspberry Pi hedef kuyruğu ve sonuçlar</span>
+            </div>
+            <div class="header-center">
+                <nav class="nav-tabs">
+                    <a href="/" class="nav-tab">Ana Sayfa</a>
+                    <a href="/orders" class="nav-tab">Siparişler</a>
+                    <a href="/settings" class="nav-tab">Ayarlar</a>
+                    <a href="/agent" class="nav-tab active">AI Agent</a>
+                </nav>
+            </div>
+        </header>
+
+        <div class="agent-grid">
+            <section class="agent-card">
+                <h2>Yeni Hedef</h2>
+                <div class="stats-row" id="summaryCards"></div>
+                <form class="agent-form" id="goalForm">
+                    <label for="goalTitle">Başlık</label>
+                    <input id="goalTitle" name="title" placeholder="Örn: EtherCAT risk analizi" required>
+
+                    <label for="goalType">Hedef Tipi</label>
+                    <select id="goalType" name="goal_type">
+                        <option value="ai">AI analiz/görev</option>
+                        <option value="simulator_check">Simülatör sağlık kontrolü</option>
+                    </select>
+
+                    <label for="goalMode">Çalışma Modu</label>
+                    <select id="goalMode" name="mode">
+                        <option value="parallel">Parallel</option>
+                        <option value="aggregate">Aggregate</option>
+                        <option value="voting">Voting</option>
+                        <option value="single">Single</option>
+                    </select>
+
+                    <label for="goalTaskType">Görev Etiketi</label>
+                    <select id="goalTaskType" name="task_type">
+                        <option value="">Seçimsiz</option>
+                        <option value="code">Code</option>
+                        <option value="debug">Debug</option>
+                        <option value="optimize">Optimize</option>
+                        <option value="review">Review</option>
+                        <option value="documentation">Documentation</option>
+                    </select>
+
+                    <label for="goalPrompt">Hedef Açıklaması</label>
+                    <textarea id="goalPrompt" name="prompt" placeholder="Ajanın çözmesini istediğin görevi yaz." required></textarea>
+
+                    <button class="agent-btn" type="submit">Hedefi Kuyruğa Ekle</button>
+                </form>
+                <p class="subtle" id="formMessage">Servis yaklaşık her 20 saniyede bir kuyruğu tarar.</p>
+            </section>
+
+            <section class="agent-card">
+                <div style="display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 14px;">
+                    <div>
+                        <h2 style="margin-bottom: 4px;">Kuyruk</h2>
+                        <div class="subtle">Bekleyen, çalışan ve tamamlanan hedefler</div>
+                    </div>
+                    <button class="link-btn" id="refreshBtn" type="button">Yenile</button>
+                </div>
+
+                <div class="goal-list" id="goalList"></div>
+
+                <div style="margin-top: 22px;">
+                    <h3>Seçilen Sonuç</h3>
+                    <div class="result-viewer" id="resultViewer">Bir hedef seçildiğinde sonucu burada görünecek.</div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        const summaryCards = document.getElementById('summaryCards');
+        const goalList = document.getElementById('goalList');
+        const resultViewer = document.getElementById('resultViewer');
+        const goalForm = document.getElementById('goalForm');
+        const formMessage = document.getElementById('formMessage');
+        const refreshBtn = document.getElementById('refreshBtn');
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;');
+        }
+
+        function renderSummary(summary) {
+            const counts = summary?.counts || {};
+            const items = [
+                ['Toplam', summary?.total ?? 0],
+                ['Bekliyor', counts.pending ?? 0],
+                ['Çalışıyor', counts.running ?? 0],
+                ['Tamamlandı', counts.done ?? 0],
+            ];
+            summaryCards.innerHTML = items.map(([label, value]) => `
+                <div class="stat-box">
+                    <strong>${value}</strong>
+                    <span>${label}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderGoals(goals) {
+            if (!goals.length) {
+                goalList.innerHTML = '<div class="subtle">Henüz hedef yok.</div>';
+                return;
+            }
+
+            goalList.innerHTML = goals.map((goal) => `
+                <article class="goal-item">
+                    <div class="goal-meta">
+                        <div>
+                            <h3 class="goal-title">${escapeHtml(goal.title)}</h3>
+                            <div class="subtle">${escapeHtml(goal.goal_type)} · ${escapeHtml(goal.mode)} · ${escapeHtml(goal.created_at || '')}</div>
+                        </div>
+                        <span class="goal-chip ${escapeHtml(goal.status)}">${escapeHtml(goal.status)}</span>
+                    </div>
+                    <div class="subtle">${escapeHtml(goal.prompt)}</div>
+                    <div class="goal-actions">
+                        <button class="link-btn" type="button" onclick="loadGoalDetail('${escapeHtml(goal.id)}')">Sonucu Aç</button>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        async function loadGoals() {
+            const response = await fetch('/api/agent/goals');
+            const payload = await response.json();
+            renderSummary(payload.summary);
+            renderGoals(payload.goals || []);
+        }
+
+        async function loadGoalDetail(goalId) {
+            resultViewer.textContent = 'Yükleniyor...';
+            const response = await fetch(`/api/agent/goals/${goalId}`);
+            const payload = await response.json();
+            if (!payload.success) {
+                resultViewer.textContent = payload.error || 'Sonuç alınamadı.';
+                return;
+            }
+            resultViewer.textContent = JSON.stringify(payload.goal, null, 2);
+        }
+
+        async function submitGoal(event) {
+            event.preventDefault();
+            formMessage.textContent = 'Hedef gönderiliyor...';
+            const formData = new FormData(goalForm);
+            const payload = Object.fromEntries(formData.entries());
+
+            const response = await fetch('/api/agent/goals', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            if (!response.ok) {
+                formMessage.textContent = result.error || 'Hedef kaydedilemedi.';
+                return;
+            }
+
+            formMessage.textContent = result.message || 'Hedef kuyruğa eklendi.';
+            goalForm.reset();
+            loadGoals();
+            loadGoalDetail(result.goal.id);
+        }
+
+        goalForm.addEventListener('submit', submitGoal);
+        refreshBtn.addEventListener('click', loadGoals);
+        loadGoals();
+        window.loadGoalDetail = loadGoalDetail;
+        setInterval(loadGoals, 15000);
+    </script>
+</body>
+</html>

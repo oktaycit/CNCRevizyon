@@ -22,7 +22,12 @@ import time
 class LamineState(str, Enum):
     IDLE = "IDLE"
     LOADING = "LOADING"
+    PROBING = "PROBING"
+    POSITIONING = "POSITIONING"
+    X_LOCK = "X_LOCK"
+    SYNC_CUT = "SYNC_CUT"
     HEATING = "HEATING"
+    TENSIONING = "TENSIONING"
     UPPER_CUT = "UPPER_CUT"
     LOWER_CUT = "LOWER_CUT"
     SEPARATING = "SEPARATING"
@@ -108,17 +113,36 @@ class NC300Simulator:
     ALARM_SAFETY = 10
     ALARM_VACUUM = 20
     ALARM_AIR = 21
+    SENSOR_MARGIN_MM = 1.0
+    PROBE_DELAY_S = 0.25
+    POSITION_DELAY_S = 0.2
+    X_LOCK_DELAY_S = 0.1
+    HEATING_DWELL_S = 4.0
+    TENSION_DELAY_S = 0.35
+    SEPARATION_DELAY_S = 0.25
+    BREAK_DELAY_S = 0.25
+    CUT_LINE_X_MM = 500.0
+    CUT_START_Y_MM = 500.0
+    CUT_END_Y_MM = 2300.0
+    CUT_Z_MM = 284.0
+    CUT_V_MM = 250.0
+    TENSION_X_DELTA_MM = 2.0
+    UNLOAD_X_MM = 500.0
+    UNLOAD_Y_MM = 500.0
 
     STATE_CODES = {
         LamineState.IDLE: 0,
         LamineState.LOADING: 10,
-        LamineState.HEATING: 20,
-        LamineState.UPPER_CUT: 30,
-        LamineState.LOWER_CUT: 40,
-        LamineState.SEPARATING: 50,
-        LamineState.BREAKING: 60,
-        LamineState.UNLOADING: 70,
-        LamineState.COMPLETE: 80,
+        LamineState.PROBING: 15,
+        LamineState.POSITIONING: 18,
+        LamineState.X_LOCK: 20,
+        LamineState.SYNC_CUT: 30,
+        LamineState.HEATING: 40,
+        LamineState.TENSIONING: 50,
+        LamineState.SEPARATING: 60,
+        LamineState.BREAKING: 70,
+        LamineState.UNLOADING: 80,
+        LamineState.COMPLETE: 90,
         LamineState.ERROR: 99,
     }
 
@@ -135,12 +159,30 @@ class NC300Simulator:
             "AIR_PRESSURE_OK": True,
             "VACUUM_OK": False,
             "GLASS_DETECT": False,
+            "G31_PROBE_INPUT": False,
+            "EDGE_PROBE_OK": False,
+            "SAFE_TO_MOVE_X": True,
+            "TENSION_OK": False,
+            "HEATER_DOWN_OK": False,
+            "HEATER_UP_OK": True,
             "TEMP_READY": False,
             "UPPER_CUT_OK": False,
             "LOWER_CUT_OK": False,
             "SEPARATION_OK": False,
             "BREAK_OK": False,
             "UNLOAD_READY": False,
+            "X_HOME_SENSOR": True,
+            "X_POS_LIMIT": False,
+            "X_NEG_LIMIT": True,
+            "Y_HOME_SENSOR": True,
+            "Y_POS_LIMIT": False,
+            "Y_NEG_LIMIT": True,
+            "Z_HOME_SENSOR": True,
+            "Z_POS_LIMIT": True,
+            "Z_NEG_LIMIT": False,
+            "V_HOME_SENSOR": True,
+            "V_POS_LIMIT": False,
+            "V_NEG_LIMIT": True,
         }
         self.do = {
             "SERVO_ENABLE_X": False,
@@ -148,14 +190,27 @@ class NC300Simulator:
             "SERVO_ENABLE_Z": False,
             "SERVO_ENABLE_V": False,
             "VACUUM_PUMP": False,
+            "LOADING_VACUUM_ENABLE": False,
+            "EDGE_PROBE_ENABLE": False,
+            "TENSION_RETRACT_ENABLE": False,
+            "X_AXIS_LOCK": False,
+            "BRIDGE_XY_INTERPOLATION": False,
+            "LAMINE_MODE_ENABLE": False,
+            "ECAM_ENABLE": False,
+            "HEATER_DOWN": False,
             "HEATER_ENABLE": False,
+            "HEATER_ZONE_1": False,
+            "HEATER_ZONE_2": False,
+            "HEATER_SAFETY_ENABLE": False,
             "UPPER_CUT_ENABLE": False,
             "LOWER_CUT_ENABLE": False,
             "SEPARATING_BLADE": False,
             "BREAKING_BAR": False,
             "PRESSURE_ROLLER": False,
+            "CYCLE_COMPLETE": False,
             "ALARM": False,
         }
+        self._update_virtual_limit_sensors()
         self._write_axis_registers()
         self._write_status_registers(self.ALARM_NONE)
 
@@ -200,6 +255,7 @@ class NC300Simulator:
         for axis in self.axes.values():
             axis.update(dt)
 
+        self._update_virtual_limit_sensors()
         self._update_motion_status()
         self._update_lamine_state_machine()
         self._write_axis_registers()
@@ -241,8 +297,10 @@ class NC300Simulator:
 
     def reset_faults(self) -> None:
         self.do["ALARM"] = False
+        self.do["CYCLE_COMPLETE"] = False
         self.lamine.state = LamineState.IDLE
         self.lamine.state_message = "Reset sonrası hazır"
+        self._clear_sequence_outputs()
         self._write_status_registers(self.ALARM_NONE)
         self.registers[self.REG_RESET] = 0
 
@@ -261,19 +319,19 @@ class NC300Simulator:
         self.lamine.state_message = "Cam yükleme bekleniyor"
         self.di["GLASS_DETECT"] = False
         self.di["VACUUM_OK"] = False
+        self.di["G31_PROBE_INPUT"] = False
+        self.di["EDGE_PROBE_OK"] = False
+        self.di["TENSION_OK"] = False
+        self.di["HEATER_DOWN_OK"] = False
+        self.di["HEATER_UP_OK"] = True
         self.di["TEMP_READY"] = False
         self.di["UPPER_CUT_OK"] = False
         self.di["LOWER_CUT_OK"] = False
         self.di["SEPARATION_OK"] = False
         self.di["BREAK_OK"] = False
         self.di["UNLOAD_READY"] = False
-        self.do["VACUUM_PUMP"] = False
-        self.do["HEATER_ENABLE"] = False
-        self.do["UPPER_CUT_ENABLE"] = False
-        self.do["LOWER_CUT_ENABLE"] = False
-        self.do["SEPARATING_BLADE"] = False
-        self.do["BREAKING_BAR"] = False
-        self.do["PRESSURE_ROLLER"] = False
+        self.do["CYCLE_COMPLETE"] = False
+        self._clear_sequence_outputs()
         self.registers[self.REG_START_LAMINE] = 0
         self._write_status_registers(self.ALARM_NONE)
 
@@ -298,6 +356,51 @@ class NC300Simulator:
         self.registers[self.REG_STATUS_WORD] = status
         self.registers[self.REG_ACTIVE_STATE] = self.STATE_CODES[self.lamine.state]
 
+    def _update_virtual_limit_sensors(self) -> None:
+        self._set_limit_triplet("X", "X_NEG_LIMIT", "X_HOME_SENSOR", "X_POS_LIMIT", home_mm=0.0)
+        self._set_limit_triplet("Y", "Y_NEG_LIMIT", "Y_HOME_SENSOR", "Y_POS_LIMIT", home_mm=0.0)
+        self._set_limit_triplet("Z", "Z_NEG_LIMIT", "Z_HOME_SENSOR", "Z_POS_LIMIT", home_mm=300.0)
+        self._set_limit_triplet("V", "V_NEG_LIMIT", "V_HOME_SENSOR", "V_POS_LIMIT", home_mm=0.0)
+        self.di["SAFE_TO_MOVE_X"] = self.axes["V"].position_mm <= self.SENSOR_MARGIN_MM
+
+    def _set_limit_triplet(
+        self,
+        axis_name: str,
+        neg_key: str,
+        home_key: str,
+        pos_key: str,
+        *,
+        home_mm: float,
+    ) -> None:
+        axis = self.axes[axis_name]
+        tol = self.SENSOR_MARGIN_MM
+        self.di[neg_key] = axis.position_mm <= tol
+        self.di[pos_key] = axis.position_mm >= axis.max_travel_mm - tol
+        self.di[home_key] = abs(axis.position_mm - home_mm) <= tol
+
+    def _clear_sequence_outputs(self) -> None:
+        for signal in (
+            "VACUUM_PUMP",
+            "LOADING_VACUUM_ENABLE",
+            "EDGE_PROBE_ENABLE",
+            "TENSION_RETRACT_ENABLE",
+            "X_AXIS_LOCK",
+            "BRIDGE_XY_INTERPOLATION",
+            "LAMINE_MODE_ENABLE",
+            "ECAM_ENABLE",
+            "HEATER_DOWN",
+            "HEATER_ENABLE",
+            "HEATER_ZONE_1",
+            "HEATER_ZONE_2",
+            "HEATER_SAFETY_ENABLE",
+            "UPPER_CUT_ENABLE",
+            "LOWER_CUT_ENABLE",
+            "SEPARATING_BLADE",
+            "BREAKING_BAR",
+            "PRESSURE_ROLLER",
+        ):
+            self.do[signal] = False
+
     def _update_lamine_state_machine(self) -> None:
         if self.lamine.state in (LamineState.IDLE, LamineState.COMPLETE, LamineState.ERROR):
             self._update_motion_status()
@@ -307,62 +410,115 @@ class NC300Simulator:
             self._trip_alarm(self.ALARM_SAFETY, "Safety interlock açıldı")
             return
 
+        self._clear_sequence_outputs()
+        self.di["HEATER_DOWN_OK"] = False
+        self.di["HEATER_UP_OK"] = True
+
         if self.lamine.state == LamineState.LOADING:
-            self.do["PRESSURE_ROLLER"] = True
             self.di["GLASS_DETECT"] = True
             self.do["VACUUM_PUMP"] = True
+            self.do["LOADING_VACUUM_ENABLE"] = True
             self.di["VACUUM_OK"] = True
-            if self.di["GLASS_DETECT"] and self.di["VACUUM_OK"]:
-                self._goto_state(LamineState.HEATING, "Isıtma fazı başladı")
+            if self.di["GLASS_DETECT"] and self.di["VACUUM_OK"] and self.di["SAFE_TO_MOVE_X"]:
+                self._goto_state(LamineState.PROBING, "Cam kenarı G31 ile aranıyor")
+
+        elif self.lamine.state == LamineState.PROBING:
+            if not self.di["SAFE_TO_MOVE_X"]:
+                self._trip_alarm(self.ALARM_SAFETY, "Alt kafa parkta değil, X sürme engellendi")
+                return
+            self.do["EDGE_PROBE_ENABLE"] = True
+            self.do["VACUUM_PUMP"] = True
+            self.do["LOADING_VACUUM_ENABLE"] = True
+            if self.time_s - self.lamine.state_started_at >= self.PROBE_DELAY_S:
+                self.di["G31_PROBE_INPUT"] = True
+                self.di["EDGE_PROBE_OK"] = True
+            if self.di["G31_PROBE_INPUT"] and self.di["EDGE_PROBE_OK"]:
+                self._goto_state(LamineState.POSITIONING, "Cam kesim hattına taşınıyor")
+
+        elif self.lamine.state == LamineState.POSITIONING:
+            if not self.di["SAFE_TO_MOVE_X"]:
+                self._trip_alarm(self.ALARM_SAFETY, "Alt kafa parkta değil, kesim hattına gidilemiyor")
+                return
+            self.do["VACUUM_PUMP"] = True
+            self.do["LOADING_VACUUM_ENABLE"] = True
+            self.move_absolute(self.CUT_LINE_X_MM, self.CUT_START_Y_MM, self.CUT_Z_MM, 0.0)
+            if self._axes_in_position("X", "Y", "Z", "V") and self.time_s - self.lamine.state_started_at >= self.POSITION_DELAY_S:
+                self._goto_state(LamineState.X_LOCK, "X ekseni kesim hattında kilitleniyor")
+
+        elif self.lamine.state == LamineState.X_LOCK:
+            self.do["VACUUM_PUMP"] = True
+            self.do["LOADING_VACUUM_ENABLE"] = True
+            self.do["X_AXIS_LOCK"] = True
+            if self.time_s - self.lamine.state_started_at >= self.X_LOCK_DELAY_S:
+                self._goto_state(LamineState.SYNC_CUT, "Y ekseni master, alt kafa EtherCAT follower")
+
+        elif self.lamine.state == LamineState.SYNC_CUT:
+            self.do["VACUUM_PUMP"] = True
+            self.do["LOADING_VACUUM_ENABLE"] = True
+            self.do["X_AXIS_LOCK"] = True
+            self.do["BRIDGE_XY_INTERPOLATION"] = True
+            self.do["LAMINE_MODE_ENABLE"] = True
+            self.do["ECAM_ENABLE"] = True
+            self.do["UPPER_CUT_ENABLE"] = True
+            self.do["LOWER_CUT_ENABLE"] = True
+            self.move_absolute(self.CUT_LINE_X_MM, self.CUT_END_Y_MM, self.CUT_Z_MM, self.CUT_V_MM)
+            if self._axes_in_position("X", "Y", "Z", "V"):
+                self.di["UPPER_CUT_OK"] = True
+                self.di["LOWER_CUT_OK"] = True
+                self._goto_state(LamineState.HEATING, "Kesim bitti, SIR ısıtıcı 4 sn aktif")
 
         elif self.lamine.state == LamineState.HEATING:
+            self.do["VACUUM_PUMP"] = True
+            self.do["LOADING_VACUUM_ENABLE"] = True
+            self.do["X_AXIS_LOCK"] = True
+            self.do["LAMINE_MODE_ENABLE"] = True
+            self.do["HEATER_DOWN"] = True
             self.do["HEATER_ENABLE"] = True
-            if self.time_s - self.lamine.state_started_at >= 1.5:
+            self.do["HEATER_ZONE_1"] = True
+            self.do["HEATER_ZONE_2"] = True
+            self.do["HEATER_SAFETY_ENABLE"] = True
+            self.di["HEATER_DOWN_OK"] = True
+            self.di["HEATER_UP_OK"] = False
+            self.move_absolute(self.CUT_LINE_X_MM, self.CUT_END_Y_MM, 300.0, 0.0)
+            if self.time_s - self.lamine.state_started_at >= self.HEATING_DWELL_S:
                 self.di["TEMP_READY"] = True
             if self.di["TEMP_READY"]:
-                self.move_absolute(500.0, 500.0, 284.0, 0.0)
-                self.do["UPPER_CUT_ENABLE"] = True
-                self._goto_state(LamineState.UPPER_CUT, "Üst kesim başlatıldı")
+                self._goto_state(LamineState.TENSIONING, "PVB germe için X +2.0 mm uygulanıyor")
 
-        elif self.lamine.state == LamineState.UPPER_CUT:
-            self.move_absolute(2000.0, 1400.0, 284.0, 0.0)
-            if self._axes_in_position("X", "Y", "Z"):
-                self.di["UPPER_CUT_OK"] = True
-                self.move_absolute(2000.0, 1400.0, 284.0, 120.0)
-                self.do["LOWER_CUT_ENABLE"] = True
-                self._goto_state(LamineState.LOWER_CUT, "Alt kesim senkronizasyonu başladı")
-
-        elif self.lamine.state == LamineState.LOWER_CUT:
-            self.move_absolute(3500.0, 2300.0, 284.0, 250.0)
-            if self._axes_in_position("X", "Y", "Z", "V"):
-                self.di["LOWER_CUT_OK"] = True
-                self.do["UPPER_CUT_ENABLE"] = False
-                self.do["LOWER_CUT_ENABLE"] = False
-                self.move_absolute(3500.0, 2300.0, 300.0, 0.0)
+        elif self.lamine.state == LamineState.TENSIONING:
+            self.do["VACUUM_PUMP"] = True
+            self.do["LOADING_VACUUM_ENABLE"] = True
+            self.do["LAMINE_MODE_ENABLE"] = True
+            self.do["TENSION_RETRACT_ENABLE"] = True
+            self.move_absolute(self.CUT_LINE_X_MM + self.TENSION_X_DELTA_MM, self.CUT_END_Y_MM, 300.0, 0.0)
+            if self._axes_in_position("X", "Z", "V") and self.time_s - self.lamine.state_started_at >= self.TENSION_DELAY_S:
+                self.di["TENSION_OK"] = True
                 self._goto_state(LamineState.SEPARATING, "Ayırma fazı başladı")
 
         elif self.lamine.state == LamineState.SEPARATING:
+            self.do["VACUUM_PUMP"] = True
+            self.do["LOADING_VACUUM_ENABLE"] = True
             self.do["SEPARATING_BLADE"] = True
-            if self._axes_in_position("Z", "V"):
+            if self.time_s - self.lamine.state_started_at >= self.SEPARATION_DELAY_S:
                 self.di["SEPARATION_OK"] = True
-                self.do["SEPARATING_BLADE"] = False
-                self.do["BREAKING_BAR"] = True
                 self._goto_state(LamineState.BREAKING, "Kırma fazı başladı")
 
         elif self.lamine.state == LamineState.BREAKING:
-            self.di["BREAK_OK"] = True
-            if self.di["BREAK_OK"]:
-                self.do["BREAKING_BAR"] = False
-                self.do["PRESSURE_ROLLER"] = False
-                self.do["VACUUM_PUMP"] = False
-                self.di["VACUUM_OK"] = False
-                self.move_absolute(500.0, 500.0, 300.0, 0.0)
+            self.do["VACUUM_PUMP"] = True
+            self.do["LOADING_VACUUM_ENABLE"] = True
+            self.do["BREAKING_BAR"] = True
+            if self.time_s - self.lamine.state_started_at >= self.BREAK_DELAY_S:
+                self.di["BREAK_OK"] = True
+                self.move_absolute(self.UNLOAD_X_MM, self.UNLOAD_Y_MM, 300.0, 0.0)
                 self._goto_state(LamineState.UNLOADING, "Boşaltma fazı başladı")
 
         elif self.lamine.state == LamineState.UNLOADING:
             if self._axes_in_position("X", "Y", "Z", "V"):
                 self.di["UNLOAD_READY"] = True
-                self.do["HEATER_ENABLE"] = False
+                self.do["CYCLE_COMPLETE"] = True
+                self.do["VACUUM_PUMP"] = False
+                self.do["LOADING_VACUUM_ENABLE"] = False
+                self.di["VACUUM_OK"] = False
                 self.lamine.cycle_counter += 1
                 self.lamine.state = LamineState.COMPLETE
                 self.lamine.state_message = "Lamine çevrim tamamlandı"
@@ -376,12 +532,8 @@ class NC300Simulator:
 
     def _trip_alarm(self, code: int, message: str) -> None:
         self.do["ALARM"] = True
-        self.do["VACUUM_PUMP"] = False
-        self.do["HEATER_ENABLE"] = False
-        self.do["UPPER_CUT_ENABLE"] = False
-        self.do["LOWER_CUT_ENABLE"] = False
-        self.do["SEPARATING_BLADE"] = False
-        self.do["BREAKING_BAR"] = False
+        self.do["CYCLE_COMPLETE"] = False
+        self._clear_sequence_outputs()
         self.lamine.state = LamineState.ERROR
         self.lamine.state_message = message
         self.registers[self.REG_ALARM_CODE] = code

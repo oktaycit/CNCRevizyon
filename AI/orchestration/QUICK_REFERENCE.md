@@ -8,8 +8,9 @@
 | `max` | qwen3-max-2026-01-23 | Analiz | Karmaşık problemler |
 | `coder` | qwen3-coder-plus | Kod | Python, FreeCAD, G-code, PLC |
 | `next` | qwen3-coder-next | İleri Kod | Advanced patterns |
-| `glm` | glm-4.7 | Alternatif | Cross-validation |
+| `glm` | glm-5 | Review | Cross-validation |
 | `kimi` | kimi-k2.5 | Doküman | Long context |
+| `minimax` | MiniMax-M2.5 | Alternatif | Second opinion |
 
 ## 🎯 Görev → Model Eşleme
 
@@ -19,10 +20,10 @@
 | Kod yaz | `coder` + `next` | `ai_code` |
 | Debug | `coder` + `max` | `ai_debug` |
 | Optimizasyon | `coder` + `max` | `ai_optimize` |
-| Karmaşık analiz | `max` + `plus` | `ai_ask_smart` (complex) |
+| Karmaşık analiz | `max` + `glm` | `ai_ask_smart` (complex) |
 | Dokümantasyon | `kimi` + `plus` | `ai_ask_smart` (documentation) |
 | Karşılaştırma | Tümü | `ai_compare` |
-| Validation | `glm` + `kimi` | `ai_ask_smart` (validation) |
+| Validation | `glm` + `minimax` | `ai_ask_smart` (validation) |
 
 ## 💬 Cline MCP Komutları
 
@@ -117,7 +118,7 @@ python ai_orchestrator.py --parallel \
 | Tek model | ~1s | 500 | Basit sorular |
 | 2 model paralel | ~2s | 1000 | Kod, debug |
 | 3 model paralel | ~2.5s | 1500 | Kritik kararlar |
-| 6 model paralel | ~4s | 3000 | Kapsamlı analiz |
+| 7 model paralel | ~4s | 3000 | Kapsamlı analiz |
 
 ## ⚡ Lite Plan Limitleri
 
@@ -130,10 +131,10 @@ python ai_orchestrator.py --parallel \
 ✅ **Yap:**
 - Routine sorular → Tek model
 - Kod → 2 model (coder + next)
-- Kritik → 3 model (plus + max + coder)
+- Kritik → 3 model (max + coder + glm)
 
 ❌ **Yapma:**
-- Her soruda 6 model paralel
+- Her soruda 7 model paralel
 - Gereksiz yere max kullanımı
 - Rate limit'i aşmak
 

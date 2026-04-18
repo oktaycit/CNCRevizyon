@@ -10,6 +10,8 @@ Kapsam:
 - register tabanlı komut alma
 - X/Y/Z/V eksen pozisyon takibi
 - lamine çevrim state machine
+- `Safe_To_Move_X` park interlock'u
+- G31 -> X500 -> X lock -> Y master / EtherCAT follower -> 4 sn isitma -> +2 mm germe sirasi
 - dijital giriş/çıkış mantığı
 - FreeCAD veya HMI entegrasyonu için callback noktası
 

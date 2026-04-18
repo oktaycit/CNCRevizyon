@@ -4,13 +4,14 @@
 Glass Cutting Program Orchestrator
 LiSEC GFB-60/30RE Cam Kesme Makinesi
 
-6 AI Model Paralel Orkestrasyon:
+7 AI Model Paralel Orkestrasyon:
 - qwen3.5-plus: Genel, hızlı
 - qwen3-max: Karmaşık analiz
 - qwen3-coder-plus: Kod/G-code
 - qwen3-coder-next: İleri kod
-- glm-4.7: Doğrulama
+- glm-5: Doğrulama ve review
 - kimi-k2.5: Dokümantasyon
+- MiniMax-M2.5: Alternatif yaklaşım
 """
 
 import os
@@ -97,7 +98,7 @@ class DefectPoint:
 class GlassCuttingOrchestrator:
     """
     Main orchestrator for glass cutting optimization
-    Uses 6 AI models in parallel for different tasks
+    Uses 7 AI models in parallel for different tasks
     """
 
     # Task routing for models
@@ -106,7 +107,7 @@ class GlassCuttingOrchestrator:
         "path_planning": ["qwen3-coder-plus"],
         "gcode_generation": ["qwen3-coder-plus", "qwen3-coder-next"],
         "lamine_params": ["qwen3.5-plus"],
-        "defect_validation": ["glm-4.7", "kimi-k2.5"],
+        "defect_validation": ["glm-5", "MiniMax-M2.5"],
         "documentation": ["kimi-k2.5"],
         "quick_query": ["qwen3.5-plus"]
     }
@@ -174,6 +175,21 @@ class GlassCuttingOrchestrator:
                     "model_id": "qwen3-coder-plus",
                     "temperature": 0.2,
                     "max_tokens": 8192
+                },
+                {
+                    "model_id": "glm-5",
+                    "temperature": 0.4,
+                    "max_tokens": 4096
+                },
+                {
+                    "model_id": "kimi-k2.5",
+                    "temperature": 0.5,
+                    "max_tokens": 4096
+                },
+                {
+                    "model_id": "MiniMax-M2.5",
+                    "temperature": 0.5,
+                    "max_tokens": 4096
                 }
             ]
         }

@@ -526,9 +526,13 @@ Firmware/NC300/
 │   ├── Homing.st              # Referans fonksiyonları
 │   ├── Safety.st              # Güvenlik mantığı
 │   └── E-Cam.st               # E-Cam programları
+├── ST/
+│   ├── Lamine_ClearPath_Main.st # G31 + germe + isitici + E-Cam referansi
+│   └── README.md                # FreeCAD parametre eslesmeleri
 ├── GCode/
 │   ├── Standard_Cut.nc        # Standart kesim programı
 │   ├── Lamine_Cut.nc          # Lamine kesim programı
+│   ├── Lamine_ClearPath.nc    # G31 + X lock + E-Cam + tension macro
 │   └── Custom_Patterns/       # Özel desenler
 ├── HMI/
 │   └── GFB60-30RE_HMI.dop     # DiaDesigner projesi
@@ -536,6 +540,59 @@ Firmware/NC300/
     ├── IO_Map.pdf             # I/O haritası
     └── Alarm_List.pdf         # Alarm listesi
 ```
+
+### 8.1 Lamine Clear Path ST Referansı
+
+Bu revizyonda FreeCAD ve NC300 analizinden türetilen lamine proses mantığı için hazır ST referansı eklendi:
+
+- `/Users/oktaycit/Projeler/CNCRevizyon/Firmware/NC300/ST/Lamine_ClearPath_Main.st`
+
+Kapsadığı başlıklar:
+- G31 benzeri kenar bulma ve vantuzlu köprü referanslama
+- folyo germe için milimetrik X geri çekme hesabı
+- `T1 = -(U1 + V1 - W1)` düzeltme mantığı
+- ısıtıcı interlock zinciri ve zon çıkışları
+- Leuze home/limit sensörlerinin çevrim geçişlerine katılması
+- üst kafa ile alt eksen arasında E-Cam angajmanı ve senkron kesim
+
+### 8.2 Lamine Clear Path G-Code Referansı
+
+Makro referansı:
+
+- `/Users/oktaycit/Projeler/CNCRevizyon/Firmware/NC300/GCode/Lamine_ClearPath.nc`
+
+Temel akış:
+- `M10` ile vakum açılır ve cam tutulur
+- `G31 X-100` ile cam kenarı bulunur
+- `G92 X0` ile cam kenarı sıfırlanır
+- `G01 X[#2007]` ile cam kesim konumuna sürülür
+- `M11` ile X ekseni kilitlenir
+- `#2000 = 1` sonrası sadece `Y` hareketi ile E-Cam kesimi yapılır
+- `M12` ve `G04 P[#2003]` ile ısıtma beklemesi yürütülür
+- `G01 X[#2007 + #2005]` ve geri settle ile folyo gerilir
+- `M13` ile ayırma/kırma başlatılır
+
+### 8.3 I/O ve User Variable Onerisi
+
+Onerilen user variable alani:
+- `#2000` E-Cam enable
+- `#2001` Lamine mode enable
+- `#2002` X lock command
+- `#2003` Heater dwell ms
+- `#2004` Probe backoff mm
+- `#2005` Tension retract mm
+- `#2006` Tension settle mm
+- `#2007` Cut X target mm
+- `#2008` Cut Y target mm
+- `#2009` Heater work offset mm
+- `#2010` Park retract mm
+
+Onerilen ciktilar:
+- `QX0.0` SIR heater valve
+- `QX0.1` Vacuum valve
+- `QX0.2` X axis lock
+- `QX0.3` Break start
+- `QX0.4` E-Cam active relay
 
 ## 9. Test Prosedürü
 
