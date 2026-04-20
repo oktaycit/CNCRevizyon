@@ -1,0 +1,4 @@
+import sys
+sys.path.append('/Users/oktaycit/Projeler/CNCRevizyon/CAD/FreeCAD')
+import fix_model_issues
+fix_model_issues.run()

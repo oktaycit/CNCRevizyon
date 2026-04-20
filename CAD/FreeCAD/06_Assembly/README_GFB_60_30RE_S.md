@@ -13,26 +13,56 @@ Makine modeli internet ve yerel referanslarla butunlendiginde bu montaj su hat y
 
 Bu README'de `GFB-60/30RE-S hibrit sistem` kisa adi, yukaridaki komple hattin merkez kesim modulu uzerinden kullanilmaktadir.
 
+Revize model mimarisi iki farkli kopruyu ayri ayri gosterir:
+
+- Beyaz kartezyen kopru: `X/Y/Z` ile calisir, uzerinde vakum ve lama silme servisi vardir.
+- Lila VB ust koprusu: sabit `X` hattinda duran dar lamine kesim unitesidir; yalniz `Y` yonunde calisir ve alt kafa ile mekanik bagli kabul edilir.
+
 ## Özellikler
+
+### Dual Bridge (Çifte Köprü) Sistemi
+
+Makinede **iki farklı köprü** bulunmaktadir:
+
+1. **Kartezyen Köprü (Beyaz Boyalı)**:
+   - X, Y, Z eksenleri ile kontrol edilir
+   - Vakum ve lama silme servisi bulunur
+   - Düz cam kesiminde kullanılır
+   - Lamine kesimde park pozisyonuna çekilir (kullanılmaz)
+
+2. **VB Ünitesi (Lila Boyalı, Dar Ünite)**:
+   - Sadece Y yönünde hareket eder
+   - X yönünde hareket edemez (sabit X konumu)
+   - Alt kafa servo, üst kafaya **mekanik bağlı**
+   - Lamine kesim için kullanılır
+   - **E-Cam gerektirmez** - mekanik bağlantı yeterli
 
 ### Eksenler
 
-| Eksen | Açıklama | Strok | Maks. Hız |
-|-------|----------|-------|-----------|
-| X | Portal Köprüsü | 6000 mm | 80 m/dk |
-| Y | Kafa Yatay Hareket | 3000 mm | 60 m/dk |
-| Z | Üst Kesim Kafası | 300 mm | 5 m/dk |
-| V | Alt Kesici (VB-Modul) | 300 mm | 60 m/dk |
-| C | Rodaj Ekseni | - | - |
+| Eksen | Açıklama | Strok | Maks. Hız | Köprü |
+|-------|----------|-------|-----------|-------|
+| X | Kartezyen Portal Köprüsü | 6000 mm | 80 m/dk | Beyaz |
+| Y | Kartezyen Üst Kafa Hareketi | 3000 mm | 60 m/dk | Beyaz |
+| Z | Üst Kesim Kafası | 300 mm | 5 m/dk | Beyaz |
+| VB-Y | VB üst/alt bağlı lamine kesim ekseni | 3000 mm | 60 m/dk | Lila |
+| V | Alt Kesici dikey stroku (VB-Modul) | 300 mm | 60 m/dk | Lila |
+| C | Rodaj Ekseni | - | - | - |
+
+**ÖNEMLI NOT:** Lamine kesim sırasında:
+
+- Kartezyen köprünün Y ekseni **kullanılmaz** (parkta)
+- VB ünitesi Y ekseni **doğrudan hareket** eder (E-Cam gereksiz)
+- VB ünitesinde alt kafa servo, üst kafaya **mekanik bağlı**
 
 ### VB-Modul Bileşenleri
 
-1. **Alt Kesici Ünitesi** - Lamine camın alt katmanını keser
-2. **Isıtıcı Çubuk (Heizstab)** - PVB filmini yumuşatır (135°C)
-3. **Vakum Vantuz Sistemi** - Camı sabitler
-4. **Kırma Çıtası (Brechleiste)** - Camı kırar
-5. **Ayırma Bıçağı (Trennklinge)** - Cam katmanlarını ayırır
-6. **Basınç Rollesi (Andrückrolle)** - Kesim sırasında camı sabitler
+1. **Dar Lila VB Üst Köprüsü** - Sabit `X` hattında, yalnız `Y` yönünde çalışan üst lamine kesim ünitesi
+2. **Alt Kesici Ünitesi** - Lamine camın alt katmanını üst kafa ile tam hizalı olarak skorlar ve aynı `Y` çizgisini izler
+3. **SIR Isıtıcı Çubuk (Heizstab)** - PVB folyoyu alttan, yaklaşık `1 mm` standoff ile seçici olarak ısıtır
+4. **Vakum Vantuz Sistemi** - Camı sabitler ve gap açma fazında levhaları kontrollü gerer
+5. **Kırma Çıtası / Kırma Mekanizması (Brechleiste)** - Skor hattı boyunca camı kırar
+6. **Folyo Kesme Bıçağı (Trennklinge)** - Açılan gap içine girerek PVB folyoyu boydan boya keser
+7. **Basınç Rollesi / Crush Roller (Andrückrolle)** - Kırma fazında üstten baskı uygular
 
 ## Kurulum
 
@@ -95,6 +125,12 @@ Daha guvenli manuel kontrol icin:
 
 ```python
 set_axis_positions(App.ActiveDocument, x=1000, y=500, z=150, v=100)
+```
+
+Acik bir belgeyi yeni iki koprulu geometriye yukseltmek icin:
+
+```python
+upgrade_existing_document_to_dual_bridge_layout(App.ActiveDocument)
 ```
 
 ### Simülasyon Çalıştırma
@@ -204,8 +240,11 @@ main([
 ```
 
 Not:
+
 - Script artık GUI olmayan `FreeCAD -c` çalıştırmalarında da güvenli şekilde açılır.
-- Kinematik eşleme FreeCAD eksenlerinde şu şekilde uygulanır: makine `X -> FreeCAD Z`, makine `Y -> FreeCAD X`, makine `Z/V -> FreeCAD Y`.
+- Lamine modunda kartezyen `Y` kafasi parkta tutulur; `Variables.B1` bu durumda VB ust/alt bagli `Y` eksenini surer.
+- VB lamine ust koprusu sabit `X` hattindadir; lamine kesimde `E-Cam` yerine mekanik bagli ortak `Y` ekseni varsayimi kullanilir.
+- `run_nc_file_simulation()` icinde `#2000` legacy bayragi `E-Cam` olarak degil, `VB_Y_LINK_ENABLE` yani ortak VB-Y kesim linki olarak yorumlanir.
 - Model açıldığında `Lamine_IO` ve `Lamine_Phases` spreadsheet'leri de oluşur.
 - `parse_nc_file()` temel NC çözümleyicisidir; `run_nc_file_simulation()` bunu FreeCAD oynatımına çevirir.
 - `run_nc_file_simulation(doc)` parametresiz cagrildiginda once `AI/GlassCuttingProgram/output/gcode` altindaki son uretilen NC dosyasini arar.
@@ -240,15 +279,16 @@ Temel faz akışı:
 
 | Faz | Giriş Şartı | Aktif Çıkışlar | Sonraki Faz |
 |-----|-------------|----------------|-------------|
-| Bekleme | START_CMD, ESTOP_OK, DOOR_CLOSED, AIR_PRESSURE_OK | Servo enable'lar | Yükleme |
-| Yükleme | GLASS_DETECT, VACUUM_OK | VACUUM_PUMP, PRESSURE_ROLLER | Isıtıcı İniş |
-| Isıtıcı İniş | HEATER_DOWN_OK | HEATER_DOWN | Isıtma |
-| Isıtma | HEATER_DOWN_OK, TEMP_READY | HEATER_ENABLE, VACUUM_PUMP | Isıtıcı Kalkış |
-| Üst Kesim Hazırlık | UPPER_HEAD_READY | UPPER_CUT_ENABLE | Üst Kesim |
-| Alt Kesici Hazırlık | LOWER_HEAD_READY | LOWER_CUT_ENABLE | Senkronize Kesim |
-| Senkronize Kesim | UPPER_CUT_OK, LOWER_CUT_OK | UPPER_CUT_ENABLE, LOWER_CUT_ENABLE | Kafalar Yukarı |
-| Ayırma | SEPARATION_OK | SEPARATING_BLADE | Kırma |
-| Kırma | BREAK_OK | BREAKING_BAR, PRESSURE_ROLLER | Boşaltma |
+| Bekleme | START_CMD, ESTOP_OK, DOOR_CLOSED, AIR_PRESSURE_OK | Servo enable'lar | Cam Yakalama ve Orijinleme |
+| Cam Yakalama ve Orijinleme | GLASS_DETECT, VACUUM_OK, SAFE_TO_MOVE_X | VACUUM_PUMP, LOADING_VACUUM_ENABLE | Kenar Probu |
+| Kenar Probu | G31_PROBE_INPUT, EDGE_PROBE_OK, SAFE_TO_MOVE_X | VACUUM_PUMP, LOADING_VACUUM_ENABLE, EDGE_PROBE_ENABLE | Kesim Hattina Konumlandirma |
+| Kesim Hattina Konumlandirma | VACUUM_OK, SAFE_TO_MOVE_X | VACUUM_PUMP, LOADING_VACUUM_ENABLE | Simetrik Scoring Hazirlik |
+| Simetrik Scoring Hazirlik | VACUUM_OK | VB_Y_LINK_ENABLE, VACUUM_PUMP, LOADING_VACUUM_ENABLE, X_AXIS_LOCK | Simetrik Scoring |
+| Simetrik Scoring | UPPER_CUT_OK, LOWER_CUT_OK | UPPER_CUT_ENABLE, LOWER_CUT_ENABLE, VB_Y_LINK_ENABLE, VACUUM_PUMP, LOADING_VACUUM_ENABLE | Cam Kirma |
+| Cam Kirma | BREAK_OK | BREAKING_BAR, PRESSURE_ROLLER, VACUUM_PUMP, LOADING_VACUUM_ENABLE | PVB Isitma |
+| PVB Isitma | HEATER_DOWN_OK, TEMP_READY | HEATER_DOWN, HEATER_ENABLE, HEATER_ZONE_1, HEATER_ZONE_2, HEATER_SAFETY_ENABLE | Gap Acma |
+| Gap Acma | TENSION_OK, VACUUM_OK | TENSION_RETRACT_ENABLE, VACUUM_PUMP, LOADING_VACUUM_ENABLE | Folyo Kesme ve Ayirma |
+| Folyo Kesme ve Ayirma | SEPARATION_OK | SEPARATING_BLADE, VACUUM_PUMP, LOADING_VACUUM_ENABLE | Boşaltma |
 | Boşaltma | UNLOAD_READY | CYCLE_COMPLETE | Tamamlandı |
 
 ### NC Dosyası ve I/O Eşlemesi
@@ -259,7 +299,7 @@ Varsayılan eşlemeler:
 
 | NC Komutu | Model Çıkışı |
 |-----------|--------------|
-| `M03` | `UPPER_CUT_ENABLE=1`, `PRESSURE_ROLLER=1` |
+| `M03` | `Cutting_Head` (`Top_Cutter` varsa o) ve `Lower_Cutter_Head` cam üst yüzeyine sabitlenir; başarısızsa `ALARM=1` ile kesim bloke edilir |
 | `M05` | `UPPER_CUT_ENABLE=0`, `PRESSURE_ROLLER=0` |
 | `M08` | `VACUUM_PUMP=1` |
 | `M09` | `VACUUM_PUMP=0` |
@@ -267,8 +307,10 @@ Varsayılan eşlemeler:
 | Program sonu | `CYCLE_COMPLETE=1` |
 
 Not:
+
 - Bu eşleme proses mantığından türetilmiş görsel/senaryo amaçlı bir modeldir.
 - NC dosyası gerçek NC300 register çevrimine değil, FreeCAD playback katmanına bağlanır.
+- `M03` interlock'u aktifken cam yüzeyi referansı bulunamaz veya kafa Z konumu tolerans icinde esitlenemezse playback `ALARM` durumuna gecer.
 
 ## Model Parametreleri
 
@@ -291,34 +333,35 @@ Not:
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Lamine Kesim Döngüsü                         │
 │                                                                 │
-│  1. Cam Yükleme                                                 │
-│     └─ Vakum aktif, cam sabitlenir                              │
+│  1. Konumlandırma ve Sabitleme                                  │
+│     ├─ Gantry camı X ekseni ile VB hattına taşır                │
+│     ├─ Kartezyen Y ve Z parkta kalır                            │
+│     └─ Vakum vantuzları camı sabitler                           │
 │                                                                 │
-│  2. Isıtma Fazı (Heizstab)                                      │
-│     ├─ Isıtıcı aşağı (2 sn)                                     │
-│     ├─ Isıtma (3-5 sn, 135°C)                                   │
-│     └─ Isıtıcı yukarı (1 sn)                                    │
+│  2. Simetrik Scoring                                            │
+│     ├─ VB üst/alt kafa ortak Y ekseninde ilerler                │
+│     ├─ Üst ve alt kesici tekerler aynı hat üstünde çalışır      │
+│     └─ Camın iki yüzü eş zamanlı skorlanır                      │
 │                                                                 │
-│  3. Üst Kesim (Z Ekseni)                                        │
-│     ├─ Kesim kafası aşağı                                       │
-│     ├─ Çizim (G01, F=2000 mm/dk)                                │
-│     └─ Kesim kafası yukarı                                      │
+│  3. Cam Kırma                                                   │
+│     ├─ Alt kırma barı ve üst crush roller devreye girer         │
+│     ├─ Skor hattı boyunca iki cam tabakası kırılır              │
+│     └─ PVB folyo henüz bütündür                                 │
 │                                                                 │
-│  4. Alt Kesim (V Ekseni) - Senkronize                           │
-│     ├─ V ekseni Y ile aynı pozisyona                            │
-│     ├─ Alt kesici yukarı (temas)                                │
-│     ├─ Çizim (senkronize Y ile)                                 │
-│     └─ Alt kesici aşağı                                         │
+│  4. PVB Isıtma                                                  │
+│     ├─ SIR ısıtıcı alttan seçici olarak folyoyu ısıtır          │
+│     ├─ Nominal standoff yaklaşık 1 mm'dir                       │
+│     └─ Amaç camı değil, doğrudan folyoyu yumuşatmaktır          │
 │                                                                 │
-│  5. Ayırma (Trennklinge)                                        │
-│     ├─ Ayırma bıçağı cam altına                                 │
-│     ├─ Hafif yukarı basınç                                      │
-│     └─ Y ekseni hareketi ile ayırma                             │
+│  5. Gap Açma                                                    │
+│     ├─ Vakum sistemi levhaları çok hafif aralar                 │
+│     ├─ PVB esner ve kesim için kontrollü boşluk oluşur          │
+│     └─ Cam kenarında delaminasyon riski azaltılır               │
 │                                                                 │
-│  6. Kırma (Brechleiste)                                         │
-│     ├─ Kırma çıtası aşağı                                       │
-│     ├─ Cam kenarından yukarı basınç                             │
-│     └─ Cam kırılır                                              │
+│  6. Folyo Kesme ve Ayırma (Trennklinge)                         │
+│     ├─ Folyo kesme bıçağı açılan gap içine girer                │
+│     ├─ PVB boydan boya kesilir                                  │
+│     └─ İki lamine parça birbirinden tamamen ayrılır             │
 │                                                                 │
 │  7. Cam Boşaltma                                                │
 │     └─ Vakum pasif, cam alınır                                  │
@@ -333,7 +376,8 @@ CAD/FreeCAD/
 │   ├── GFB_60_30RE_S_Model.py    # Ana model script
 │   ├── README_GFB_60_30RE_S.md   # Bu dosya
 │   ├── Complete_Machine_Simulation.py  # Orijinal simülasyon
-│   └── Assembly4_LamineCam_ECam.py     # E-Cam profili
+│   ├── GFB_60_30RE_S_Stage3_VB_Y_Sync.FCMacro  # Yeni Stage 3 makrosu
+│   └── Assembly4_LamineCam_ECam.py     # Legacy E-Cam denemesi
 ├── 07_Exports/
 │   └── STEP/
 │       └── Assembly/           # STEP dışa aktarımları
@@ -402,6 +446,24 @@ FreeCAD simülasyonunda kullanılan proses sinyalleri, firmware tasarımındaki 
 
 - Python konsolunda hata mesajlarını kontrol edin
 - FreeCAD sürümünüzün 1.0+ olduğunu doğrulayın
+
+## Önemli Notlar - Dual Bridge Sistemi
+
+**Kartezyen Köprü (Beyaz) vs VB Ünitesi (Lila):**
+
+1. **Lamine Kesimde E-Cam Gereksiz:**
+   - VB ünitesinde alt kafa servo, üst kafaya **mekanik bağlı**
+   - Doğrudan Y ekseni hareketi yeterli
+   - X ekseni sabit kalır (kilitli)
+
+2. **Kartezyen Köprü Kullanımı:**
+   - Düz cam kesiminde: X, Y, Z eksenleri aktif
+   - Lamine kesimde: Park pozisyonunda (kullanılmaz)
+
+3. **VB Ünitesi Kullanımı:**
+   - Sadece lamine kesimde kullanılır
+   - Sadece Y yönünde hareket eder
+   - X yönünde hareket edemez (sabit konum)
 
 ## Kaynaklar
 

@@ -117,6 +117,16 @@ class NC300GCodeGenerator:
         "dwell": "G04",
         "blade_delete_on": "M10",
         "blade_delete_off": "M11",
+        "lamine_heater_on": "M12",
+        "lamine_break_on": "M13",
+        "lamine_break_off": "M20",
+        "lamine_blade_on": "M14",
+        "lamine_blade_off": "M15",
+        "lamine_pressure_on": "M16",
+        "lamine_pressure_off": "M17",
+        "lamine_tension_on": "M18",
+        "lamine_tension_off": "M19",
+        "lamine_heater_off": "M22",
     }
 
     def __init__(self, params: Optional[GCodeParams] = None):
@@ -210,10 +220,19 @@ class NC300GCodeGenerator:
             "; Verify sheet position",
             "; Verify coolant (if required)",
             "",
-            "; --- Start Cutting ---",
-            self.NC300_CODES["spindle_on"] + f" S{self.params.spindle_start}",
-            "",
         ]
+        if glass_type != GlassType.LAMINATED:
+            header.extend([
+                "; --- Start Cutting ---",
+                self.NC300_CODES["spindle_on"] + f" S{self.params.spindle_start}",
+                "",
+            ])
+        else:
+            header.extend([
+                "; --- Start Laminated Cycle ---",
+                "; Laminate outputs are phase-controlled inside the program body",
+                "",
+            ])
 
         if self.params.coolant:
             header.append(self.NC300_CODES["coolant_on"])
@@ -293,27 +312,80 @@ class NC300GCodeGenerator:
 
     def _generate_blade_delete_sequence(self, x: float, y: float,
                                         w: float, h: float) -> Tuple[List[str], float]:
-        """Generate a simple blade wiping / lama siyirma sequence."""
+        """
+        Generate Low-E kaplama taşlama dizisi (GFB Orijinal Tasarım)
+        
+        GFB prensibi: "Önce temizle, sonra kes"
+        - Periferik taşlama diski (çevre taşlama)
+        - Disk genişliği: 20-26 mm standart
+        - Elmas kaplama (Low-E kaplama temizleme için)
+        - Devir: 2000-3000 RPM (M03 S2000)
+        - Pnömatik basınç kontrolü ile hassas temas
+        - Vakum emiş sistemi ile metalik toz toplama
+        
+        G-Kod dizisi:
+        1. Taşlama pozisyonuna hızlı hareket (G00)
+        2. Mil başlat (M03 S2000)
+        3. Taşlama teması (G01 Z-2 F500)
+        4. İlk geçiş - kaplama temizleme (G01 X... F2000)
+        5. Vakum aç (M12)
+        6. Z eksenini kaldır (G00 Z10)
+        7. Mil durdur (M05)
+        8. Kesim başlangıcına dön
+        """
         lines = [
             "",
-            "; Blade delete sequence",
-            "; Step BD1: Move to wiping pad",
+            "; ============================================",
+            "; Low-E KAPLAMA TAŞLAMA DİZİSİ (GFB Orijinal)",
+            "; ============================================",
+            "; Prensip: Önce temizle, sonra kes",
+            "; Disk: Periferik taşlama, 24mm genişlik, elmas kaplama",
+            "; Devir: 2000-3000 RPM",
+            "; Vakum: Metalik toz emiş (gümüş oksit vb.)",
+            "",
         ]
         distance = 0.0
 
-        pad_x = max(0.0, x - min(80.0, max(20.0, w * 0.1)))
-        pad_y = max(0.0, y - min(60.0, max(20.0, h * 0.1)))
-
-        lines.append(f"{self.NC300_CODES['rapid']} X{pad_x:.2f} Y{pad_y:.2f} F{self.params.rapid_speed}")
-        distance += abs(x - pad_x) + abs(y - pad_y)
-        lines.append(self.NC300_CODES["blade_delete_on"])
-        lines.append(f"{self.NC300_CODES['dwell']} P1.5 ; Blade wipe contact")
-        lines.append(self.NC300_CODES["blade_delete_off"])
+        # Taşlama pozisyonu - camin sol alt köşesinin hemen dışında
+        grind_start_x = max(0.0, x - 50.0)  # 50 mm X ekseninde geride
+        grind_start_y = y  # Y pozisyonunda
+        
         lines.extend([
-            "; Step BD2: Return to cut start",
+            "; --- BD1: Taşlama Pozisyonuna Hareket ---",
+            f"{self.NC300_CODES['rapid']} X{grind_start_x:.2f} Y{grind_start_y:.2f} F{self.params.rapid_speed}",
+            "",
+            "; --- BD2: Mil Başlat (CW, 2000 RPM) ---",
+            f"{self.NC300_CODES['spindle_on']} S2000",
+            "",
+            "; --- BD3: Taşlama Diski Temas ---",
+            "; Disk, cam yüzeyine dik veya çok dar açıyla temas eder",
+            "; Pnömatik basınç ile hassas kontrol (Low-E kalınlığına göre)",
+            f"{self.NC300_CODES['linear']} Z-2.00 F500 ; Taşlama teması (2mm derinlik)",
+            "",
+            "; --- BD4: İlk Geçiş - Low-E Kaplama Temizleme ---",
+            "; X ekseni boyunca ilk geçiş",
+            "; Çıkış yapan metalik tozlar vakum ile toplanır",
+            f"{self.NC300_CODES['linear']} X{x+w:.2f} Y{y:.2f} F2000 ; Taşlama hızı 2m/dk",
+            "",
+            "; --- BD5: Vakum Emiş Aç ---",
+            "; Metalik tozları (gümüş oksit vb.) toplamak için",
+            "M12 ; Vakum emiş AÇIK",
+            "",
+            "; --- BD6: Z Eksenini Kaldır ---",
+            f"{self.NC300_CODES['rapid']} Z10.00 ; Güvenlik pozisyonu",
+            "",
+            "; --- BD7: Mil Durdur ---",
+            f"{self.NC300_CODES['spindle_off']}",
+            "",
+            "; --- BD8: Kesim Başlangıç Pozisyonuna Dön ---",
             f"{self.NC300_CODES['rapid']} X{x:.2f} Y{y:.2f} F{self.params.rapid_speed}",
+            "",
         ])
-        distance += abs(x - pad_x) + abs(y - pad_y)
+        distance += w
+        
+        # Geri dönüş mesafesi
+        distance += abs(x - grind_start_x) + abs(y - grind_start_y)
+        
         return lines, distance
 
     def _generate_float_cut(self, x: float, y: float,
@@ -343,60 +415,79 @@ class NC300GCodeGenerator:
     def _generate_laminated_cut(self, x: float, y: float,
                                  w: float, h: float) -> Tuple[List[str], float]:
         """
-        Generate laminated glass cut sequence
-        Requires heating and upper/lower separation
+        Generate laminated glass cut sequence aligned with the dual-bridge model.
+
+        Process:
+        1. Gantry positions the glass on the VB cut line and locks X.
+        2. VB-Y performs symmetric scoring while Cartesian Y/Z stay parked.
+        3. Breaking bar and pressure roller crack both plies.
+        4. SIR heater softens the PVB.
+        5. Gantry opens a small X-gap while vacuum keeps the sheet stable.
+        6. Separation blade cuts the softened foil.
         """
         lines = []
         distance = 0.0
 
-        # Heating approach
+        cut_x = x + (w / 2.0)
+        score_start_y = y
+        score_end_y = y + h
+        heater_dwell_s = 4.0
+        break_dwell_s = 1.0
+        blade_dwell_s = 1.0
+        tension_offset = min(6.0, max(2.0, w * 0.01))
+        tension_x = cut_x + tension_offset
+
         lines.extend([
             "",
-            "; Laminated glass sequence",
-            "; Step 1: Upper glass cut",
-        ])
-
-        # Upper glass perimeter
-        lines.append(f"{self.NC300_CODES['linear']} X{x+w:.2f} Y{y:.2f} F{self.params.cut_speed}")
-        distance += w
-        lines.append(f"{self.NC300_CODES['linear']} X{x+w:.2f} Y{y+h:.2f}")
-        distance += h
-        lines.append(f"{self.NC300_CODES['linear']} X{x:.2f} Y{y+h:.2f}")
-        distance += w
-        lines.append(f"{self.NC300_CODES['linear']} X{x:.2f} Y{y:.2f}")
-        distance += h
-
-        # Heating position (center)
-        lines.extend([
+            "; Laminated glass sequence (dual-bridge / VB aligned)",
+            f"; VB cut line X: {cut_x:.2f} mm",
+            f"; VB score span Y: {score_start_y:.2f} -> {score_end_y:.2f} mm",
             "",
-            "; Step 2: Heating",
-            f"{self.NC300_CODES['rapid']} X{x+w/2:.2f} Y{y+h/2:.2f}",
-            f"{self.NC300_CODES['dwell']} P4.0 ; Heat for 4 seconds",
-        ])
-
-        # Lower glass cut
-        lines.extend([
+            "; Step 1: Positioning and vacuum hold",
+            "M10 ; VACUUM ON",
+            "G31 X-100 F500 ; edge probe search",
+            "G92 X0 ; accept detected edge as work zero",
+            f"{self.NC300_CODES['linear']} X{cut_x:.2f} F1500 ; gantry pushes glass to VB cut line",
+            "M11 ; X LOCK / brake ON",
+            "#2001 = 1 ; lamine mode enable",
+            "#2002 = 1 ; X axis lock enable",
+            "#2000 = 1 ; VB-Y mechanical link enable",
             "",
-            "; Step 3: Lower glass cut",
-        ])
-
-        # Lower glass perimeter (same path)
-        lines.append(f"{self.NC300_CODES['linear']} X{x+w:.2f} Y{y:.2f}")
-        distance += w
-        lines.append(f"{self.NC300_CODES['linear']} X{x+w:.2f} Y{y+h:.2f}")
-        distance += h
-        lines.append(f"{self.NC300_CODES['linear']} X{x:.2f} Y{y+h:.2f}")
-        distance += w
-        lines.append(f"{self.NC300_CODES['linear']} X{x:.2f} Y{y:.2f}")
-        distance += h
-
-        # Break-out
-        lines.extend([
+            "; Step 2: Symmetric scoring on VB-Y",
+            f"{self.NC300_CODES['rapid']} Y{score_start_y:.2f} F{self.params.rapid_speed}",
+            f"{self.NC300_CODES['spindle_on']} S{self.params.spindle_start} ; upper/lower scoring heads ON",
+            f"{self.NC300_CODES['linear']} Y{score_end_y:.2f} F{self.params.cut_speed} ; VB-Y scoring stroke",
+            f"{self.NC300_CODES['spindle_off']} ; scoring heads OFF",
             "",
-            "; Step 4: Break-out",
-            f"{self.NC300_CODES['rapid']} X{x+w/2:.2f} Y{y+h/2:.2f}",
-            "; Apply break pressure",
+            "; Step 3: Breaking",
+            f"{self.NC300_CODES['lamine_pressure_on']} ; pressure roller ON",
+            f"{self.NC300_CODES['lamine_break_on']} ; breaking bar ON",
+            f"{self.NC300_CODES['dwell']} P{break_dwell_s:.1f} ; crack both glass plies",
+            f"{self.NC300_CODES['lamine_break_off']} ; breaking bar OFF",
+            f"{self.NC300_CODES['lamine_pressure_off']} ; pressure roller OFF",
+            "",
+            "; Step 4: PVB heating",
+            f"{self.NC300_CODES['lamine_heater_on']} ; SIR heater ON",
+            f"{self.NC300_CODES['dwell']} P{heater_dwell_s:.1f} ; soften the foil",
+            f"{self.NC300_CODES['lamine_heater_off']} ; SIR heater OFF",
+            "",
+            "; Step 5: Gap opening",
+            "#2002 = 0 ; release X lock before tension stroke",
+            f"{self.NC300_CODES['lamine_tension_on']} ; vacuum-assisted gap opening ON",
+            f"{self.NC300_CODES['linear']} X{tension_x:.2f} F200 ; small X pull to open foil gap",
+            f"{self.NC300_CODES['lamine_tension_off']} ; gap opening OFF",
+            "",
+            "; Step 6: Foil cut and separation",
+            f"{self.NC300_CODES['lamine_blade_on']} ; separation blade ON",
+            f"{self.NC300_CODES['dwell']} P{blade_dwell_s:.1f} ; cut softened foil",
+            f"{self.NC300_CODES['lamine_blade_off']} ; separation blade OFF",
+            "#2000 = 0 ; VB-Y link disable",
+            "#2001 = 0 ; lamine mode disable",
         ])
+
+        distance += abs(cut_x - x)
+        distance += abs(score_end_y - score_start_y)
+        distance += abs(tension_x - cut_x)
 
         return lines, distance
 

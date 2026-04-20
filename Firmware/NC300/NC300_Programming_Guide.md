@@ -1,4 +1,5 @@
 # Delta NC300 Programlama Kılavuzu
+
 ## Lisec GFB-60/30RE Cam Kesme Makinesi
 
 ## 1. Genel Bakış
@@ -6,6 +7,7 @@
 Delta NC300, EtherCAT master olarak çalışan, G-kod işleme ve çok eksenli hareket kontrolü sağlayan CNC kontrolördür.
 
 ### 1.1 NC300 Özellikleri
+
 | Özellik | Değer |
 |---------|-------|
 | Eksen Sayısı | 8 eksen (CSP/CSV/CST) |
@@ -16,17 +18,56 @@ Delta NC300, EtherCAT master olarak çalışan, G-kod işleme ve çok eksenli ha
 | Program Belleği | 64 MB |
 
 ### 1.2 GFB-60/30RE Eksen Konfigürasyonu
+
+**DUAL BRIDGE (ÇIFTE KÖPRÜ) SISTEMI:**
+
+Makinede iki farklı köprü bulunmaktadir:
+
+1. **Kartezyen Köprü (Beyaz Boyali)**:
+   - X, Y, Z eksenleri ile kontrol edilir
+   - Vakum ve lama silme servisi bulunur
+   - Düz cam kesiminde kullanılır
+   - Lamine kesimde park pozisyonuna çekilir (kullanılmaz)
+
+2. **VB Ünitesi (Lila Boyali, Dar Ünite)**:
+   - Sadece Y yönünde hareket eder
+   - X yönünde hareket edemez (sabit X konumu)
+   - Alt kafa servo, üst kafaya **mekanik bağlı**
+   - Lamine kesim için kullanılır
+   - **E-Cam gerektirmez** - mekanik bağlantı yeterli
+
 ```
-Eksen 1: X (Köprü) - 4.5kW ECMA-L11845
-Eksen 2: Y (Kafa Yatay) - 2.0kW ECMA-E11320
-Eksen 3: Z (Kafa Dikey) - 1.0kW ECMA-C11010 (Frenli)
-Eksen 4: ALT (Alt Kesim) - 2.0kW ECMA-E11320
+┌─────────────────────────────────────────────────────────────────┐
+│                    DUAL BRIDGE ARCHITECTURE                     │
+│                                                                 │
+│  ┌─────────────────────────┐    ┌────────────────────────────┐ │
+│  │  Kartezyen Köprü        │    │  VB Ünitesi (Lamine)       │ │
+│  │  (Beyaz)                │    │  (Lila)                    │ │
+│  │  - X Ekseni (Portal)    │    │  - Y Ekseni (Dar)          │ │
+│  │  - Y Ekseni (Kafa)      │    │  - Mekanik bağlı alt/üst   │ │
+│  │  - Z Ekseni (Kesim)     │    │  - E-Cam gereksiz          │ │
+│  │  - Vakum servisi        │    │  - Sabit X konumu          │ │
+│  │  - Lama silme servisi   │    │                            │ │
+│  └─────────────────────────┘    └────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Eksen Listesi:**
+
+```
+Eksen 1: X (Kartezyen Portal Köprüsü) - 4.5kW ECMA-L11845
+Eksen 2: Y (Kartezyen Üst Kafa) - 2.0kW ECMA-E11320
+Eksen 3: Z (Kartezyen Kesim Kafası) - 1.0kW ECMA-C11010 (Frenli)
+Eksen 4: V (VB Ünitesi Y Ekseni) - 2.0kW ECMA-E11320
+         NOT: VB ünitesinde alt kafa servo üst kafaya mekanik bağlı
+         Lamine kesimde E-Cam gereksiz, doğrudan Y hareketi yeterli
 Eksen 5: C (Rodaj) - 1.5kW ECMA-E11315 (IP67)
 ```
 
 ## 2. ISPSoft Kurulumu
 
 ### 2.1 Yazılım Kurulumu
+
 1. **ISPSoft v3.xx** kurulum dosyasını çalıştırın
 2. Lisans anlaşmasını kabul edin
 3. Varsayılan dizine kurun (C:\Delta\ISPSoft)
@@ -34,6 +75,7 @@ Eksen 5: C (Rodaj) - 1.5kW ECMA-E11315 (IP67)
 5. ISPSoft'u başlatın
 
 ### 2.2 Yeni Proje Oluşturma
+
 1. **File → New**
 2. **Device Type:** NC300 Series
 3. **Project Name:** GFB60-30RE_CNC
@@ -43,6 +85,7 @@ Eksen 5: C (Rodaj) - 1.5kW ECMA-E11315 (IP67)
 ## 3. EtherCAT Konfigürasyonu
 
 ### 3.1 EtherCAT Master Ayarları
+
 ```pascal
 // Hardware Configuration → EtherCAT Master
 Master_Settings:
@@ -53,6 +96,7 @@ Master_Settings:
 ```
 
 ### 3.2 Slave Ekleme Sırası
+
 1. **ASDA-A3-E 4.5kW** (X Ekseni) - Position 1
 2. **ASDA-A3-E 2.0kW** (Y Ekseni) - Position 2
 3. **ASDA-A3-E 2.0kW** (Alt Ekseni) - Position 3
@@ -70,6 +114,7 @@ Master_Settings:
 ### 3.3 PDO Mapping Konfigürasyonu
 
 #### X Ekseni (Slave 1) PDO Ayarları
+
 ```
 TxPDO (Sürücü → NC300):
     0x1A00: Status Word (2 bytes)
@@ -143,6 +188,7 @@ Axis[5]:  // C Ekseni (Rodaj)
 ### 4.1 Desteklenen G-Kodlar
 
 #### Hareket Komutları
+
 | Kod | Açıklama | Format |
 |-----|----------|--------|
 | G00 | Hızlı konumlandırma | G00 X_Y_Z_ |
@@ -152,6 +198,7 @@ Axis[5]:  // C Ekseni (Rodaj)
 | G04 | Dwell (bekleme) | G04 P_ |
 
 #### Referans ve Koordinat
+
 | Kod | Açıklama | Format |
 |-----|----------|--------|
 | G28 | Referans noktasına dönüş | G28 X_Y_Z_ |
@@ -160,6 +207,7 @@ Axis[5]:  // C Ekseni (Rodaj)
 | G54-G59 | İş koordinat sistemi seçimi | G54 |
 
 #### Kesim Özel
+
 | Kod | Açıklama | Format |
 |-----|----------|--------|
 | G71 | Metrik birimler | G71 |
@@ -207,9 +255,23 @@ M30
 
 ## 5. E-Cam (Elektronik Kam) Programlama
 
-### 5.1 E-Cam Tanımlama
+### 5.1 E-Cam Kullanım Durumu
 
-Lamine kesim için alt ve üst eksen senkronizasyonu:
+**ÖNEMLI NOT: VB Ünitesi Mekanik Bağlı - E-Cam Gereksiz**
+
+Lamine kesim modülünde (VB ünitesi):
+
+- Alt kafa servo, üst kafaya **mekanik olarak bağlı**
+- X yönünde hareket edemez (sabit X konumu)
+- Sadece Y yönünde çalışır
+- **E-Cam programlaması gereksizdir** - doğrudan Y ekseni hareketi yeterli
+
+**E-Cam sadece aşağıdaki durumlarda kullanılır:**
+
+- Düz cam kesiminde özel profil uygulamaları (opsiyonel)
+- Gelecek genişletmeler için rezerve edilmiştir
+
+### 5.2 E-Cam Tanımlama (Düz Cam - Opsiyonel)
 
 ```pascal
 // E-Cam Tablosu Tanımlama
@@ -240,47 +302,44 @@ ECamEngage(
 );
 ```
 
-### 5.2 Lamine Kesim Döngüsü
+### 5.2 Lamine Kesim Döngüsü (VB Mekanik Bağlı - E-Cam Gereksiz)
+
+**ÖNEMLİ:** VB ünitesi mekanik bağlı olduğu için E-Cam kullanılmaz. Doğrudan Y ekseni hareketi yeterlidir.
 
 ```pascal
 PROGRAM LamineCutting
 VAR
-    CutLength : REAL := 500.0;  // mm
-    CutCount : INT := 0;
-    TotalCuts : INT := 10;
+    CutX : REAL := 500.0;          // mm
+    ScoreY : REAL := 2300.0;       // mm
+    GapStroke : REAL := 2.0;       // mm
+    HeatTimer : TON;
+    BreakTimer : TON;
+    BladeTimer : TON;
 END_VAR
 
-// Ana döngü
-WHILE CutCount < TotalCuts DO
-    // E-Cam senkronizasyonu başlat
-    ECamEngage(TableID := 1);
-    
-    // Kesim uzunluğu kadar hareket
-    MC_MoveRelative(
-        Axis := AXIS_2,
-        Distance := CutLength,
-        Velocity := 30000,
-        Acceleration := 1000,
-        Deceleration := 1000
-    );
-    
-    // Kesim tamamlandı
-    IF MC_MoveRelative.Done THEN
-        CutCount := CutCount + 1;
-        
-        // E-Cam bırak
-        ECamDisengage(TableID := 1);
-        
-        // Hızlı geri dönüş
-        MC_MoveAbsolute(
-            Axis := AXIS_2,
-            Position := 0,
-            Velocity := 50000,
-            Acceleration := 2000,
-            Deceleration := 2000
-        );
-    END_IF;
-END_WHILE;
+// 1. Camı kesim hattına sür ve X'i kilitle
+MC_MoveAbsolute(Axis := AXIS_1, Position := CutX, Velocity := 1500);
+M11_XAxisLock := TRUE;
+
+// 2. VB-Y ile simetrik scoring
+MC_MoveAbsolute(Axis := AXIS_4, Position := ScoreY, Velocity := 5000);
+
+// 3. Kırma
+M16_PressureRoller := TRUE;
+M13_BreakingBar := TRUE;
+BreakTimer(IN := TRUE, PT := T#1S);
+
+// 4. PVB ısıtma
+M12_Heater := TRUE;
+HeatTimer(IN := TRUE, PT := T#4S);
+
+// 5. Gap açma
+M18_TensionEnable := TRUE;
+MC_MoveAbsolute(Axis := AXIS_1, Position := CutX + GapStroke, Velocity := 200);
+
+// 6. Folyo kesme
+M14_SeparationBlade := TRUE;
+BladeTimer(IN := TRUE, PT := T#1S);
 
 END_PROGRAM
 ```
@@ -490,6 +549,7 @@ END_FUNCTION_BLOCK
 ### 7.2 DOP-110CS Ekran Yapısı
 
 #### Ana Ekran
+
 - Sistem durumu göstergesi
 - Eksen pozisyonları (X, Y, Z)
 - Feed rate override slider
@@ -497,18 +557,21 @@ END_FUNCTION_BLOCK
 - Aktif program numarası
 
 #### Manuel Ekranı
+
 - Jog butonları (X+, X-, Y+, Y-, Z+, Z-)
 - Hız seçimi (%10, %50, %100)
 - Servo ON/OFF
 - Vakum ON/OFF
 
 #### Otomatik Ekranı
+
 - Program listesi
 - Cycle sayısı
 - Kesim uzunluğu ayarı
 - Parça sayısı ayarı
 
 #### Alarm Ekranı
+
 - Aktif alarm listesi
 - Alarm geçmişi
 - Alarm açıklaması
@@ -527,12 +590,12 @@ Firmware/NC300/
 │   ├── Safety.st              # Güvenlik mantığı
 │   └── E-Cam.st               # E-Cam programları
 ├── ST/
-│   ├── Lamine_ClearPath_Main.st # G31 + germe + isitici + E-Cam referansi
+│   ├── Lamine_ClearPath_Main.st # G31 + VB-Y scoring + break + heat + gap + blade
 │   └── README.md                # FreeCAD parametre eslesmeleri
 ├── GCode/
 │   ├── Standard_Cut.nc        # Standart kesim programı
 │   ├── Lamine_Cut.nc          # Lamine kesim programı
-│   ├── Lamine_ClearPath.nc    # G31 + X lock + E-Cam + tension macro
+│   ├── Lamine_ClearPath.nc    # G31 + X lock + VB-Y + break + heat + gap + blade
 │   └── Custom_Patterns/       # Özel desenler
 ├── HMI/
 │   └── GFB60-30RE_HMI.dop     # DiaDesigner projesi
@@ -548,12 +611,15 @@ Bu revizyonda FreeCAD ve NC300 analizinden türetilen lamine proses mantığı i
 - `/Users/oktaycit/Projeler/CNCRevizyon/Firmware/NC300/ST/Lamine_ClearPath_Main.st`
 
 Kapsadığı başlıklar:
+
 - G31 benzeri kenar bulma ve vantuzlu köprü referanslama
-- folyo germe için milimetrik X geri çekme hesabı
-- `T1 = -(U1 + V1 - W1)` düzeltme mantığı
+- VB-Y üzerinden simetrik scoring
+- kırma barı + pressure roller çatlatma fazı
 - ısıtıcı interlock zinciri ve zon çıkışları
+- folyo germe için milimetrik X geri çekme hesabı
+- folyo kesme bıçağı fazı
 - Leuze home/limit sensörlerinin çevrim geçişlerine katılması
-- üst kafa ile alt eksen arasında E-Cam angajmanı ve senkron kesim
+- VB ünitesinde mekanik bağlı alt/üst kafa mantığı
 
 ### 8.2 Lamine Clear Path G-Code Referansı
 
@@ -562,41 +628,46 @@ Makro referansı:
 - `/Users/oktaycit/Projeler/CNCRevizyon/Firmware/NC300/GCode/Lamine_ClearPath.nc`
 
 Temel akış:
+
 - `M10` ile vakum açılır ve cam tutulur
 - `G31 X-100` ile cam kenarı bulunur
 - `G92 X0` ile cam kenarı sıfırlanır
 - `G01 X[#2007]` ile cam kesim konumuna sürülür
 - `M11` ile X ekseni kilitlenir
-- `#2000 = 1` sonrası sadece `Y` hareketi ile E-Cam kesimi yapılır
-- `M12` ve `G04 P[#2003]` ile ısıtma beklemesi yürütülür
-- `G01 X[#2007 + #2005]` ve geri settle ile folyo gerilir
-- `M13` ile ayırma/kırma başlatılır
+- `#2000 = 1` sonrası sadece `Y` hareketi ile VB-Y scoring yapılır
+- `M16` + `M13` ile pressure roller ve kırma barı devreye girer
+- `M12` ve `G04 P[#2003]` ile PVB ısıtma beklemesi yürütülür
+- `M18` ve `G01 X[#2007 + #2005]` ile gap açılır
+- `M14` ile folyo kesme bıçağı devreye girer
 
 ### 8.3 I/O ve User Variable Onerisi
 
 Onerilen user variable alani:
-- `#2000` E-Cam enable
+
+- `#2000` VB-Y link enable / reserve
 - `#2001` Lamine mode enable
 - `#2002` X lock command
 - `#2003` Heater dwell ms
 - `#2004` Probe backoff mm
 - `#2005` Tension retract mm
-- `#2006` Tension settle mm
 - `#2007` Cut X target mm
 - `#2008` Cut Y target mm
-- `#2009` Heater work offset mm
 - `#2010` Park retract mm
 
 Onerilen ciktilar:
+
 - `QX0.0` SIR heater valve
 - `QX0.1` Vacuum valve
 - `QX0.2` X axis lock
-- `QX0.3` Break start
-- `QX0.4` E-Cam active relay
+- `QX0.3` Breaking bar
+- `QX0.7` Tension / gap opening
+- `QX1.0` Separation blade
+- `QX1.1` Pressure roller
 
 ## 9. Test Prosedürü
 
 ### 9.1 PLC Testi
+
 ```pascal
 // Test programı - Manuel mod
 TEST_Manual:
@@ -622,6 +693,7 @@ TEST_Manual:
 ```
 
 ### 9.2 G-Kod Testi
+
 ```gcode
 %
 O9999 (TEST PROGRAMI)

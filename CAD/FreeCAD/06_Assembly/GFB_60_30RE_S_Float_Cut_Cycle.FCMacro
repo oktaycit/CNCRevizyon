@@ -1,0 +1,56 @@
+# -*- coding: utf-8 -*-
+"""
+GFB-60/30RE-S Float glass cutting cycle macro
+Run this file in FreeCAD with F5.
+
+Representative straight-score cycle for float glass.
+Edit CONFIG below to change sheet size, score Z, and cut segments.
+Segment coordinates are local to the sheet proxy:
+  (0, 0) = sheet front-left corner on the table
+  X = table length direction
+  Y = table width direction
+Only axis-aligned segments are supported in this macro.
+"""
+
+import os
+import sys
+import importlib
+
+try:
+    import FreeCAD as App
+except ImportError:
+    App = None
+
+
+def _macro_dir():
+    if "__file__" in globals():
+        return os.path.dirname(os.path.abspath(__file__))
+    return "/Users/oktaycit/Projeler/CNCRevizyon/CAD/FreeCAD/06_Assembly"
+
+
+CONFIG = {
+    "sheet_length_mm": 5200.0,
+    "sheet_width_mm": 2800.0,
+    "sheet_margin_x_mm": 300.0,
+    "sheet_margin_y_mm": 180.0,
+    "safe_z_mm": 300.0,
+    "score_z_mm": 40.0,
+    "score_line_width_mm": 14.0,
+    "score_line_height_mm": 1.4,
+    "segments": [
+        {"name": "X_Skor_1", "start": (420.0, 900.0), "end": (4780.0, 900.0)},
+        {"name": "Y_Skor_1", "start": (2700.0, 260.0), "end": (2700.0, 2540.0)},
+        {"name": "X_Skor_2", "start": (420.0, 1900.0), "end": (4780.0, 1900.0)},
+    ],
+}
+
+
+MACRO_DIR = _macro_dir()
+if MACRO_DIR not in sys.path:
+    sys.path.insert(0, MACRO_DIR)
+
+import GFB_60_30RE_S_TestMacros as test_macros
+
+test_macros = importlib.reload(test_macros)
+
+TEST_RESULT = test_macros.run_float_glass_cut_cycle(CONFIG)

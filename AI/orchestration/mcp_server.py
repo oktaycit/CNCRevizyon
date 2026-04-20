@@ -1147,7 +1147,40 @@ if MCP_AVAILABLE:
         # FreeCAD tool'larını işle
         elif FREECAD_AVAILABLE and freecad_controller:
             if name.startswith("freecad_"):
-                return await handle_freecad_tool(name, arguments, freecad_controller)
+                try:
+                    return await handle_freecad_tool(name, arguments, freecad_controller)
+                except FileNotFoundError as e:
+                    # FreeCAD CLI bulunamadı
+                    error_msg = (
+                        "⚠️ **FreeCAD CLI Bulunamadı**\n\n"
+                        "FreeCAD uygulaması sistem PATH'inde değil. Lütfen FreeCAD'i yükleyin:\n\n"
+                        "**macOS (Homebrew):**\n"
+                        "```bash\n"
+                        "brew install --cask freecad\n"
+                        "```\n\n"
+                        "**Manuel İndirme:**\n"
+                        "https://www.freecad.org/downloads.php\n\n"
+                        "**Alternatif - Manuel Çalıştırma:**\n"
+                        "1. FreeCAD'i açın\n"
+                        "2. View → Panels → Python Console\n"
+                        "3. Script'i kopyalayıp yapıştırın:\n"
+                        "```python\n"
+                        "exec(open('/Users/oktaycit/Projeler/CNCRevizyon/CAD/FreeCAD/06_Assembly/update_vacuum_pads.py').read())\n"
+                        "update_vacuum_pads()\n"
+                        "```\n"
+                    )
+                    return [TextContent(type="text", text=error_msg)]
+                except Exception as e:
+                    # Diğer hatalar
+                    return [TextContent(
+                        type="text",
+                        text=f"❌ **FreeCAD Hatası:** {type(e).__name__}\n\n{str(e)}\n\n"
+                             f"💡 **Çözüm:** FreeCAD Python Console'da manuel çalıştırın:\n"
+                             f"```python\n"
+                             f"exec(open('/Users/oktaycit/Projeler/CNCRevizyon/CAD/FreeCAD/06_Assembly/update_vacuum_pads.py').read())\n"
+                             f"update_vacuum_pads()\n"
+                             f"```"
+                    )]
 
         return [TextContent(type="text", text=f"⚠️ Bilinmeyen tool: {name}")]
 

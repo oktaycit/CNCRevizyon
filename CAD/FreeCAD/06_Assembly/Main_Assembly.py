@@ -56,11 +56,11 @@ def create_simplified_frame(doc, name="Simplified_Frame"):
     # Kısa profiller (Y ekseni)
     left_front = create_box(profile_size, MACHINE_WIDTH, profile_size,
                            (0, 0, 0))
-    left_front.rotate(App.Vector(0, 0, 0), App.Vector(0, 0, 1), 90)
-    
+    left_front.rotate(App.Vector(0, 0, 1), 90)
+
     right_front = create_box(profile_size, MACHINE_WIDTH, profile_size,
                             (MACHINE_LENGTH - profile_size, 0, 0))
-    right_front.rotate(App.Vector(0, 0, 0), App.Vector(0, 0, 1), 90)
+    right_front.rotate(App.Vector(0, 0, 1), 90)
     
     profiles.extend([left_front, right_front])
     
@@ -74,7 +74,7 @@ def create_simplified_frame(doc, name="Simplified_Frame"):
     
     return shape
 
-def create_simplified_motor(doc, name="Simplified_Motor", 
+def create_simplified_motor(doc, name="Simplified_Motor",
                             housing_diameter=130, housing_length=170,
                             shaft_diameter=24, shaft_length=50,
                             position=(0, 0, 0)):
@@ -83,27 +83,24 @@ def create_simplified_motor(doc, name="Simplified_Motor",
     """
     # Gövde
     housing = create_cylinder(housing_diameter/2, housing_length, position)
-    
+
     # Flanş
-    flange = create_cylinder(housing_diameter/2 + 25, 10, 
+    flange = create_cylinder(housing_diameter/2 + 25, 10,
                             (position[0], position[1], position[2] - 5))
     housing = housing.fuse(flange)
-    
+
     # Mil
     shaft = create_cylinder(shaft_diameter/2, shaft_length,
                            (position[0], position[1], position[2] + housing_length))
     housing = housing.fuse(shaft)
-    
+
     # Konektör
     connector = create_box(50, 40, 45,
-                          (position[0] - 25, position[1] + housing_diameter/2, 
+                          (position[0] - 25, position[1] + housing_diameter/2,
                            position[2] + housing_length/2))
     housing = housing.fuse(connector)
-    
-    moved = housing.copy()
-    moved.translate(App.Vector(position))
-    
-    return moved
+
+    return housing
 
 def create_simplified_rail(doc, name="Simplified_Rail", 
                            width=23, height=40, length=1000,
@@ -113,15 +110,14 @@ def create_simplified_rail(doc, name="Simplified_Rail",
     """
     rail = create_box(width, height, length,
                      (-width/2, 0, 0))
-    
+
     # T-slot (basitleştirilmiş)
     t_slot = create_box(8, 5, length, (-4, height - 5, 0))
     rail = rail.cut(t_slot)
-    
-    moved = rail.copy()
-    moved.translate(App.Vector(position))
-    
-    return moved
+
+    rail.translate(App.Vector(position))
+
+    return rail
 
 def create_simplified_block(doc, name="Simplified_Block",
                             width=60, height=40, length=98,
@@ -131,11 +127,10 @@ def create_simplified_block(doc, name="Simplified_Block",
     """
     block = create_box(width, height, length,
                       (-width/2, 0, -length/2))
-    
-    moved = block.copy()
-    moved.translate(App.Vector(position))
-    
-    return moved
+
+    block.translate(App.Vector(position))
+
+    return block
 
 def create_x_axis_assembly(doc, name="XAxis_Assembly"):
     """
@@ -211,8 +206,7 @@ def create_y_axis_assembly(doc, name="YAxis_Assembly"):
     rail_length = MACHINE_WIDTH - 200
     y_rail = create_simplified_rail(doc, "Y_Rail", 23, 40, rail_length,
                                     (MACHINE_LENGTH/2, 400, MACHINE_WIDTH/2 - rail_length/2))
-    y_rail.rotate(App.Vector(MACHINE_LENGTH/2, 400, MACHINE_WIDTH/2), 
-                  App.Vector(0, 0, 1), 90)
+    y_rail.rotate(App.Vector(0, 0, 1), 90)
     parts.append(y_rail)
     
     # Y ekseni kızakları

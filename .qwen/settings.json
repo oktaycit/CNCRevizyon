@@ -12,7 +12,10 @@
       "Bash(pkill *)",
       "Bash(nohup *)",
       "Bash(grep *)",
-      "Bash(sed *)"
+      "Bash(sed *)",
+      "WebFetch(www.lisec.com)",
+      "WebFetch(www.google.com)",
+      "Bash(mdfind *)"
     ]
   },
   "$version": 3

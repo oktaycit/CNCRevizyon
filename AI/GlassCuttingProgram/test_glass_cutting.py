@@ -125,8 +125,12 @@ def test_gcode_generator(nesting_result, path_result):
     print(f"\nLaminated glass program:")
     print(f"  Lines: {len(lamine_program.lines)}")
 
-    # Check for heating commands in laminated G-code
-    assert "Heat" in str(lamine_program.lines), "Missing heating command!"
+    lamine_text = "\n".join(lamine_program.lines)
+    assert "symmetric scoring on vb-y" in lamine_text.lower(), "Missing VB-Y scoring phase!"
+    assert "M13" in lamine_text, "Missing breaking bar command!"
+    assert "M14" in lamine_text, "Missing separation blade command!"
+    assert "M18" in lamine_text, "Missing tension retract command!"
+    assert "#2001 = 1" in lamine_text, "Missing lamine mode enable!"
 
     print("✓ G-code generator test passed")
     return float_program

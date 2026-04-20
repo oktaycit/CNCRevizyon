@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+"""
+GFB-60/30RE-S Stage 2 macro
+Run this file in FreeCAD with F5.
+"""
+
+import os
+import sys
+import importlib
+
+try:
+    import FreeCAD as App
+except ImportError:
+    App = None
+
+
+def _macro_dir():
+    if "__file__" in globals():
+        return os.path.dirname(os.path.abspath(__file__))
+    return "/Users/oktaycit/Projeler/CNCRevizyon/CAD/FreeCAD/06_Assembly"
+
+
+MACRO_DIR = _macro_dir()
+if MACRO_DIR not in sys.path:
+    sys.path.insert(0, MACRO_DIR)
+
+import GFB_60_30RE_S_TestMacros as test_macros
+
+test_macros = importlib.reload(test_macros)
+
+TEST_RESULT = test_macros.run_stage_2_probe_alignment()

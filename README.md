@@ -11,7 +11,7 @@ LiSEC GFB-60/30RE cam kesme makinasının tam revizyonu. Delta Electronics ASDA-
 - ✅ Delta DOP-110CS HMI entegrasyonu
 - ✅ R1-EC uzak I/O modülleri ile sensör/aktüatör yönetimi
 - ✅ STO (Safe Torque Off) güvenlik sistemi
-- ✅ E-Cam (Elektronik Kam) ile lamine kesim senkronizasyonu
+- ✅ VB ünitesinde mekanik bağlı üst-alt kafa ile lamine kesim senkronizasyonu
 - ✅ 24-bit encoder ile yüksek çözünürlüklü konumlandırma
 - ✅ Yapay zeka destekli kesim optimizasyonu
 - ✅ **6 AI modeli paralel kullanım** (Alibaba Cloud Lite Plan optimize)
@@ -108,7 +108,7 @@ CNCRevizyon/
 ├── Firmware/
 │   ├── NC300/               # Delta NC programları
 │   │   ├── GCode/
-│   │   ├── E-Cam/           # Lamine kesim profili
+│   │   ├── E-Cam/           # Legacy lamine profil denemeleri
 │   │   └── PLC/
 │   └── Tools/
 ├── Delta/
@@ -142,7 +142,7 @@ CNCRevizyon/
 4. [ ] R1-EC modül kutu yerleşim tasarımı
 5. [ ] Leuze IS 218 sensör montaj braketleri
 6. [ ] EtherCAT kablolama şeması
-7. [ ] NC300 E-Cam profili programlama
+7. [ ] NC300 VB mekanik bağlı lamine çevrimi programlama
 8. [ ] STO güvenlik devresi testi
 
 ---

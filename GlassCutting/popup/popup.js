@@ -87,7 +87,7 @@ function loadGCode() {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.nc,.txt,.gcode,.ngc';
-  
+
   input.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -107,7 +107,7 @@ function saveGCode() {
   const content = document.getElementById('gcodeEditor').value;
   const blob = new Blob([content], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
-  
+
   chrome.downloads.download({
     url: url,
     filename: 'program.nc',
@@ -124,7 +124,7 @@ function runGCode() {
 
   // Simülasyon tab'ına geç
   document.querySelector('[data-tab="simulation"]').click();
-  
+
   // Simülasyonu başlat
   startSimulation(content);
 }
@@ -415,6 +415,9 @@ function parseAndSimulate(gcode) {
   const movements = [];
   let currentPos = { x: 0, y: 0, z: 50 };
   let feedRate = 1000;
+  let spindleSpeed = 0;  // Mil devri (RPM)
+  let spindleOn = false; // Mil durumu
+  let vacuumOn = false;  // Vakum durumu
 
   lines.forEach(line => {
     line = line.trim();
@@ -425,6 +428,7 @@ function parseAndSimulate(gcode) {
     let command = '';
     let newPos = { ...currentPos };
     let newFeed = feedRate;
+    let hasMovement = false;
 
     parts.forEach(part => {
       const code = part.substring(0, 2).toUpperCase();
@@ -432,21 +436,59 @@ function parseAndSimulate(gcode) {
 
       if (code === 'G') {
         command = `G${Math.floor(value)}`;
+        hasMovement = true;
       } else if (code === 'X') {
         newPos.x = value;
+        hasMovement = true;
       } else if (code === 'Y') {
         newPos.y = value;
+        hasMovement = true;
       } else if (code === 'Z') {
         newPos.z = value;
+        hasMovement = true;
       } else if (code === 'F') {
         newFeed = value;
+      } else if (code === 'S') {
+        // Mil devri (Spindle speed)
+        spindleSpeed = value;
+        console.log(`[Sim] Spindle speed: ${spindleSpeed} RPM`);
+      } else if (code === 'M') {
+        // M kodları - yardımcı fonksiyonlar
+        if (value === 3) {
+          // M03: Mil saat yönünde başlat (Spindle CW)
+          spindleOn = true;
+          console.log(`[Sim] Spindle ON (CW) - ${spindleSpeed} RPM`);
+        } else if (value === 5) {
+          // M05: Mil durdur
+          spindleOn = false;
+          console.log('[Sim] Spindle OFF');
+        } else if (value === 10) {
+          // M10: Lama sıyırma/wiper AÇIK (eski sistem)
+          console.log('[Sim] Blade wipe ON (M10)');
+        } else if (value === 11) {
+          // M11: Lama sıyırma/wiper KAPALI (eski sistem)
+          console.log('[Sim] Blade wipe OFF (M11)');
+        } else if (value === 12) {
+          // M12: Vakum emiş AÇIK (taşlama tozu için)
+          vacuumOn = true;
+          console.log('[Sim] Vacuum ON (M12)');
+        } else if (value === 13) {
+          // M13: Vakum emiş KAPALI
+          vacuumOn = false;
+          console.log('[Sim] Vacuum OFF (M13)');
+        } else if (value === 30) {
+          // M30: Program sonu
+          console.log('[Sim] Program end (M30)');
+        }
       }
     });
 
-    if (command === 'G0' || command === 'G1') {
+    // Sadece hareket komutlarını ekle (G0, G1, X, Y, Z)
+    if (hasMovement && (command === 'G0' || command === 'G1')) {
       const dx = newPos.x - currentPos.x;
       const dy = newPos.y - currentPos.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
+      const dz = newPos.z - currentPos.z;
+      const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
       if (distance > 0) {
         movements.push({
@@ -454,7 +496,10 @@ function parseAndSimulate(gcode) {
           to: { ...newPos },
           distance: distance,
           feedRate: command === 'G0' ? 5000 : newFeed,
-          type: command
+          type: command,
+          spindleOn: spindleOn,
+          spindleSpeed: spindleSpeed,
+          vacuumOn: vacuumOn
         });
         currentPos = newPos;
         feedRate = newFeed;

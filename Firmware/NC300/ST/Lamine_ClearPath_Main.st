@@ -1,14 +1,24 @@
 (*
     Delta NC300 - 30RE-S Lamine Clear Path Reference
+    REVIZYON: VB ünitesi mekanik bağlı - E-Cam gereksiz
+
+    Sistem Yapisi:
+    - Kartezyen köprü (beyaz): X,Y,Z eksenleri, vakum+lama silme servisi
+    - VB ünitesi (lila): Dar ünite, sadece Y yönünde çalışır, X yönünde hareket edemez
+    - VB ünitesinde alt kafa servo, üst kafaya mekanik bağlı
+    - Lamine kesimde kartezyen köprünün Y ekseni kullanılmaz
+    - VB Y ekseni doğrudan Y hareketi ile kesim yapar (E-Cam gereksiz)
 
     Sira:
     1. M10 ile cami kavra
     2. G31 ile kenari bul, G92 X0 kabul et
     3. X=500 mm kesim hattina sur
     4. M11 ile X eksenini kilitle
-    5. Y eksenini master yapip alt unitenin EtherCAT follower olmasini sagla
-    6. Kesim biter bitmez SIR isitici 4 saniye aktif olsun
-    7. X ekseni +2.0 mm germe stroku uygulasin
+    5. VB-Y ile simetrik scoring yap
+    6. Kırma barı + pressure roller ile iki camı çatlat
+    7. SIR isitici ile PVB folyoyu yumusat
+    8. X ekseni +2.0 mm gap açma stroku uygulasin
+    9. Folyo kesme bicagi ile ayirmayi tamamla
 
     Kritik interlock:
     - %IX0.0 -> G31 cam kenari sensoru
@@ -25,10 +35,11 @@ TYPE E_LamineStep :
     STEP_MOVE_TO_CUT_X := 40,
     STEP_X_LOCK := 50,
     STEP_SYNC_CUT := 60,
-    STEP_HEATER_DWELL := 70,
-    STEP_TENSION_STROKE := 80,
-    STEP_BREAK_START := 90,
-    STEP_COMPLETE := 100,
+    STEP_BREAK_CRACK := 70,
+    STEP_HEATER_DWELL := 80,
+    STEP_TENSION_STROKE := 90,
+    STEP_SEPARATE_BLADE := 100,
+    STEP_COMPLETE := 110,
     STEP_FAULT := 900
 );
 END_TYPE
@@ -50,6 +61,8 @@ VAR
 
     HeatTimer : TON;
     LockTimer : TON;
+    BreakTimer : TON;
+    BladeTimer : TON;
 
     XActualPos : REAL := 0.0;
     StartCmd : BOOL := FALSE;
@@ -58,13 +71,15 @@ VAR
     EdgeProbeLatched : BOOL := FALSE;
     XZeroSetDone : BOOL := FALSE;
     SyncCutDone : BOOL := FALSE;
+    BreakDone : BOOL := FALSE;
     TensionDone : BOOL := FALSE;
+    SeparateDone : BOOL := FALSE;
 END_VAR
 
 VAR RETAIN
-    User2000_ECamEnable AT %MW2000 : INT := 0;
-    User2001_LamineModeEnable AT %MW2001 : INT := 0;
-    User2002_XLockEnable AT %MW2002 : INT := 0;
+    User2000_ECamEnable AT %MW2000 : INT := 0;       (* REZERV - VB mekanik bağlı, E-Cam gereksiz *)
+    User2001_LamineModeEnable AT %MW2001 : INT := 0; (* VB ünitesi aktif *)
+    User2002_XLockEnable AT %MW2002 : INT := 0;      (* X ekseni kilitli *)
     User2003_HeaterDwellMs AT %MW2003 : INT := 4000;
     User2004_ProbeSearchMm AT %MW2004 : INT := 100;
     User2005_TensionStrokeMm AT %MW2005 : INT := 2;
@@ -94,6 +109,8 @@ VAR
     DO_LamineMode AT %QX0.5 : BOOL;
     DO_ProbeEnable AT %QX0.6 : BOOL;
     DO_TensionEnable AT %QX0.7 : BOOL;
+    M14_SeparationBlade_ON AT %QX1.0 : BOOL;
+    M16_PressureRoller_ON AT %QX1.1 : BOOL;
 END_VAR
 
 
@@ -105,10 +122,14 @@ DO_ECamActive := FALSE;
 DO_LamineMode := FALSE;
 DO_ProbeEnable := FALSE;
 DO_TensionEnable := FALSE;
+M14_SeparationBlade_ON := FALSE;
+M16_PressureRoller_ON := FALSE;
 CycleDone := FALSE;
 
 HeatTimer(IN := FALSE, PT := INT_TO_TIME(User2003_HeaterDwellMs));
 LockTimer(IN := FALSE, PT := T#100MS);
+BreakTimer(IN := FALSE, PT := T#1S);
+BladeTimer(IN := FALSE, PT := T#1S);
 
 IF (NOT SafetyOK) OR LeuzeXPosLimit OR LeuzeXNegLimit OR LeuzeYPosLimit OR LeuzeYNegLimit THEN
     AlarmActive := TRUE;
@@ -122,7 +143,9 @@ CASE Step OF
         EdgeProbeLatched := FALSE;
         XZeroSetDone := FALSE;
         SyncCutDone := FALSE;
+        BreakDone := FALSE;
         TensionDone := FALSE;
+        SeparateDone := FALSE;
 
         User2000_ECamEnable := 0;
         User2001_LamineModeEnable := 0;
@@ -216,16 +239,24 @@ CASE Step OF
         END_IF;
 
     STEP_SYNC_CUT:
+        (* 
+           VB ÜNITESI MEKANIK BAĞLI - E-CAM GEREKSIZ
+           Alt kafa servo, üst kafaya mekanik bağlı
+           Y ekseni hareketi ile doğrudan kesim yapar
+        *)
         M10_Vacuum_ON := TRUE;
         M11_XAxisLock := TRUE;
-        DO_ECamActive := TRUE;
         DO_LamineMode := TRUE;
-        User2000_ECamEnable := 1;
         User2001_LamineModeEnable := 1;
         User2002_XLockEnable := 1;
 
+        (* E-Cam gereksiz, doğrudan Y hareketi yeterli *)
+        User2000_ECamEnable := 0;  (* REZERV *)
+        DO_ECamActive := FALSE;
+
         IF NOT StepInit THEN
             StepInit := TRUE;
+            (* VB ünitesi Y eksenini doğrudan sür - mekanik bağlı *)
             MoveAbsY(
                 Axis := AxisY,
                 Execute := TRUE,
@@ -238,8 +269,20 @@ CASE Step OF
 
         IF MoveAbsY.Done THEN
             SyncCutDone := TRUE;
-            User2000_ECamEnable := 0;
-            User2002_XLockEnable := 0;      (* Germe stroku once lock serbest kalacak *)
+            Step := STEP_BREAK_CRACK;
+            StepInit := FALSE;
+        END_IF;
+
+    STEP_BREAK_CRACK:
+        M10_Vacuum_ON := TRUE;
+        DO_LamineMode := TRUE;
+        M11_XAxisLock := TRUE;
+        M16_PressureRoller_ON := TRUE;      (* M16 *)
+        M13_BreakStart := TRUE;             (* M13 *)
+
+        BreakTimer(IN := TRUE, PT := T#1S);
+        IF BreakOK OR BreakTimer.Q THEN
+            BreakDone := TRUE;
             Step := STEP_HEATER_DWELL;
             StepInit := FALSE;
         END_IF;
@@ -247,6 +290,7 @@ CASE Step OF
     STEP_HEATER_DWELL:
         M10_Vacuum_ON := TRUE;
         DO_LamineMode := TRUE;
+        M11_XAxisLock := TRUE;
         M12_Heater_ON := TRUE;              (* Heater_ON / QX0.0 *)
 
         HeatTimer(IN := TRUE, PT := INT_TO_TIME(User2003_HeaterDwellMs));
@@ -259,6 +303,7 @@ CASE Step OF
         M10_Vacuum_ON := TRUE;
         DO_LamineMode := TRUE;
         DO_TensionEnable := TRUE;
+        User2002_XLockEnable := 0;          (* Gap acmadan once X kilidi serbest *)
 
         IF NOT StepInit THEN
             StepInit := TRUE;
@@ -274,17 +319,20 @@ CASE Step OF
 
         IF MoveAbsX.Done THEN
             TensionDone := TRUE;
-            Step := STEP_BREAK_START;
+            Step := STEP_SEPARATE_BLADE;
             StepInit := FALSE;
         END_IF;
 
-    STEP_BREAK_START:
+    STEP_SEPARATE_BLADE:
         M10_Vacuum_ON := TRUE;
         DO_LamineMode := TRUE;
-        M13_BreakStart := TRUE;             (* M13 *)
+        M14_SeparationBlade_ON := TRUE;     (* M14 *)
 
-        IF BreakOK THEN
+        BladeTimer(IN := TRUE, PT := T#1S);
+        IF BladeTimer.Q THEN
+            SeparateDone := TRUE;
             Step := STEP_COMPLETE;
+            StepInit := FALSE;
         END_IF;
 
     STEP_COMPLETE:

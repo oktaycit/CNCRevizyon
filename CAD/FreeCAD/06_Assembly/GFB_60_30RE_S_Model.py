@@ -4,11 +4,12 @@ LiSEC GFB-60/30RE-S - Hibrit Sistem (Düz Cam + Lamine Cam)
 FreeCAD Assembly4 Workbench için Python Script
 
 Özellikler:
-- X Ekseni (Gantry) - 6000mm hareket
-- Y Ekseni (Portal) - 3000mm hareket  
-- Z Ekseni (Üst Kesim Kafası) - 300mm strok
-- V Ekseni (VB-Modul Alt Kesici) - Y ile senkronize
+- X/Y/Z kontrollu beyaz kartezyen kopru - 6000/3000/300mm hareket
+- Maksimum islenebilir cam ebadi - 6000 x 3210 mm Jumbo
+- VB ust koprusu - sabit X hattinda yalniz Y yonunde hareket eden dar lila unitesi
+- V Ekseni (VB-Modul Alt Kesici) - VB ust kafasi ile mekanik bagli Y takibi
 - VB-Modul Bileşenleri:
+  * Ust lamine kesim koprusu
   * Alt kesici ünitesi
   * Isıtıcı çubuk (Heizstab)
   * Vakum vantuz sistemi
@@ -53,23 +54,43 @@ class MachineParameters:
     Y_MAX = 3000.0  # mm
     Z_MAX = 300.0   # mm (üst kesim)
     V_MAX = 300.0   # mm (alt kesici strok)
+
+    # Islenebilir cam ebadi
+    MAX_GLASS_LENGTH = 6000.0  # mm (Jumbo)
+    MAX_GLASS_WIDTH = 3210.0   # mm (Jumbo)
+    VB_Y_BRIDGE_START = 120.0  # mm (operator terminal tarafindan baslayan VB ust kopru acikligi)
+    VB_Y_BRIDGE_SPAN = MAX_GLASS_WIDTH + 150.0  # mm (cam eninin tamamini ve emniyet payini kapsar)
+    VB_Y_RAIL_SPAN = MAX_GLASS_WIDTH + 60.0  # mm (ust/alt kafa tasiyici strogu)
+    VB_C_FRAME_WIDTH = 180.0  # mm (ust + alt kesiciyi ayni rijit govde gibi okutan boy)
+    VB_C_FRAME_HEIGHT = 920.0  # mm
+    VB_C_FRAME_DEPTH = 150.0  # mm
     
     # Hız parametreleri
     X_HIZ_MAX = 80000.0   # mm/dk (80 m/dk)
     Y_HIZ_MAX = 60000.0   # mm/dk
     Z_HIZ_MAX = 5000.0    # mm/dk
     V_HIZ_MAX = 60000.0   # mm/dk (Y ile senkronize)
+
+    # VB istasyonu sabit Y kesim hattidir ve cam zarfının BTS tarafinda disinda kalir.
+    # Gantry'nin mantiksal / mekanik X erisimi 6000 mm ile sinirli kalir; VB hatti
+    # bu zarfin disinda sabit bir istasyon olarak modellenir.
+    VB_OUTSIDE_GLASS_OFFSET = 300.0  # mm (VB sabit hattini 6000 mm cam zarfinin tamamen disina tasir)
+    VB_FIXED_CUT_X = X_MAX + VB_OUTSIDE_GLASS_OFFSET  # mm
+    X_VB_MECHANICAL_STOP = X_MAX  # mm
     
-    # Başlangıç pozisyonları (Home)
+    # Baslangic / home pozisyonlari
+    # Nominal ve kullanilabilir ust limit 6000 mm'dir; VB istasyonu bu limitin disinda kalir.
     X_HOME = 0.0
-    Y_HOME = 0.0
+    Y_HOME = 0.0  # mm (operator terminal tarafindaki kartezyen Y home / origin noktasi)
     Z_HOME = 300.0  # Üst pozisyon (güvenli)
     V_HOME = 0.0    # Alt pozisyon (geri çekilmiş)
-    X_PARK_BTS = 5600.0  # mm (video referansina gore portal BTS tarafina yakin park edilir)
-    Y_PARK_BTS = 350.0   # mm (Y arabasi gantry uzerinde BTS tarafinda ayri parkta tutulur)
+    X_PARK_BTS = X_VB_MECHANICAL_STOP  # mm (BTS yonundeki son erisilebilir gantry pozisyonu)
+    Y_PARK_BTS = 350.0   # mm (Y arabasi home kosesine yakin, kopru icinde emniyetli bekleme pozu)
     
     # Şase boyutları
-    FRAME_LENGTH = 6800.0  # mm
+    # Ana makina govdesi 7000 mm uzunlugunda, beyaz gantry 6000 x 3000 mm
+    # hareket eder; tabla ise 6000 x 3210 mm Jumbo cam ebadini destekler.
+    FRAME_LENGTH = 7000.0  # mm
     FRAME_WIDTH = 3600.0   # mm
     FRAME_HEIGHT = 820.0   # mm
     MACHINE_Z_OFFSET = 650.0  # mm (ana kesim tablasini hat modulleriyle ayni calisma kotuna tasir)
@@ -95,7 +116,7 @@ class MachineParameters:
     # VB-Modul parametreleri
     ISITMA_SICAKLIK = 135.0  # °C
     ISITMA_SURES = 4.0       # sn
-    ISITICI_CAM_MESAFESI = 18.0  # mm (nominal heater standoff to glass)
+    ISITICI_CAM_MESAFESI = 1.0  # mm (SIR isitici icin folyo altina yakin nominal standoff)
     ALT_KESIM_CAM_ALT_MESAFESI = 5.0  # mm (nominal lower wheel gap to glass underside)
     BASINC_MERDANE_CAM_MESAFESI = 2.0  # mm (nominal pressure roller gap to glass top)
     G31_KENAR_GERI_KACIS = 8.0  # mm (Leuze/G31 edge detect safe backoff)
@@ -103,10 +124,12 @@ class MachineParameters:
     FOLYO_GERME_RELAX_OFFSET = 0.0  # mm (optional post-tension settle release, disabled by default)
     YUKLEME_X_DUZELTME = 0.0  # mm (net bridge X correction written by NC logic)
     LAMINE_MODU = 0.0  # 0=float/park, 1=lamine operation
-    LAMINE_KESIM_X_BASLANGIC = 500.0  # mm (nominal bridge X cut start)
+    # Lamine fazda gantry cami VB istasyonuna kadar tasir ve 6000 mm park/hold hattinda sabitlenir.
+    # Sabit VB kesim hattinin kendisi ise ayri olarak VB_FIXED_CUT_X ile temsil edilir.
+    LAMINE_KESIM_X_BASLANGIC = X_PARK_BTS  # mm (gantry hold line inside the 6000 mm work envelope)
     LAMINE_KESIM_Y_BASLANGIC = 500.0  # mm (nominal bridge Y cut start)
-    LAMINE_KESIM_X_BITIS = 500.0  # mm (X remains locked on the cut line during synchronized Y cut)
-    LAMINE_KESIM_Y_BITIS = 2300.0  # mm (nominal bridge Y cut end, E-Cam travel)
+    LAMINE_KESIM_X_BITIS = LAMINE_KESIM_X_BASLANGIC  # mm (gantry stays locked while VB Y axis cuts outside the glass envelope)
+    LAMINE_KESIM_Y_BITIS = 2300.0  # mm (nominal VB Y stroke end for the coupled laminate bridge)
     PARK_Z_GERI_CEKME = 50.0  # mm (under-table park retract)
     TABLE_SLOT_WIDTH = 120.0  # mm (visible slot for lower cutter wheel / VB module neck)
     VAKUM_BASINC = 0.8       # bar
@@ -119,8 +142,8 @@ class MachineParameters:
     MAIN_PANEL_HEIGHT = 2000.0
     MAIN_PANEL_SERVICE_OFFSET = 420.0
     MAIN_PANEL_X = FRAME_LENGTH - 1450.0
-    OPERATOR_TERMINAL_BASE_X = X_PARK_BTS - 60.0
-    OPERATOR_TERMINAL_BASE_Y = -500.0
+    OPERATOR_TERMINAL_BASE_X = FRAME_LENGTH + INTERFACE_GAP + 160.0  # BTS tarafinin sol kenarina yakin
+    OPERATOR_TERMINAL_BASE_Y = -560.0  # Hat alt kenarinda, servis koridoruna bakan pozisyon
 
 
 # =============================================================================
@@ -140,14 +163,15 @@ def create_box(doc, name, width, height, depth, color, position=App.Vector(0,0,0
     return box
 
 
-def create_cylinder(doc, name, radius, height, color, position=App.Vector(0,0,0), rotation=App.Rotation(0,0,0)):
+def create_cylinder(doc, name, radius, height, color, position=App.Vector(0,0,0), rotation=None):
     """Silindir geometrisi oluştur"""
     cyl = doc.addObject("Part::Cylinder", name)
     cyl.Radius = radius
     cyl.Height = height
     cyl.Label = name
     cyl.Placement.Base = position
-    cyl.Placement.Rotation = rotation
+    if rotation is not None:
+        cyl.Placement.Rotation = rotation
     if hasattr(cyl, 'ViewObject') and cyl.ViewObject:
         cyl.ViewObject.ShapeColor = color
     return cyl
@@ -182,6 +206,16 @@ def create_group(doc, name, label=None):
     return group
 
 
+def ensure_group(doc, name, label=None):
+    """Var olan grubu kullan veya yoksa olustur"""
+    group = doc.getObject(name)
+    if group is None:
+        group = create_group(doc, name, label=label)
+    elif label:
+        group.Label = label
+    return group
+
+
 def add_objects_to_group(group, items):
     """Sozluk/liste/tekil nesneleri recurse ederek gruba ekle"""
     if items is None:
@@ -210,6 +244,35 @@ def set_object_visual(obj, transparency=None):
             obj.ViewObject.Transparency = transparency
         except Exception:
             pass
+
+
+def set_object_style(doc, obj_name, label=None, color=None, transparency=None, visible=None):
+    """Etiket, renk ve gorunum ayarlarini guvenli sekilde uygula"""
+    obj = doc.getObject(obj_name)
+    if obj is None:
+        return None
+    if label is not None:
+        try:
+            obj.Label = label
+        except Exception:
+            pass
+    if hasattr(obj, "ViewObject") and obj.ViewObject:
+        if color is not None:
+            try:
+                obj.ViewObject.ShapeColor = color
+            except Exception:
+                pass
+        if transparency is not None:
+            try:
+                obj.ViewObject.Transparency = transparency
+            except Exception:
+                pass
+        if visible is not None:
+            try:
+                obj.ViewObject.Visibility = visible
+            except Exception:
+                pass
+    return obj
 
 
 # =============================================================================
@@ -274,12 +337,16 @@ def create_frame_assembly(doc, params):
         position=App.Vector(100, 50, frame_z + 100)
     )
 
-    table_slot_width = min(params.TABLE_SLOT_WIDTH, table_grid.Width - 400)
-    table_side_width = (table_grid.Width - table_slot_width) / 2.0
+    table_grid_width = float(table_grid.Width.Value)
+    table_grid_height = float(table_grid.Height.Value)
+    table_grid_length = float(table_grid.Length.Value)
+
+    table_slot_width = min(params.TABLE_SLOT_WIDTH, table_grid_length - 400.0)
+    table_side_length = (table_grid_length - table_slot_width) / 2.0
 
     table_grid_left = create_box(
         doc, "Table_Grid_Left_Deck",
-        width=table_side_width, height=table_grid.Height, depth=table_grid.Length,
+        width=table_grid_width, height=table_grid_height, depth=table_side_length,
         color=(0.46, 0.46, 0.46),
         position=App.Vector(
             table_grid.Placement.Base.x,
@@ -290,22 +357,22 @@ def create_frame_assembly(doc, params):
 
     table_grid_right = create_box(
         doc, "Table_Grid_Right_Deck",
-        width=table_side_width, height=table_grid.Height, depth=table_grid.Length,
+        width=table_grid_width, height=table_grid_height, depth=table_side_length,
         color=(0.46, 0.46, 0.46),
         position=App.Vector(
-            table_grid.Placement.Base.x,
-            table_grid.Placement.Base.y + table_side_width + table_slot_width,
+            table_grid.Placement.Base.x + table_side_length + table_slot_width,
+            table_grid.Placement.Base.y,
             table_grid.Placement.Base.z
         )
     )
 
     table_slot_reference = create_box(
         doc, "Table_Grid_VB_Slot",
-        width=table_slot_width, height=table_grid.Height + 2, depth=table_grid.Length,
+        width=table_grid_width, height=table_grid_height + 2.0, depth=table_slot_width,
         color=(0.15, 0.2, 0.28),
         position=App.Vector(
-            table_grid.Placement.Base.x,
-            table_grid.Placement.Base.y + table_side_width,
+            table_grid.Placement.Base.x + table_side_length,
+            table_grid.Placement.Base.y,
             table_grid.Placement.Base.z - 1
         )
     )
@@ -341,14 +408,18 @@ def create_glass_reference(doc, frame, params):
     print("  - Cam referans plakasi olusturuluyor...")
 
     table_bb = frame['table_grid'].Shape.BoundBox
+    glass_length = min(params.MAX_GLASS_LENGTH, table_bb.XLength)
+    glass_width = min(params.MAX_GLASS_WIDTH, table_bb.YLength)
+    glass_x = table_bb.XMin + max((table_bb.XLength - glass_length) / 2.0, 0.0)
+    glass_y = table_bb.YMin + max((table_bb.YLength - glass_width) / 2.0, 0.0)
 
     glass = create_box(
         doc, "Glass_Sheet_Reference",
-        width=table_bb.YLength,
+        width=glass_width,
         height=params.LAMINE_KALINLIK,
-        depth=table_bb.XLength,
+        depth=glass_length,
         color=(0.45, 0.75, 0.95),
-        position=App.Vector(table_bb.XMin, table_bb.YMin, table_bb.ZMax)
+        position=App.Vector(glass_x, glass_y, table_bb.ZMax)
     )
 
     if hasattr(glass, "ViewObject") and glass.ViewObject:
@@ -367,17 +438,17 @@ def create_lower_cutter_channel_reference(doc, frame):
     print("  - Alt kesim kanal referansi olusturuluyor...")
 
     table_bb = frame['table_grid'].Shape.BoundBox
-    channel_width = min(900.0, table_bb.YLength - 200.0)
+    channel_depth = min(220.0, table_bb.XLength - 200.0)
 
     channel = create_box(
         doc, "Lower_Cutter_Channel_Reference",
-        width=channel_width,
+        width=table_bb.YLength,
         height=220,
-        depth=table_bb.XLength,
+        depth=channel_depth,
         color=(0.30, 0.55, 0.80),
         position=App.Vector(
-            table_bb.XMin,
-            table_bb.YMin + (table_bb.YLength - channel_width) / 2.0,
+            table_bb.XMin + (table_bb.XLength - channel_depth) / 2.0,
+            table_bb.YMin,
             table_bb.ZMin - 220
         )
     )
@@ -389,6 +460,205 @@ def create_lower_cutter_channel_reference(doc, frame):
             pass
 
     return channel
+
+
+def ensure_vb_slot_visuals(doc):
+    """
+    Tabla uzerindeki VB slotunu belirginlestir.
+
+    Slot kutusu yari saydam tutulur; iki parlak kenar referansi ise ustten
+    bakista slotu net secilebilir hale getirir.
+    """
+    slot = doc.getObject("Table_Grid_VB_Slot")
+    if slot is None:
+        return {}
+
+    if hasattr(slot, "ViewObject") and slot.ViewObject:
+        try:
+            slot.ViewObject.Visibility = True
+            slot.ViewObject.ShapeColor = (0.10, 0.62, 0.92)
+            slot.ViewObject.Transparency = 55
+            slot.ViewObject.LineColor = (0.00, 0.38, 0.72)
+            slot.ViewObject.LineWidth = 3.0
+            slot.ViewObject.DisplayMode = "Flat Lines"
+        except Exception:
+            pass
+
+    slot_x = float(slot.Placement.Base.x)
+    slot_y = float(slot.Placement.Base.y)
+    slot_z = float(slot.Placement.Base.z)
+    slot_width = float(slot.Width.Value)
+    slot_height = float(slot.Height.Value)
+    slot_length = float(slot.Length.Value)
+
+    edge_width = min(10.0, max(6.0, slot_width / 12.0))
+    edge_height = 8.0
+    edge_z = slot_z + slot_height + 2.0
+    edge_color = (1.0, 0.46, 0.08)
+    marker_height = 4.0
+    marker_z = slot_z + slot_height + 6.0
+
+    def _upsert_edge(name, base_y):
+        edge = doc.getObject(name)
+        if edge is None:
+            edge = doc.addObject("Part::Box", name)
+            edge.Label = name
+        edge.Width = edge_width
+        edge.Height = edge_height
+        edge.Length = slot_length
+        edge.Placement.Base = App.Vector(slot_x, base_y, edge_z)
+        if hasattr(edge, "ViewObject") and edge.ViewObject:
+            try:
+                edge.ViewObject.ShapeColor = edge_color
+                edge.ViewObject.Transparency = 5
+                edge.ViewObject.LineColor = edge_color
+                edge.ViewObject.LineWidth = 2.0
+            except Exception:
+                pass
+        return edge
+
+    marker = doc.getObject("Table_Grid_VB_Slot_Top_Marker")
+    if marker is None:
+        marker = doc.addObject("Part::Box", "Table_Grid_VB_Slot_Top_Marker")
+        marker.Label = "Table_Grid_VB_Slot_Top_Marker"
+    marker.Width = slot_width
+    marker.Height = marker_height
+    marker.Length = slot_length
+    marker.Placement.Base = App.Vector(slot_x, slot_y, marker_z)
+    if hasattr(marker, "ViewObject") and marker.ViewObject:
+        try:
+            marker.ViewObject.ShapeColor = (0.08, 0.80, 1.00)
+            marker.ViewObject.Transparency = 28
+            marker.ViewObject.LineColor = (0.05, 0.50, 0.85)
+            marker.ViewObject.LineWidth = 2.0
+            marker.ViewObject.DisplayMode = "Flat Lines"
+        except Exception:
+            pass
+
+    left_edge = _upsert_edge("Table_Grid_VB_Slot_Left_Edge", slot_y)
+    right_edge = _upsert_edge("Table_Grid_VB_Slot_Right_Edge", slot_y + slot_width - edge_width)
+
+    label = doc.getObject("Table_Grid_VB_Slot_Label")
+    if label is None:
+        label = create_text_note(
+            doc,
+            "Table_Grid_VB_Slot_Label",
+            "VB Slot (BTS)",
+            App.Vector(slot_x + 120.0, slot_y + 140.0, edge_z + 70.0),
+        )
+    elif label is not None:
+        try:
+            label.LabelText = ["VB Slot (BTS)"]
+            label.BasePosition = App.Vector(slot_x + 120.0, slot_y + 140.0, edge_z + 70.0)
+        except Exception:
+            pass
+
+    return {
+        "table_slot_left_edge": left_edge,
+        "table_slot_right_edge": right_edge,
+        "table_slot_top_marker": marker,
+        "table_slot_label": label,
+    }
+
+
+def ensure_lamine_process_visuals(doc, params):
+    """
+    Lamine kesim operasyonunu sahnede daha okunur kilan proses zonlari.
+
+    Bu overlay referanslari mekanik objeler degildir; tutma, scoring, kirma ve
+    PVB isitma/ayirma adimlarinin VB hattinda nasil siralandigini gorsel olarak anlatir.
+    """
+    glass = doc.getObject("Glass_Sheet_Reference")
+    table = doc.getObject("Table_Grid")
+    if glass is None or table is None:
+        return {}
+
+    glass_width = float(glass.Width.Value)
+    glass_y = float(glass.Placement.Base.y)
+    top_z = float(glass.Placement.Base.z) + float(glass.Height.Value) + 4.0
+    zone_y = glass_y + 55.0
+    zone_width = max(glass_width - 110.0, 120.0)
+
+    def _upsert_zone(name, y_width, z_height, x_depth, color, transparency):
+        zone = doc.getObject(name)
+        if zone is None:
+            zone = doc.addObject("Part::Box", name)
+            zone.Label = name
+        zone.Width = y_width
+        zone.Height = z_height
+        zone.Length = x_depth
+        if hasattr(zone, "ViewObject") and zone.ViewObject:
+            try:
+                zone.ViewObject.ShapeColor = color
+                zone.ViewObject.Transparency = transparency
+                zone.ViewObject.LineColor = color
+                zone.ViewObject.LineWidth = 2.0
+                zone.ViewObject.DisplayMode = "Flat Lines"
+                zone.ViewObject.Visibility = True
+            except Exception:
+                pass
+        return zone
+
+    cut_zone = _upsert_zone(
+        "Lamine_Cut_Zone",
+        zone_width, 5.0, 28.0,
+        (0.95, 0.22, 0.28), 45,
+    )
+    heat_zone = _upsert_zone(
+        "Lamine_Heat_Zone",
+        zone_width - 80.0, 5.0, 70.0,
+        (0.96, 0.58, 0.12), 58,
+    )
+    separation_zone = _upsert_zone(
+        "Lamine_Separation_Zone",
+        zone_width - 160.0, 5.0, 40.0,
+        (0.12, 0.82, 0.86), 58,
+    )
+    break_zone = _upsert_zone(
+        "Lamine_Break_Zone",
+        zone_width - 120.0, 5.0, 48.0,
+        (0.60, 0.36, 0.86), 58,
+    )
+    hold_zone = _upsert_zone(
+        "Lamine_Glass_Hold_Zone",
+        min(880.0, zone_width - 220.0), 4.0, 120.0,
+        (0.96, 0.82, 0.18), 68,
+    )
+
+    for zone in (cut_zone, heat_zone, separation_zone, break_zone, hold_zone):
+        zone.Placement.Base.z = top_z
+        zone.Placement.Base.y = zone_y
+
+    cut_zone.Placement.Base.x = 455.0 + params.VB_FIXED_CUT_X
+    break_zone.Placement.Base.x = 520.0 + params.VB_FIXED_CUT_X
+    heat_zone.Placement.Base.x = 590.0 + params.VB_FIXED_CUT_X
+    separation_zone.Placement.Base.x = 660.0 + params.VB_FIXED_CUT_X
+    hold_zone.Placement.Base.x = 130.0 + params.X_PARK_BTS
+    hold_zone.Placement.Base.y = glass_y + max((glass_width - float(hold_zone.Width.Value)) / 2.0, 0.0)
+
+    label = doc.getObject("Lamine_Process_Label")
+    if label is None:
+        label = create_text_note(
+            doc,
+            "Lamine_Process_Label",
+            "Lamine Process: Hold -> Score -> Break -> Heat -> Separate",
+            App.Vector(hold_zone.Placement.Base.x + 120.0, glass_y + 120.0, top_z + 90.0),
+        )
+    elif label is not None:
+        try:
+            label.LabelText = ["Lamine Process: Hold -> Score -> Break -> Heat -> Separate"]
+            label.BasePosition = App.Vector(hold_zone.Placement.Base.x + 120.0, glass_y + 120.0, top_z + 90.0)
+        except Exception:
+            pass
+
+    return {
+        "cut_zone": cut_zone,
+        "heat_zone": heat_zone,
+        "separation_zone": separation_zone,
+        "break_zone": break_zone,
+        "hold_zone": hold_zone,
+        "process_label": label,
+    }
 
 
 # =============================================================================
@@ -404,23 +674,23 @@ def create_portal_assembly(doc, frame, params):
     # X ekseni köprüsü
     bridge = create_box(
         doc, "Portal_Bridge",
-        width=params.PORTAL_WIDTH, height=100, depth=220,
-        color=(0.2, 0.4, 0.6),
+        width=params.PORTAL_WIDTH, height=118, depth=260,
+        color=(0.82, 0.84, 0.86),
         position=App.Vector(150, 100, 360)
     )
     
     # Dikey destekler
     left_support = create_box(
         doc, "Portal_Left_Support",
-        width=200, height=260, depth=150,
-        color=(0.2, 0.4, 0.6),
+        width=250, height=320, depth=210,
+        color=(0.87, 0.89, 0.91),
         position=App.Vector(150, 100, 150)
     )
     
     right_support = create_box(
         doc, "Portal_Right_Support",
-        width=200, height=260, depth=150,
-        color=(0.2, 0.4, 0.6),
+        width=250, height=320, depth=210,
+        color=(0.87, 0.89, 0.91),
         position=App.Vector(150, params.PORTAL_WIDTH - 150, 150)
     )
     
@@ -470,24 +740,24 @@ def create_y_axis_assembly(doc, portal, params):
     # Y ekseni kızak
     carriage = create_box(
         doc, "Y_Carriage",
-        width=400, height=180, depth=250,
-        color=(0.8, 0.2, 0.2),
+        width=340, height=170, depth=220,
+        color=(0.92, 0.92, 0.92),
         position=App.Vector(
             portal['bridge'].Placement.Base.x - 10,
-            portal['bridge'].Placement.Base.y + (params.PORTAL_WIDTH - 500) / 2.0,
-            portal['bridge'].Placement.Base.z + 90
+            portal['bridge'].Placement.Base.y + (params.PORTAL_WIDTH - 460) / 2.0,
+            portal['bridge'].Placement.Base.z + 95
         )
     )
     
     # Y ekseni lineer ray
     y_rail = create_box(
         doc, "Y_Rail",
-        width=params.PORTAL_WIDTH - 200, height=30, depth=50,
+        width=params.PORTAL_WIDTH - 200, height=32, depth=48,
         color=(0.7, 0.7, 0.7),
         position=App.Vector(
             portal['bridge'].Placement.Base.x + 85,
             portal['bridge'].Placement.Base.y + 50,
-            portal['bridge'].Placement.Base.z + 110
+            portal['bridge'].Placement.Base.z + 124
         )
     )
     
@@ -602,42 +872,310 @@ def create_z_axis_assembly(doc, y_axis):
     }
 
 
+def create_portal_service_modules(doc, y_axis, z_axis):
+    """
+    Kartezyen kopru uzerindeki vakum ve lama silme ekipmanlari.
+
+    Bu revizyonda portal vakum banki, kartezyen koprunun VB'ye bakan
+    tarafinda tek sira 8 kupa olacak sekilde modellenir. Kupalar
+    kopru boyunca esit araliktadir ve kopru X hareketi ile VB koprusunun
+    altina kayarak lamine kesimde cami sabitler.
+    """
+    print("  - Kartezyen kopru servis ekipmanlari olusturuluyor...")
+
+    carriage = y_axis['carriage']
+    head = z_axis['head']
+    fixed_vacuum_y = 310
+    cup_pitch_y = 342
+    vacuum_bank_x = carriage.Placement.Base.x + 168
+    lift_frame_span_y = 2920
+    lift_frame_height_z = 64
+    manifold_span_y = 2770
+    manifold_height_z = 28
+    lift_frame_z = carriage.Placement.Base.z - 62
+
+    lift_frame = create_box(
+        doc, "Portal_Lift_Frame",
+        width=lift_frame_span_y, height=lift_frame_height_z, depth=126,
+        color=(0.78, 0.80, 0.82),
+        position=App.Vector(
+            vacuum_bank_x,
+            fixed_vacuum_y,
+            lift_frame_z,
+        )
+    )
+
+    left_riser = create_box(
+        doc, "Portal_Lift_Riser_Left",
+        width=95, height=210, depth=58,
+        color=(0.68, 0.70, 0.73),
+        position=App.Vector(
+            lift_frame.Placement.Base.x + 60,
+            lift_frame.Placement.Base.y + 90,
+            lift_frame.Placement.Base.z + 12,
+        )
+    )
+
+    right_riser = create_box(
+        doc, "Portal_Lift_Riser_Right",
+        width=95, height=210, depth=58,
+        color=(0.68, 0.70, 0.73),
+        position=App.Vector(
+            lift_frame.Placement.Base.x + 60,
+            lift_frame.Placement.Base.y + 2600,
+            lift_frame.Placement.Base.z + 12,
+        )
+    )
+
+    # 8-line vakum manifoldu - hareketli lift frame altinda tek sira lineer cup banki
+    vacuum_manifold = create_box(
+        doc, "Portal_Vacuum_Manifold",
+        width=manifold_span_y, height=manifold_height_z, depth=52,
+        color=(0.38, 0.40, 0.42),
+        position=App.Vector(
+            lift_frame.Placement.Base.x + 40,
+            lift_frame.Placement.Base.y + 72,
+            lift_frame.Placement.Base.z - 14,
+        )
+    )
+
+    vacuum_header_left = create_cylinder(
+        doc, "Portal_Vacuum_Header_Left",
+        radius=16, height=90,
+        color=(0.20, 0.24, 0.28),
+        position=App.Vector(
+            lift_frame.Placement.Base.x + 18,
+            lift_frame.Placement.Base.y + 128,
+            lift_frame.Placement.Base.z - 8,
+        )
+    )
+
+    vacuum_header_right = create_cylinder(
+        doc, "Portal_Vacuum_Header_Right",
+        radius=16, height=90,
+        color=(0.20, 0.24, 0.28),
+        position=App.Vector(
+            lift_frame.Placement.Base.x + 18,
+            lift_frame.Placement.Base.y + 2700,
+            lift_frame.Placement.Base.z - 8,
+        )
+    )
+
+    # 8 adet kupa kartezyen kopru boyunca esit aralikla tek sira halinde dizilir.
+    vacuum_brackets = []
+    vacuum_cups = []
+    vacuum_pads = []
+    cup_layout = [(5, 20 + idx * cup_pitch_y) for idx in range(8)]
+    for idx, (x_offset, y_offset) in enumerate(cup_layout, start=1):
+        bracket = create_box(
+            doc, f"Portal_Vacuum_Bracket_{idx}",
+            width=42, height=24, depth=88,
+            color=(0.74, 0.75, 0.77),
+            position=App.Vector(
+                vacuum_manifold.Placement.Base.x + 26,
+                vacuum_manifold.Placement.Base.y + y_offset + 24,
+                lift_frame.Placement.Base.z - 44,
+            )
+        )
+        cup = create_box(
+            doc, f"Portal_Vacuum_Cup_{idx}",
+            width=138, height=34, depth=92,
+            color=(0.70, 0.72, 0.75),
+            position=App.Vector(
+                vacuum_manifold.Placement.Base.x + 18 + x_offset,
+                vacuum_manifold.Placement.Base.y + y_offset,
+                lift_frame.Placement.Base.z - 66,
+            )
+        )
+        pad = create_box(
+            doc, f"Portal_Vacuum_Pad_{idx}",
+            width=126, height=8, depth=84,
+            color=(0.94, 0.80, 0.24),
+            position=App.Vector(
+                cup.Placement.Base.x + 4,
+                cup.Placement.Base.y + 6,
+                cup.Placement.Base.z - 8,
+            )
+        )
+        vacuum_brackets.append(bracket)
+        vacuum_cups.append(cup)
+        vacuum_pads.append(pad)
+
+    # Lama silme yine kesim kafasi uzerinde kalir.
+    wiper_block = create_box(
+        doc, "Portal_Blade_Wiper_Block",
+        width=80, height=42, depth=60,
+        color=(0.78, 0.78, 0.80),
+        position=App.Vector(
+            head.Placement.Base.x - 10,
+            head.Placement.Base.y + 48,
+            head.Placement.Base.z + 24,
+        )
+    )
+
+    wiper_pad = create_box(
+        doc, "Portal_Blade_Wiper_Pad",
+        width=56, height=12, depth=38,
+        color=(0.18, 0.18, 0.18),
+        position=App.Vector(
+            wiper_block.Placement.Base.x + 12,
+            wiper_block.Placement.Base.y + 10,
+            wiper_block.Placement.Base.z - 10,
+        )
+    )
+
+    return {
+        'lift_frame': lift_frame,
+        'risers': [left_riser, right_riser],
+        'manifold': vacuum_manifold,
+        'headers': [vacuum_header_left, vacuum_header_right],
+        'brackets': vacuum_brackets,
+        'cups': vacuum_cups,
+        'pads': vacuum_pads,
+        'wiper': [wiper_block, wiper_pad],
+    }
+
+
+def create_vb_upper_bridge(doc, frame, params):
+    """
+    VB-Modul ust koprusu.
+    Sabit X hattinda duran, yalniz Y ekseninde calisan ve alt kafa ile
+    mekanik bagli kabul edilen dar lila lamine kesim unitesi.
+    Operator terminal tarafinda tahrik/servis tarafi bulunur.
+    """
+    print("  - VB-Modul ust kopru / Y kesim unitesi olusturuluyor...")
+
+    table_z = frame['table_grid'].Placement.Base.z
+    cut_line_x = params.VB_FIXED_CUT_X
+    vb_y_start = params.VB_Y_BRIDGE_START
+    vb_y_span = params.VB_Y_BRIDGE_SPAN
+    vb_y_rail_start = vb_y_start + max((vb_y_span - params.VB_Y_RAIL_SPAN) / 2.0, 0.0)
+
+    upper_bridge = create_box(
+        doc, "VB_Upper_Bridge",
+        width=vb_y_span, height=76, depth=120,
+        color=(0.73, 0.58, 0.85),
+        position=App.Vector(210 + cut_line_x, vb_y_start, table_z + 405)
+    )
+
+    support_front = create_box(
+        doc, "VB_Upper_Support_Front",
+        width=120, height=420, depth=110,
+        color=(0.69, 0.54, 0.82),
+        position=App.Vector(220 + cut_line_x, vb_y_start - 30, table_z + 25)
+    )
+
+    support_rear = create_box(
+        doc, "VB_Upper_Support_Rear",
+        width=120, height=420, depth=110,
+        color=(0.69, 0.54, 0.82),
+        position=App.Vector(220 + cut_line_x, vb_y_start + vb_y_span - 90, table_z + 25)
+    )
+
+    y_rail = create_box(
+        doc, "VB_Y_Rail",
+        width=params.VB_Y_RAIL_SPAN, height=24, depth=34,
+        color=(0.70, 0.70, 0.74),
+        position=App.Vector(248 + cut_line_x, vb_y_rail_start, table_z + 435)
+    )
+
+    y_carriage = create_box(
+        doc, "VB_Y_Carriage",
+        width=240, height=140, depth=120,
+        color=(0.67, 0.52, 0.82),
+        position=App.Vector(228 + cut_line_x, vb_y_start + 220, table_z + 452)
+    )
+
+    # Y servo operator terminal tarafinda, alt seviyede sabit durur ve hareketi
+    # ust kopruye mekanik aktarimla tasir.
+    y_motor = create_cylinder(
+        doc, "VB_Y_Motor",
+        radius=40, height=110,
+        color=(0.16, 0.16, 0.20),
+        position=App.Vector(192 + cut_line_x, vb_y_start + 45, table_z + 120)
+    )
+
+    top_head = create_box(
+        doc, "VB_Top_Cutter_Head",
+        width=90, height=210, depth=72,
+        color=(0.84, 0.73, 0.90),
+        position=App.Vector(242 + cut_line_x, vb_y_start + 300, table_z + 118)
+    )
+
+    top_wheel = create_cylinder(
+        doc, "VB_Top_Cutting_Wheel",
+        radius=18, height=18,
+        color=(0.88, 0.88, 0.91),
+        position=App.Vector(250 + cut_line_x, vb_y_start + 386, table_z + 94)
+    )
+
+    link_cover = create_box(
+        doc, "VB_Link_Cover",
+        width=64, height=540, depth=60,
+        color=(0.56, 0.43, 0.72),
+        position=App.Vector(242 + cut_line_x, vb_y_start + 30, table_z - 95)
+    )
+    set_object_visual(link_cover, transparency=35)
+
+    return {
+        'bridge': upper_bridge,
+        'supports': [support_front, support_rear],
+        'rail': y_rail,
+        'carriage': y_carriage,
+        'motor': y_motor,
+        'head': top_head,
+        'wheel': top_wheel,
+        'link_cover': link_cover,
+    }
+
+
 # =============================================================================
 # VB-MODUL: ALT KESİCİ ÜNİTESİ (V EKSENİ)
 # =============================================================================
 
-def create_vb_lower_cutter(doc, frame):
+def create_vb_lower_cutter(doc, frame, params):
     """
     VB-Modul alt kesici ünitesi (V ekseni)
-    Masa altında, Y ekseni ile senkronize hareket eder
+    Masa altında, Y ekseni ile senkronize hareket eder.
+    Ust kafa ile ayni Y arabasina bagli rijit C-frame icinde tandem calisir.
     """
     print("  - VB-Modul alt kesici oluşturuluyor...")
     table_z = frame['table_grid'].Placement.Base.z
+    cut_line_x = params.VB_FIXED_CUT_X
+
+    v_rail_start = max(params.VB_Y_BRIDGE_START - 50.0, 50.0)
+
+    c_frame = create_box(
+        doc, "VB_C_Frame",
+        width=params.VB_C_FRAME_WIDTH, height=params.VB_C_FRAME_HEIGHT, depth=params.VB_C_FRAME_DEPTH,
+        color=(0.61, 0.45, 0.78),
+        position=App.Vector(cut_line_x + 210, 420, table_z - 250)
+    )
     
     # V ekseni taban plakası
     base_plate = create_box(
         doc, "VB_Base_Plate",
-        width=500, height=30, depth=400,
+        width=420, height=24, depth=250,
         color=(0.5, 0.5, 0.5),
-        position=App.Vector(100, 100, table_z - 150)
+        position=App.Vector(cut_line_x + 70, 405, table_z - 158)
     )
     
     # V ekseni lineer ray
     v_rail = create_box(
         doc, "V_Rail",
-        width=40, height=30, depth=3000,
+        width=params.VB_Y_RAIL_SPAN + 120.0, height=30, depth=40,
         color=(0.7, 0.7, 0.7),
-        position=App.Vector(150, 50, table_z - 135)
+        position=App.Vector(cut_line_x + 185, v_rail_start, table_z - 135)
     )
     
     # V ekseni kızak
     v_carriage = create_box(
         doc, "V_Carriage",
-        width=300, height=100, depth=200,
-        color=(0.6, 0.3, 0.3),
+        width=200, height=95, depth=140,
+        color=(0.64, 0.49, 0.79),
         position=App.Vector(
-            base_plate.Placement.Base.x + 100,
-            base_plate.Placement.Base.y,
+            c_frame.Placement.Base.x - 10,
+            c_frame.Placement.Base.y + 36,
             base_plate.Placement.Base.z
         )
     )
@@ -657,11 +1195,11 @@ def create_vb_lower_cutter(doc, frame):
     # Alt kesici kafası (yukarı doğru hareket eder)
     lower_cutter_head = create_box(
         doc, "Lower_Cutter_Head",
-        width=100, height=200, depth=80,
-        color=(1.0, 0.6, 0.2),
+        width=92, height=220, depth=72,
+        color=(0.84, 0.73, 0.90),
         position=App.Vector(
-            v_carriage.Placement.Base.x + 100,
-            v_carriage.Placement.Base.y + 50,
+            c_frame.Placement.Base.x + 34,
+            c_frame.Placement.Base.y + 70,
             v_carriage.Placement.Base.z + 50
         )
     )
@@ -714,6 +1252,7 @@ def create_vb_lower_cutter(doc, frame):
     )
     
     return {
+        'c_frame': c_frame,
         'base': base_plate,
         'rail': v_rail,
         'carriage': v_carriage,
@@ -1018,8 +1557,8 @@ def create_breaking_table_module(doc, params):
             doc, f"BTS_Roller_{idx+1}",
             radius=42, height=params.BREAKOUT_WIDTH - 300,
             color=(0.62, 0.62, 0.64),
-            position=App.Vector(x_pos + 280 + idx * 260, params.BREAKOUT_WIDTH - 150, 770),
-            rotation=App.Rotation(App.Vector(1, 0, 0), 90)
+            position=App.Vector(x_pos + 280 + idx * 260, 75, 770),
+            rotation=App.Rotation(App.Vector(1, 0, 0), -90)
         )
         roller_bed.append(roller)
 
@@ -1449,16 +1988,63 @@ def create_operator_terminal_assembly(doc, params):
     }
 
 
+def position_operator_terminal(doc, params):
+    """
+    Operator terminalini BTS tarafindaki sol-alt servis alanina tasir.
+    Yeni ve mevcut dokumanlarda ayni yerlesimi uygular.
+    """
+    base_x = params.OPERATOR_TERMINAL_BASE_X
+    base_y = params.OPERATOR_TERMINAL_BASE_Y
+    base_z = 0.0
+
+    placements = {
+        "Operator_Terminal_Base": App.Vector(base_x, base_y, base_z),
+        "Operator_Terminal_Plinth": App.Vector(base_x + 140, base_y + 170, base_z + 18),
+        "Operator_Terminal_Column": App.Vector(base_x + 155, base_y + 185, base_z + 88),
+        "Operator_Terminal_Column_Shoulder": App.Vector(base_x + 130, base_y + 155, base_z + 1168),
+        "Operator_Terminal_Head_Support": App.Vector(base_x + 110, base_y + 130, base_z + 1190),
+        "Operator_Terminal_Head_Wedge": App.Vector(base_x + 130, base_y + 95, base_z + 1275),
+        "Operator_Terminal_Enclosure": App.Vector(base_x, base_y - 140, base_z + 1260),
+        "Operator_Terminal_Door": App.Vector(base_x + 5, base_y - 152, base_z + 1265),
+        "DOP_110CS_HMI": App.Vector(base_x + 67, base_y - 168, base_z + 1322),
+        "DOP_110CS_Screen": App.Vector(base_x + 100, base_y - 174, base_z + 1366),
+        "R1_EC_Mounting_Plate": App.Vector(base_x + 35, base_y + 40, base_z + 1335),
+        "R1_EC_Module_1": App.Vector(base_x + 95, base_y - 15, base_z + 1372),
+        "R1_EC_Module_2": App.Vector(base_x + 185, base_y - 15, base_z + 1372),
+        "R1_EC_Module_3": App.Vector(base_x + 275, base_y - 15, base_z + 1372),
+        "Terminal_Field_Patch": App.Vector(base_x + 240, base_y + 5, base_z + 1305),
+        "Operator_Terminal_Gland_1": App.Vector(base_x + 110, base_y - 58, base_z + 1240),
+        "Operator_Terminal_Gland_2": App.Vector(base_x + 210, base_y - 58, base_z + 1240),
+        "Operator_Terminal_Gland_3": App.Vector(base_x + 310, base_y - 58, base_z + 1240),
+        "Operator_Terminal_Filter_Left": App.Vector(base_x + 20, base_y + 58, base_z + 1365),
+        "Operator_Terminal_Filter_Right": App.Vector(base_x + 310, base_y + 58, base_z + 1365),
+    }
+
+    for obj_name, base in placements.items():
+        obj = doc.getObject(obj_name)
+        if obj is not None:
+            obj.Placement.Base = base
+
+    label = doc.getObject("Operator_Terminal_Label")
+    if label is not None:
+        try:
+            label.BasePosition = App.Vector(base_x - 80, base_y - 110, base_z + 1730)
+        except Exception:
+            pass
+
+    return doc
+
+
 # =============================================================================
 # VB-MODUL: VAKUM VANTUZ SİSTEMİ
 # =============================================================================
 
 def create_vb_vacuum(doc, frame):
     """
-    Vantuzlu kopru uzerindeki vakum sistemi.
+    Kartezyen kopru uzerindeki genis vakum traversi.
     Cami orijinleme ve folyo germe adimlarinda tasir.
     """
-    print("  - VB-Modul vakum sistemi oluşturuluyor...")
+    print("  - Kartezyen kopru vakum traversi oluşturuluyor...")
     table_z = frame['table_grid'].Placement.Base.z
     
     # Kopru uzerindeki manifold tabani
@@ -1706,31 +2292,31 @@ def create_cable_tracks(doc, params):
         doc, "Cable_Track_X",
         width=50, height=30, depth=1000,
         color=(0.1, 0.1, 0.1),
-        position=App.Vector(0, 50, machine_z + 50)
+        position=App.Vector(50, 40, machine_z + 500)
     )
     
     # Y ekseni kablo tankı
     cable_y = create_box(
         doc, "Cable_Track_Y",
-        width=40, height=25, depth=500,
+        width=500, height=25, depth=40,
         color=(0.1, 0.1, 0.1),
-        position=App.Vector(1600, 100, machine_z + 250)
+        position=App.Vector(180, 1200, machine_z + 1180)
     )
     
     # Z ekseni kablo tankı
     cable_z = create_box(
         doc, "Cable_Track_Z",
-        width=30, height=20, depth=400,
+        width=30, height=400, depth=20,
         color=(0.1, 0.1, 0.1),
-        position=App.Vector(1750, 200, machine_z + 50)
+        position=App.Vector(280, 1600, machine_z + 220)
     )
     
     # VB-Modul kablo tankı
     cable_v = create_box(
         doc, "Cable_Track_V",
-        width=40, height=25, depth=500,
+        width=40, height=420, depth=25,
         color=(0.1, 0.1, 0.1),
-        position=App.Vector(200, 100, machine_z - 50)
+        position=App.Vector(5600, 1500, machine_z - 20)
     )
     
     # Pnömatik hortumlar
@@ -1739,7 +2325,7 @@ def create_cable_tracks(doc, params):
         radius=8, height=1000,
         color=(0.0, 0.5, 1.0),
         position=App.Vector(300, 200, machine_z - 30),
-        rotation=App.Rotation(90, 0, 0)
+        rotation=App.Rotation(App.Vector(1, 0, 0), 90)
     )
     
     return {
@@ -1755,60 +2341,111 @@ def create_cable_tracks(doc, params):
 # DEĞİŞKEN TABLOSU (ASSEMBLY4)
 # =============================================================================
 
-def create_variables_spreadsheet(doc, params):
+def ensure_variables_sheet_defaults(ss, params, preserve_existing=True):
     """
-    Assembly4 değişken tablosu
+    Variables spreadsheet icin gerekli hucreleri doldurur.
+    Eski FCStd surumlerinde eksik kalan hucreleri tamamlar; mevcut degerleri
+    istege gore korur.
     """
-    print("  - Değişken tablosu oluşturuluyor...")
-    ss = doc.addObject('Spreadsheet::Sheet', 'Variables')
-    
-    # Eksen pozisyonları
-    ss.set('A1', f'{params.X_PARK_BTS} mm')  # X_Position
-    ss.set('B1', f'{params.Y_PARK_BTS} mm')  # Y_Position
-    ss.set('C1', f'{params.Z_HOME} mm')  # Z_Position
-    ss.set('D1', f'{params.V_HOME} mm')  # V_Position (alt kesici)
-    
-    # Eksen limitleri
-    ss.set('E1', f'{params.X_MAX} mm')   # X_Max
-    ss.set('F1', f'{params.Y_MAX} mm')   # Y_Max
-    ss.set('G1', f'{params.Z_MAX} mm')   # Z_Max
-    ss.set('H1', f'{params.V_MAX} mm')   # V_Max
-    
-    # Kesim parametreleri
-    ss.set('I1', f'{params.CAM_KALINLIGI} mm')  # Cam_Kalinligi
-    ss.set('J1', f'{params.LAMINE_KALINLIK} mm')  # Lamine_Kalinlik
-    ss.set('K1', f'{params.KESIM_BASINCI} MPa')  # Kesim_Basinci
-    
-    # VB-Modul parametreleri
-    ss.set('L1', f'{params.ISITMA_SICAKLIK} deg')  # Isitma_Sicaklik
-    ss.set('M1', f'{params.ISITMA_SURES} s')  # Isitma_Suresi
-    ss.set('N1', f'{params.VAKUM_BASINC} bar')  # Vakum_Basinc
-    ss.set('O1', f'{params.AYIRMA_BASINC} bar')  # Ayirma_Basinc
-    ss.set('P1', f'{params.KIRMA_BASINC} bar')  # Kirma_Basinci
-    ss.set('Q1', f'{params.ISITICI_CAM_MESAFESI} mm')  # Heater_Standoff
-    ss.set('R1', f'{params.ALT_KESIM_CAM_ALT_MESAFESI} mm')  # Lower_Cutter_Standoff
-    ss.set('S1', f'{params.BASINC_MERDANE_CAM_MESAFESI} mm')  # Pressure_Roller_Standoff
-    ss.set('T1', f'{params.YUKLEME_X_DUZELTME} mm')  # Loading_Bridge_X_Correction
-    ss.set('U1', f'{params.G31_KENAR_GERI_KACIS} mm')  # Probe_Backoff_X
-    ss.set('V1', f'{params.FOLYO_GERME_X_OFFSET} mm')  # Tension_Retract_X
-    ss.set('W1', f'{params.FOLYO_GERME_RELAX_OFFSET} mm')  # Tension_Settle_X
-    ss.set('X1', f'{params.LAMINE_MODU}')  # Lamine_Modu (0/1)
-    ss.set('Y1', f'{params.LAMINE_KESIM_X_BASLANGIC} mm')  # Lamine_Cut_Start_X
-    ss.set('Z1', f'{params.PARK_Z_GERI_CEKME} mm')  # Park_Z_Retract
-    ss.set('AA1', f'{params.LAMINE_KESIM_Y_BASLANGIC} mm')  # Lamine_Cut_Start_Y
-    ss.set('AB1', f'{params.LAMINE_KESIM_X_BITIS} mm')  # Lamine_Cut_End_X
-    ss.set('AC1', f'{params.LAMINE_KESIM_Y_BITIS} mm')  # Lamine_Cut_End_Y
-    ss.set('AD1', '0')  # is_clamped (0/1)
+    defaults = {
+        'A1': f'{params.X_PARK_BTS} mm',
+        'B1': f'{params.Y_PARK_BTS} mm',
+        'C1': f'{params.Z_HOME} mm',
+        'D1': f'{params.V_HOME} mm',
+        'E1': f'{params.X_VB_MECHANICAL_STOP} mm',
+        'F1': f'{params.Y_MAX} mm',
+        'G1': f'{params.Z_MAX} mm',
+        'H1': f'{params.V_MAX} mm',
+        'I1': f'{params.CAM_KALINLIGI} mm',
+        'J1': f'{params.LAMINE_KALINLIK} mm',
+        'K1': f'{params.KESIM_BASINCI} MPa',
+        'L1': f'{params.ISITMA_SICAKLIK} deg',
+        'M1': f'{params.ISITMA_SURES} s',
+        'N1': f'{params.VAKUM_BASINC} bar',
+        'O1': f'{params.AYIRMA_BASINC} bar',
+        'P1': f'{params.KIRMA_BASINC} bar',
+        'Q1': f'{params.ISITICI_CAM_MESAFESI} mm',
+        'R1': f'{params.ALT_KESIM_CAM_ALT_MESAFESI} mm',
+        'S1': f'{params.BASINC_MERDANE_CAM_MESAFESI} mm',
+        'T1': f'{params.YUKLEME_X_DUZELTME} mm',
+        'U1': f'{params.G31_KENAR_GERI_KACIS} mm',
+        'V1': f'{params.FOLYO_GERME_X_OFFSET} mm',
+        'W1': f'{params.FOLYO_GERME_RELAX_OFFSET} mm',
+        'X1': f'{params.LAMINE_MODU}',
+        'Y1': f'{params.VB_FIXED_CUT_X} mm',
+        'Z1': f'{params.PARK_Z_GERI_CEKME} mm',
+        'AA1': f'{params.LAMINE_KESIM_Y_BASLANGIC} mm',
+        'AB1': f'{params.LAMINE_KESIM_X_BITIS} mm',
+        'AC1': f'{params.LAMINE_KESIM_Y_BITIS} mm',
+        'AD1': '0',
+    }
+
+    def _sheet_numeric(cell_name):
+        try:
+            raw = ss.get(cell_name)
+        except Exception:
+            return None
+        if raw is None:
+            return None
+        match = re.search(r'-?\d+(?:\.\d+)?', str(raw).replace(',', '.'))
+        if match is None:
+            return None
+        try:
+            return float(match.group(0))
+        except Exception:
+            return None
+
+    # Revizyon gocu:
+    # - E1 eski surumlerde 5500 mm stopunda kalmis olabilir; yeni mantikta 6000 mm'ye cikar.
+    # - Y1 eski surumlerde gantry stopunu izliyor olabilir; yeni mantikta VB sabit hattini
+    #   cam zarfinin disina tasiyan guncel defaulta gecmelidir.
+    if preserve_existing:
+        legacy_stop = _sheet_numeric('E1')
+        if legacy_stop is None or legacy_stop < params.X_VB_MECHANICAL_STOP:
+            try:
+                ss.set('E1', defaults['E1'])
+            except Exception:
+                pass
+
+        legacy_vb_x = _sheet_numeric('Y1')
+        if legacy_vb_x is None or legacy_vb_x < params.VB_FIXED_CUT_X:
+            try:
+                ss.set('Y1', defaults['Y1'])
+            except Exception:
+                pass
+
+    for cell, value in defaults.items():
+        needs_value = not preserve_existing
+        if preserve_existing:
+            try:
+                current = ss.get(cell)
+                needs_value = current is None or str(current).strip() == ''
+            except Exception:
+                needs_value = True
+        if needs_value:
+            ss.set(cell, value)
 
     if hasattr(ss, "setAlias"):
+        try:
+            ss.setAlias('X1', 'Lamine_Mode')
+        except Exception:
+            pass
         try:
             ss.setAlias('AD1', 'is_clamped')
         except Exception:
             pass
 
     ss.Label = 'Variables'
-    
     return ss
+
+
+def create_variables_spreadsheet(doc, params):
+    """
+    Assembly4 değişken tablosu
+    """
+    print("  - Değişken tablosu oluşturuluyor...")
+    ss = doc.addObject('Spreadsheet::Sheet', 'Variables')
+    return ensure_variables_sheet_defaults(ss, params, preserve_existing=False)
 
 
 LAMINE_INPUT_DESCRIPTIONS = {
@@ -1855,11 +2492,12 @@ LAMINE_OUTPUT_DESCRIPTIONS = {
     "VACUUM_PUMP": "Vakum pompası aktif",
     "LOADING_VACUUM_ENABLE": "Yükleme köprüsü vantuz valfi aktif",
     "EDGE_PROBE_ENABLE": "G31 / kenar bulma dizisi aktif",
-    "TENSION_RETRACT_ENABLE": "Folyo germe geri çekme aktif",
+    "TENSION_RETRACT_ENABLE": "Vakumla gap acma / folyo germe aktif",
     "X_AXIS_LOCK": "X ekseni yazılımsal kilit / brake aktif",
     "BRIDGE_XY_INTERPOLATION": "Köprü X ve Y eksenleri interpolated kesimde",
     "LAMINE_MODE_ENABLE": "Lamine mekanik modu aktif",
-    "ECAM_ENABLE": "Y master / alt kafa follower senkronu aktif",
+    "VB_Y_LINK_ENABLE": "VB ust ve alt kafalar mekanik bagli ortak Y ekseninde",
+    "ECAM_ENABLE": "Legacy E-Cam uyumluluk bayragi (mevcut model mantiginda normalde kapali)",
     "HEATER_DOWN": "Isıtıcı aşağı komutu",
     "HEATER_ENABLE": "Isıtıcı enerji verildi",
     "HEATER_ZONE_1": "SIR ısıtıcı bölge 1 aktif",
@@ -1867,9 +2505,9 @@ LAMINE_OUTPUT_DESCRIPTIONS = {
     "HEATER_SAFETY_ENABLE": "Isıtıcı emniyet rölesi aktif",
     "UPPER_CUT_ENABLE": "Üst kesim aktif",
     "LOWER_CUT_ENABLE": "Alt kesim aktif",
-    "SEPARATING_BLADE": "Ayırma bıçağı aktif",
-    "BREAKING_BAR": "Kırma çıtası aktif",
-    "PRESSURE_ROLLER": "Basınç rollesi aktif",
+    "SEPARATING_BLADE": "Folyo kesme bıçağı (Trennklinge) aktif",
+    "BREAKING_BAR": "Kırma çıtası / alt kırma barı aktif",
+    "PRESSURE_ROLLER": "Kırma tekerleği / üst baskı aktif",
     "CYCLE_COMPLETE": "Çevrim başarıyla tamamlandı",
     "ALARM": "Çevrim alarmda",
 }
@@ -1914,7 +2552,7 @@ def create_lamine_phase_spreadsheet(doc):
     ss = doc.addObject('Spreadsheet::Sheet', 'Lamine_Phases')
     ss.Label = 'Lamine_Phases'
 
-    headers = ['Faz', 'Giris Sarti', 'Cikislar', 'Sonraki Faz', 'X Hedef', 'Y Hedef', 'Z Hedef', 'V Hedef']
+    headers = ['Faz', 'Giris Sarti', 'Cikislar', 'Sonraki Faz', 'X Hedef', 'Y / VB-Y Hedef', 'Z Hedef', 'V Hedef']
     for idx, header in enumerate(headers):
         col = chr(ord('A') + idx)
         ss.set(f'{col}1', header)
@@ -1934,7 +2572,21 @@ def setup_kinematics(doc, params):
     machine_z = params.MACHINE_Z_OFFSET
     loading_x_origin = -(params.LOADER_LENGTH + params.INTERFACE_GAP)
     loading_x_correction = 'Variables.T1'
-    bridge_x_expr = 'Variables.A1'
+    # Gantry mantiksal olarak 6000 mm calisma zarfinin disina cikamaz; sabit VB
+    # kesim hatti bu zarfin disinda modelledigi icin elle spreadsheet duzenlense
+    # bile kinematik tarafta 6000 mm'de limitlenir.
+    bridge_x_expr = 'min(Variables.A1, Variables.E1)'
+    cut_line_x_expr = 'Variables.Y1'
+    y_machine_expr = 'Variables.B1'
+    cartesian_park_y_expr = f'{params.Y_PARK_BTS} mm'
+    cartesian_y_expr = (
+        f'({y_machine_expr}) + Variables.Lamine_Mode * '
+        f'(({cartesian_park_y_expr}) - ({y_machine_expr}))'
+    )
+    vb_y_expr = (
+        f'({cartesian_park_y_expr}) + Variables.Lamine_Mode * '
+        f'(({y_machine_expr}) - ({cartesian_park_y_expr}))'
+    )
     park_lower_v_z_expr = 'Table_Grid.Placement.Base.z - Variables.Z1 - 250 mm'
     lamine_lower_v_z_expr = 'Glass_Sheet_Reference.Placement.Base.z - Variables.R1 - 170 mm'
     lower_v_z_expr = (
@@ -1947,28 +2599,36 @@ def setup_kinematics(doc, params):
         f'{park_heater_rod_z_expr} + Variables.X1 * '
         f'(({lamine_heater_rod_z_expr}) - ({park_heater_rod_z_expr}))'
     )
+    cup_safe_z_expr = 'Glass_Sheet_Reference.Placement.Base.z + Glass_Sheet_Reference.Height + 20 mm'
+    cup_pad_z_expr = f'({cup_safe_z_expr}) - Variables.AD1 * 20 mm'
+    cup_body_z_expr = f'({cup_pad_z_expr}) + 8 mm'
+    cup_bracket_z_expr = f'({cup_body_z_expr}) + 10 mm'
+
+    # Güvenli obje erişimi için helper fonksiyon
+    def safe_set_expression(obj_name, property_path, expression):
+        """Obje varlık kontrolü ile expression ayarla"""
+        obj = doc.getObject(obj_name)
+        if obj is not None:
+            try:
+                obj.setExpression(property_path, expression)
+            except Exception as e:
+                print(f"    ⚠️  Warning: {obj_name}.{property_path} expression failed: {e}")
+        else:
+            print(f"    ⚠️  Warning: Object '{obj_name}' not found for kinematic setup")
 
     # Bu assembly'de uzunlamasina hareket FreeCAD X, en hareketi FreeCAD Y
     # ve kafa yuksekligi FreeCAD Z ekseninde temsil edilir.
-    doc.Loading_Station_Carriage.setExpression(
-        'Placement.Base.x',
-        f'{loading_x_origin + 560} mm + {loading_x_correction}'
-    )
-    doc.Loading_Suction_Beam.setExpression(
-        'Placement.Base.x',
-        f'{loading_x_origin + 640} mm + {loading_x_correction}'
-    )
-    doc.Loading_Vacuum_Manifold.setExpression(
-        'Placement.Base.x',
-        f'{loading_x_origin + 720} mm + {loading_x_correction}'
-    )
+    safe_set_expression('Loading_Station_Carriage', 'Placement.Base.x',
+                        f'{loading_x_origin + 560} mm + {loading_x_correction}')
+    safe_set_expression('Loading_Suction_Beam', 'Placement.Base.x',
+                        f'{loading_x_origin + 640} mm + {loading_x_correction}')
+    safe_set_expression('Loading_Vacuum_Manifold', 'Placement.Base.x',
+                        f'{loading_x_origin + 720} mm + {loading_x_correction}')
     for row in range(6):
         for col in range(2):
-            pad = getattr(doc, f'Loading_Suction_Pad_{row+1}_{col+1}')
-            pad.setExpression(
-                'Placement.Base.x',
-                f'{loading_x_origin + 820 + col * 220} mm + {loading_x_correction}'
-            )
+            pad_name = f'Loading_Suction_Pad_{row+1}_{col+1}'
+            safe_set_expression(pad_name, 'Placement.Base.x',
+                                f'{loading_x_origin + 820 + col * 220} mm + {loading_x_correction}')
 
     doc.Portal_Bridge.setExpression('Placement.Base.x', f'150 mm + {bridge_x_expr}')
     doc.Portal_Bridge.setExpression('Placement.Base.y', '100 mm')
@@ -1988,10 +2648,33 @@ def setup_kinematics(doc, params):
     doc.X_Rail_Right.setExpression('Placement.Base.x', '50 mm')
     doc.X_Rail_Right.setExpression('Placement.Base.y', '3350 mm')
     doc.X_Rail_Right.setExpression('Placement.Base.z', f'{machine_z + 330} mm')
+
+    # Lamine alt kanal / slot referanslari 6000 x 3210 cam zarfinin disindaki sabit VB istasyonuna baglidir.
+    doc.Table_Grid_VB_Slot.setExpression('Placement.Base.x', f'210 mm + {cut_line_x_expr}')
+    doc.Table_Grid_VB_Slot.setExpression('Placement.Base.y', '50 mm')
+    doc.Table_Grid_Left_Deck.setExpression('Placement.Base.x', 'Table_Grid.Placement.Base.x')
+    doc.Table_Grid_Left_Deck.setExpression('Placement.Base.y', 'Table_Grid.Placement.Base.y')
+    doc.Table_Grid_Left_Deck.setExpression('Placement.Base.z', 'Table_Grid.Placement.Base.z')
+    doc.Table_Grid_Left_Deck.setExpression('Length', 'Table_Grid_VB_Slot.Placement.Base.x - Table_Grid.Placement.Base.x')
+    doc.Table_Grid_Right_Deck.setExpression('Placement.Base.x', 'Table_Grid_VB_Slot.Placement.Base.x + Table_Grid_VB_Slot.Length')
+    doc.Table_Grid_Right_Deck.setExpression('Placement.Base.y', 'Table_Grid.Placement.Base.y')
+    doc.Table_Grid_Right_Deck.setExpression('Placement.Base.z', 'Table_Grid.Placement.Base.z')
+    doc.Table_Grid_Right_Deck.setExpression(
+        'Length',
+        '(Table_Grid.Placement.Base.x + Table_Grid.Length) - '
+        '(Table_Grid_VB_Slot.Placement.Base.x + Table_Grid_VB_Slot.Length)'
+    )
+    doc.Lower_Cutter_Channel_Reference.setExpression('Placement.Base.x', f'210 mm + {cut_line_x_expr}')
+    doc.Lower_Cutter_Channel_Reference.setExpression('Placement.Base.y', '50 mm')
+    doc.V_Rail.setExpression('Placement.Base.x', 'VB_C_Frame.Placement.Base.x + 8 mm')
+    doc.V_Rail.setExpression('Placement.Base.y', 'Lower_Cutter_Channel_Reference.Placement.Base.y')
+    doc.V_Rail.setExpression('Placement.Base.z', 'Table_Grid.Placement.Base.z - 135 mm')
     
     # Y ekseni arabasi gantry ile X hareketini izler, kendi stroku FreeCAD Y'dedir.
+    # Makine koordinatinda Y=0 operator terminal tarafindaki fiziksel home / origin
+    # tarafidir; FreeCAD tarafinda ayni mantik dogrudan korunur.
     doc.Y_Carriage.setExpression('Placement.Base.x', 'Portal_Bridge.Placement.Base.x - 10 mm')
-    doc.Y_Carriage.setExpression('Placement.Base.y', '100 mm + Variables.B1')
+    doc.Y_Carriage.setExpression('Placement.Base.y', f'100 mm + ({cartesian_y_expr})')
     doc.Y_Carriage.setExpression('Placement.Base.z', f'{machine_z + 450} mm')
     doc.Y_Rail.setExpression('Placement.Base.x', 'Portal_Bridge.Placement.Base.x + 85 mm')
     doc.Y_Rail.setExpression('Placement.Base.y', '150 mm')
@@ -1999,6 +2682,55 @@ def setup_kinematics(doc, params):
     doc.Motor_Y.setExpression('Placement.Base.x', 'Y_Carriage.Placement.Base.x - 40 mm')
     doc.Motor_Y.setExpression('Placement.Base.y', 'Y_Carriage.Placement.Base.y + 120 mm')
     doc.Motor_Y.setExpression('Placement.Base.z', 'Y_Carriage.Placement.Base.z + 20 mm')
+
+    # Kartezyen kopru uzerindeki lineer 8'li vakum banki VB'ye bakan tarafta durur.
+    # Vacuum cup grubu sadece X eksenini izler; kopru boyunca esit aralikli tek sira
+    # olarak Y'de sabit kalir ve kopru X ile VB altina kayar.
+    safe_set_expression('Portal_Lift_Frame', 'Placement.Base.x', 'Portal_Bridge.Placement.Base.x + 168 mm')
+    safe_set_expression('Portal_Lift_Frame', 'Placement.Base.y', '310 mm')
+    safe_set_expression('Portal_Lift_Frame', 'Placement.Base.z', 'Portal_Bridge.Placement.Base.z - 62 mm')
+    safe_set_expression('Portal_Lift_Riser_Left', 'Placement.Base.x', 'Portal_Lift_Frame.Placement.Base.x + 60 mm')
+    safe_set_expression('Portal_Lift_Riser_Left', 'Placement.Base.y', 'Portal_Lift_Frame.Placement.Base.y + 90 mm')
+    safe_set_expression('Portal_Lift_Riser_Left', 'Placement.Base.z', 'Portal_Lift_Frame.Placement.Base.z + 12 mm')
+    safe_set_expression('Portal_Lift_Riser_Right', 'Placement.Base.x', 'Portal_Lift_Frame.Placement.Base.x + 60 mm')
+    safe_set_expression('Portal_Lift_Riser_Right', 'Placement.Base.y', 'Portal_Lift_Frame.Placement.Base.y + 2600 mm')
+    safe_set_expression('Portal_Lift_Riser_Right', 'Placement.Base.z', 'Portal_Lift_Frame.Placement.Base.z + 12 mm')
+    safe_set_expression('Portal_Vacuum_Manifold', 'Placement.Base.x', 'Portal_Lift_Frame.Placement.Base.x + 40 mm')
+    safe_set_expression('Portal_Vacuum_Manifold', 'Placement.Base.y', 'Portal_Lift_Frame.Placement.Base.y + 72 mm')
+    safe_set_expression('Portal_Vacuum_Manifold', 'Placement.Base.z', 'Portal_Lift_Frame.Placement.Base.z - 14 mm')
+    safe_set_expression('Portal_Vacuum_Header_Left', 'Placement.Base.x', 'Portal_Lift_Frame.Placement.Base.x + 18 mm')
+    safe_set_expression('Portal_Vacuum_Header_Left', 'Placement.Base.y', 'Portal_Lift_Frame.Placement.Base.y + 128 mm')
+    safe_set_expression('Portal_Vacuum_Header_Left', 'Placement.Base.z', 'Portal_Lift_Frame.Placement.Base.z - 8 mm')
+    safe_set_expression('Portal_Vacuum_Header_Right', 'Placement.Base.x', 'Portal_Lift_Frame.Placement.Base.x + 18 mm')
+    safe_set_expression('Portal_Vacuum_Header_Right', 'Placement.Base.y', 'Portal_Lift_Frame.Placement.Base.y + 2700 mm')
+    safe_set_expression('Portal_Vacuum_Header_Right', 'Placement.Base.z', 'Portal_Lift_Frame.Placement.Base.z - 8 mm')
+
+    # 8 adet kupa kopru boyunca esit aralikli tek sira lineer dizi olusturur.
+    cup_layout = [(5, 20 + idx * 342) for idx in range(8)]
+    for idx, (x_offset, y_offset) in enumerate(cup_layout, start=1):
+        cup = getattr(doc, f'Portal_Vacuum_Cup_{idx}', None)
+        bracket = getattr(doc, f'Portal_Vacuum_Bracket_{idx}', None)
+        pad = getattr(doc, f'Portal_Vacuum_Pad_{idx}', None)
+        if bracket is not None:
+            safe_set_expression(bracket.Name, 'Placement.Base.x', 'Portal_Vacuum_Manifold.Placement.Base.x + 26 mm')
+            safe_set_expression(bracket.Name, 'Placement.Base.y', f'Portal_Vacuum_Manifold.Placement.Base.y + {y_offset + 24} mm')
+            safe_set_expression(bracket.Name, 'Placement.Base.z', cup_bracket_z_expr)
+        if cup is not None:
+            safe_set_expression(cup.Name, 'Placement.Base.x', f'Portal_Vacuum_Manifold.Placement.Base.x + {18 + x_offset} mm')
+            safe_set_expression(cup.Name, 'Placement.Base.y', f'Portal_Vacuum_Manifold.Placement.Base.y + {y_offset} mm')
+            safe_set_expression(cup.Name, 'Placement.Base.z', cup_body_z_expr)
+        if pad is not None:
+            safe_set_expression(pad.Name, 'Placement.Base.x', f'Portal_Vacuum_Manifold.Placement.Base.x + {22 + x_offset} mm')
+            safe_set_expression(pad.Name, 'Placement.Base.y', f'Portal_Vacuum_Manifold.Placement.Base.y + {y_offset + 6} mm')
+            safe_set_expression(pad.Name, 'Placement.Base.z', cup_pad_z_expr)
+    
+    # Lama silme blogu yine kesim kafasi ile birlikte hareket eder.
+    safe_set_expression('Portal_Blade_Wiper_Block', 'Placement.Base.x', 'Cutting_Head.Placement.Base.x - 10 mm')
+    safe_set_expression('Portal_Blade_Wiper_Block', 'Placement.Base.y', 'Cutting_Head.Placement.Base.y + 48 mm')
+    safe_set_expression('Portal_Blade_Wiper_Block', 'Placement.Base.z', 'Cutting_Head.Placement.Base.z + 24 mm')
+    safe_set_expression('Portal_Blade_Wiper_Pad', 'Placement.Base.x', 'Portal_Blade_Wiper_Block.Placement.Base.x + 12 mm')
+    safe_set_expression('Portal_Blade_Wiper_Pad', 'Placement.Base.y', 'Portal_Blade_Wiper_Block.Placement.Base.y + 10 mm')
+    safe_set_expression('Portal_Blade_Wiper_Pad', 'Placement.Base.z', 'Portal_Blade_Wiper_Block.Placement.Base.z - 10 mm')
     
     # Z ekseni ust kafa: X ve Y'de arabayi izler, strok FreeCAD Z eksenindedir.
     doc.Z_Column.setExpression('Placement.Base.x', 'Y_Carriage.Placement.Base.x + 80 mm')
@@ -2019,17 +2751,48 @@ def setup_kinematics(doc, params):
     doc.C_Axis_Head.setExpression('Placement.Base.x', 'Cutting_Head.Placement.Base.x + 40 mm')
     doc.C_Axis_Head.setExpression('Placement.Base.y', 'Cutting_Head.Placement.Base.y - 20 mm')
     doc.C_Axis_Head.setExpression('Placement.Base.z', 'Cutting_Head.Placement.Base.z + 40 mm')
+
+    # VB ust koprusu lamine kesimde kartezyen Y ekseninden bagimsizdir.
+    # Hareket iletimi operator terminal tarafinda kalir; kopru acikligi 3210 mm
+    # cam eninden daha buyuktur ve cam bu koprunun altina enine girebilir.
+    doc.VB_Upper_Bridge.setExpression('Placement.Base.x', f'210 mm + {cut_line_x_expr}')
+    doc.VB_Upper_Bridge.setExpression('Placement.Base.y', f'{params.VB_Y_BRIDGE_START} mm')
+    doc.VB_Upper_Bridge.setExpression('Placement.Base.z', 'Table_Grid.Placement.Base.z + 405 mm')
+    doc.VB_Upper_Support_Front.setExpression('Placement.Base.x', f'220 mm + {cut_line_x_expr}')
+    doc.VB_Upper_Support_Front.setExpression('Placement.Base.y', f'{params.VB_Y_BRIDGE_START - 30.0} mm')
+    doc.VB_Upper_Support_Front.setExpression('Placement.Base.z', 'Table_Grid.Placement.Base.z + 25 mm')
+    doc.VB_Upper_Support_Rear.setExpression('Placement.Base.x', f'220 mm + {cut_line_x_expr}')
+    doc.VB_Upper_Support_Rear.setExpression('Placement.Base.y', f'{params.VB_Y_BRIDGE_START + params.VB_Y_BRIDGE_SPAN - 90.0} mm')
+    doc.VB_Upper_Support_Rear.setExpression('Placement.Base.z', 'Table_Grid.Placement.Base.z + 25 mm')
+    doc.VB_Y_Rail.setExpression('Placement.Base.x', f'248 mm + {cut_line_x_expr}')
+    doc.VB_Y_Rail.setExpression(
+        'Placement.Base.y',
+        f'{params.VB_Y_BRIDGE_START + max((params.VB_Y_BRIDGE_SPAN - params.VB_Y_RAIL_SPAN) / 2.0, 0.0)} mm'
+    )
+    doc.VB_Y_Rail.setExpression('Placement.Base.z', 'Table_Grid.Placement.Base.z + 435 mm')
+    doc.VB_Y_Carriage.setExpression('Placement.Base.x', 'VB_Y_Rail.Placement.Base.x - 20 mm')
+    doc.VB_Y_Carriage.setExpression('Placement.Base.y', f'{params.VB_Y_BRIDGE_START} mm + ({vb_y_expr})')
+    doc.VB_Y_Carriage.setExpression('Placement.Base.z', 'Table_Grid.Placement.Base.z + 452 mm')
+    # VB Y servo operator paneli tarafinda ve alt seviyede sabit kalir; mekanik
+    # hareket ust kopruye aktarildigi icin araba ile birlikte suruklenmez.
+    doc.VB_Y_Motor.setExpression('Placement.Base.x', 'VB_Upper_Bridge.Placement.Base.x - 18 mm')
+    doc.VB_Y_Motor.setExpression('Placement.Base.y', f'{params.VB_Y_BRIDGE_START + 45.0} mm')
+    doc.VB_Y_Motor.setExpression('Placement.Base.z', 'Table_Grid.Placement.Base.z + 120 mm')
+    doc.VB_C_Frame.setExpression('Placement.Base.x', 'VB_Y_Carriage.Placement.Base.x - 18 mm')
+    doc.VB_C_Frame.setExpression('Placement.Base.y', 'VB_Y_Carriage.Placement.Base.y - 60 mm')
+    doc.VB_C_Frame.setExpression('Placement.Base.z', 'Table_Grid.Placement.Base.z - 250 mm')
     
-    # V ekseni alt kesici: Y arabasi ile ayni yatay stroku izler, V stroku FreeCAD Y'dedir
-    doc.V_Carriage.setExpression('Placement.Base.x', '200 mm + Variables.B1')
-    doc.V_Carriage.setExpression('Placement.Base.y', 'Lower_Cutter_Channel_Reference.Placement.Base.y + 50 mm + Variables.D1')
-    doc.V_Carriage.setExpression('Placement.Base.z', lower_v_z_expr)
+    # V ekseni alt kesici: BTS tarafindaki sabit VB slot hattinda calisir, kesim boyunca
+    # sadece Y arabasini takip eder. Alt eksenin kendi stroku gorselde dikey (FreeCAD Z)
+    # olarak temsil edilir.
+    doc.V_Carriage.setExpression('Placement.Base.x', 'VB_C_Frame.Placement.Base.x - 10 mm')
+    doc.V_Carriage.setExpression('Placement.Base.y', 'VB_C_Frame.Placement.Base.y + 36 mm')
+    doc.V_Carriage.setExpression('Placement.Base.z', f'({lower_v_z_expr}) + Variables.D1')
     doc.Motor_V.setExpression('Placement.Base.x', 'V_Carriage.Placement.Base.x - 50 mm')
     doc.Motor_V.setExpression('Placement.Base.y', 'V_Carriage.Placement.Base.y - 50 mm')
-    doc.Lower_Cutter_Head.setExpression('Placement.Base.x', 'V_Carriage.Placement.Base.x + 100 mm')
-    # R1 spreadsheet hücresi alt kesim takımının cam alt yüzeyine göre nominal boşluğunu taşır.
-    # Kafa gövdesi tablo ızgarasından bağımsız alt kanalda tutulur.
-    doc.Lower_Cutter_Head.setExpression('Placement.Base.y', 'V_Carriage.Placement.Base.y + 50 mm')
+    doc.Lower_Cutter_Head.setExpression('Placement.Base.x', 'VB_C_Frame.Placement.Base.x + 34 mm')
+    # Rigid C-frame icinde alt ve ust kafa ayni Y hattini birlikte izler.
+    doc.Lower_Cutter_Head.setExpression('Placement.Base.y', 'VB_C_Frame.Placement.Base.y + 70 mm')
     doc.Lower_Cutter_Head.setExpression('Placement.Base.z', 'V_Carriage.Placement.Base.z + 50 mm')
     doc.Lower_Cutting_Wheel.setExpression('Placement.Base.x', 'Lower_Cutter_Head.Placement.Base.x')
     doc.Lower_Cutting_Wheel.setExpression('Placement.Base.y', 'Lower_Cutter_Head.Placement.Base.y + 100 mm')
@@ -2043,76 +2806,168 @@ def setup_kinematics(doc, params):
     doc.Lower_Head_Work_Sensor.setExpression('Placement.Base.x', 'Lower_Cutter_Head.Placement.Base.x - 140 mm')
     doc.Lower_Head_Work_Sensor.setExpression('Placement.Base.y', 'Lower_Cutter_Head.Placement.Base.y')
     doc.Lower_Head_Work_Sensor.setExpression('Placement.Base.z', f'({lamine_lower_v_z_expr}) + 140 mm')
+
+    doc.VB_Top_Cutting_Wheel.setExpression('Placement.Base.x', 'VB_C_Frame.Placement.Base.x + 42 mm')
+    doc.VB_Top_Cutting_Wheel.setExpression('Placement.Base.y', 'Lower_Cutting_Wheel.Placement.Base.y')
+    doc.VB_Top_Cutting_Wheel.setExpression(
+        'Placement.Base.z',
+        'Glass_Sheet_Reference.Placement.Base.z + Glass_Sheet_Reference.Height - 18 mm'
+    )
+    doc.VB_Top_Cutter_Head.setExpression('Placement.Base.x', 'VB_C_Frame.Placement.Base.x + 34 mm')
+    doc.VB_Top_Cutter_Head.setExpression('Placement.Base.y', 'VB_C_Frame.Placement.Base.y + 70 mm')
+    doc.VB_Top_Cutter_Head.setExpression(
+        'Placement.Base.z',
+        'Glass_Sheet_Reference.Placement.Base.z + Glass_Sheet_Reference.Height + 28 mm'
+    )
+    doc.VB_Link_Cover.setExpression('Placement.Base.x', 'VB_Upper_Bridge.Placement.Base.x + 32 mm')
+    doc.VB_Link_Cover.setExpression('Placement.Base.y', f'{params.VB_Y_BRIDGE_START + 30.0} mm')
+    doc.VB_Link_Cover.setExpression('Placement.Base.z', 'Table_Grid.Placement.Base.z - 95 mm')
     
     # VB-Modul bileşenleri (sabit pozisyonlar, işlem sırasında hareket eder)
     # Isıtıcı - X boyunca hareket eder, gövde/çubuk ise tabla genişliği boyunca (FreeCAD Y) uzanır.
     # Q1 spreadsheet hücresi cam/table referansina gore 18 mm emniyetli standoff'u tasir.
     # Dikey boşluk FreeCAD Z ekseninde temsil edilir.
-    doc.Heater_Base.setExpression('Placement.Base.x', f'200 mm + {bridge_x_expr}')
+    doc.Heater_Base.setExpression('Placement.Base.x', f'200 mm + {cut_line_x_expr}')
     doc.Heater_Base.setExpression('Placement.Base.y', '200 mm')
     doc.Heater_Base.setExpression('Placement.Base.z', 'Heater_Rod.Placement.Base.z - 80 mm')
-    doc.Heater_Rod.setExpression('Placement.Base.x', f'200 mm + {bridge_x_expr}')
+    doc.Heater_Rod.setExpression('Placement.Base.x', f'200 mm + {cut_line_x_expr}')
     doc.Heater_Rod.setExpression('Placement.Base.y', '3050 mm')
     doc.Heater_Rod.setExpression('Placement.Base.z', heater_rod_z_expr)
-    doc.Heater_Housing.setExpression('Placement.Base.x', f'200 mm + {bridge_x_expr}')
+    doc.Heater_Housing.setExpression('Placement.Base.x', f'200 mm + {cut_line_x_expr}')
     doc.Heater_Housing.setExpression('Placement.Base.y', '200 mm')
     doc.Heater_Housing.setExpression('Placement.Base.z', 'Heater_Rod.Placement.Base.z - 37 mm')
-    doc.Heater_Thermocouple.setExpression('Placement.Base.x', f'250 mm + {bridge_x_expr}')
+    doc.Heater_Thermocouple.setExpression('Placement.Base.x', f'250 mm + {cut_line_x_expr}')
     doc.Heater_Thermocouple.setExpression('Placement.Base.y', 'Heater_Rod.Placement.Base.y - 1400 mm')
     doc.Heater_Thermocouple.setExpression('Placement.Base.z', 'Heater_Rod.Placement.Base.z + 10 mm')
-    doc.Heater_Pneu_Cylinder.setExpression('Placement.Base.x', f'200 mm + {bridge_x_expr}')
+    doc.Heater_Pneu_Cylinder.setExpression('Placement.Base.x', f'200 mm + {cut_line_x_expr}')
     doc.Heater_Pneu_Cylinder.setExpression('Placement.Base.y', '160 mm')
     doc.Heater_Pneu_Cylinder.setExpression('Placement.Base.z', 'Heater_Base.Placement.Base.z - 20 mm')
 
-    # Vantuzlu kopru: 8 adet vantuz ve basinç sensörü, yukleme koprusu ile X'te birlikte gider.
-    doc.Vacuum_Base.setExpression('Placement.Base.x', f'{loading_x_origin + 690} mm + {loading_x_correction}')
-    doc.Vacuum_Base.setExpression('Placement.Base.y', '430 mm')
-    doc.Vacuum_Base.setExpression('Placement.Base.z', 'Loading_Suction_Beam.Placement.Base.z + 95 mm')
-    doc.Vacuum_Channel.setExpression('Placement.Base.x', f'{loading_x_origin + 705} mm + {loading_x_correction}')
-    doc.Vacuum_Channel.setExpression('Placement.Base.y', '560 mm')
-    doc.Vacuum_Channel.setExpression('Placement.Base.z', 'Loading_Suction_Beam.Placement.Base.z + 135 mm')
-    doc.Vacuum_Pressure_Sensor.setExpression('Placement.Base.x', f'{loading_x_origin + 930} mm + {loading_x_correction}')
-    doc.Vacuum_Pressure_Sensor.setExpression('Placement.Base.y', '1470 mm')
-    doc.Vacuum_Pressure_Sensor.setExpression('Placement.Base.z', 'Vacuum_Base.Placement.Base.z + 20 mm - Variables.AD1 * 12 mm')
-    cup_y_offsets = [520, 1020, 1520, 2020]
-    for row, y_offset in enumerate(cup_y_offsets):
-        left_cup = getattr(doc, f'Vacuum_Cup_{row * 2 + 1}')
-        right_cup = getattr(doc, f'Vacuum_Cup_{row * 2 + 2}')
-        left_cup.setExpression('Placement.Base.x', f'{loading_x_origin + 740} mm + {loading_x_correction}')
-        left_cup.setExpression('Placement.Base.y', f'{y_offset} mm')
-        left_cup.setExpression('Placement.Base.z', 'Loading_Suction_Beam.Placement.Base.z - 38 mm')
-        right_cup.setExpression('Placement.Base.x', f'{loading_x_origin + 880} mm + {loading_x_correction}')
-        right_cup.setExpression('Placement.Base.y', f'{y_offset} mm')
-        right_cup.setExpression('Placement.Base.z', 'Loading_Suction_Beam.Placement.Base.z - 38 mm')
+    # Legacy genis vakum traversi gizli tutulur; varsa guvenli sekilde surdurulur.
+    safe_set_expression('Vacuum_Base', 'Placement.Base.x', 'Portal_Bridge.Placement.Base.x + 500 mm')
+    safe_set_expression('Vacuum_Base', 'Placement.Base.y', 'Portal_Bridge.Placement.Base.y + 410 mm')
+    safe_set_expression('Vacuum_Base', 'Placement.Base.z', 'Portal_Bridge.Placement.Base.z - 125 mm')
+    safe_set_expression('Vacuum_Channel', 'Placement.Base.x', 'Vacuum_Base.Placement.Base.x + 15 mm')
+    safe_set_expression('Vacuum_Channel', 'Placement.Base.y', 'Vacuum_Base.Placement.Base.y + 130 mm')
+    safe_set_expression('Vacuum_Channel', 'Placement.Base.z', 'Vacuum_Base.Placement.Base.z + 40 mm')
+    safe_set_expression('Vacuum_Pressure_Sensor', 'Placement.Base.x', 'Vacuum_Base.Placement.Base.x + 240 mm')
+    safe_set_expression('Vacuum_Pressure_Sensor', 'Placement.Base.y', 'Vacuum_Base.Placement.Base.y + 1040 mm')
+    safe_set_expression('Vacuum_Pressure_Sensor', 'Placement.Base.z', 'Vacuum_Base.Placement.Base.z + 20 mm - Variables.AD1 * 12 mm')
+    legacy_cup_y_offsets = [90, 590, 1090, 1590]
+    for row, y_offset in enumerate(legacy_cup_y_offsets):
+        left_cup = getattr(doc, f'Vacuum_Cup_{row * 2 + 1}', None)
+        right_cup = getattr(doc, f'Vacuum_Cup_{row * 2 + 2}', None)
+        if left_cup is not None:
+            left_cup.setExpression('Placement.Base.x', 'Vacuum_Base.Placement.Base.x + 50 mm')
+            left_cup.setExpression('Placement.Base.y', f'Vacuum_Base.Placement.Base.y + {y_offset} mm')
+            left_cup.setExpression('Placement.Base.z', cup_body_z_expr)
+        if right_cup is not None:
+            right_cup.setExpression('Placement.Base.x', 'Vacuum_Base.Placement.Base.x + 190 mm')
+            right_cup.setExpression('Placement.Base.y', f'Vacuum_Base.Placement.Base.y + {y_offset} mm')
+            right_cup.setExpression('Placement.Base.z', cup_body_z_expr)
     
-    # Kırma çıtası - Y stroku ile aynı hizayi izler
-    doc.Breaking_Profile.setExpression('Placement.Base.x', f'300 mm + {bridge_x_expr}')
+    # Kırma çıtası - BTS tarafindaki cam zarfi disindaki sabit VB hattinda calisir
+    doc.Breaking_Bar_Base.setExpression('Placement.Base.x', f'300 mm + {cut_line_x_expr}')
+    doc.Breaking_Profile.setExpression('Placement.Base.x', f'300 mm + {cut_line_x_expr}')
+    doc.Breaking_Arm_Left.setExpression('Placement.Base.x', f'300 mm + {cut_line_x_expr}')
+    doc.Breaking_Arm_Right.setExpression('Placement.Base.x', f'300 mm + {cut_line_x_expr}')
+    doc.Breaking_Cylinder_Left.setExpression('Placement.Base.x', f'300 mm + {cut_line_x_expr}')
+    doc.Breaking_Cylinder_Right.setExpression('Placement.Base.x', f'300 mm + {cut_line_x_expr}')
     
-    # Ayırma bıçağı - Y stroku ile aynı hizayi izler
-    doc.Separating_Blade.setExpression('Placement.Base.x', f'400 mm + {bridge_x_expr}')
-    doc.Separating_Blade_Edge.setExpression('Placement.Base.x', f'400 mm + {bridge_x_expr}')
+    # Ayırma bıçağı - BTS tarafindaki cam zarfi disindaki sabit VB hattinda calisir
+    doc.Separating_Blade_Base.setExpression('Placement.Base.x', f'400 mm + {cut_line_x_expr}')
+    doc.Separating_Blade.setExpression('Placement.Base.x', f'400 mm + {cut_line_x_expr}')
+    doc.Separating_Blade_Edge.setExpression('Placement.Base.x', f'400 mm + {cut_line_x_expr}')
+    doc.Separating_Adjustment.setExpression('Placement.Base.x', f'400 mm + {cut_line_x_expr}')
+    doc.Separating_Cylinder.setExpression('Placement.Base.x', f'400 mm + {cut_line_x_expr}')
     
     # Basınç rollesi - X boyunca hareket eder, merdane tabla genişliği boyunca (FreeCAD Y) uzanır.
     # S1 spreadsheet hücresi merdanenin cam üst yüzeyine göre nominal boşluğunu taşır.
-    doc.Pressure_Roller_Base.setExpression('Placement.Base.x', f'500 mm + {bridge_x_expr}')
+    doc.Pressure_Roller_Base.setExpression('Placement.Base.x', f'500 mm + {cut_line_x_expr}')
     doc.Pressure_Roller_Base.setExpression('Placement.Base.y', '250 mm')
     doc.Pressure_Roller_Base.setExpression('Placement.Base.z', 'Glass_Sheet_Reference.Placement.Base.z + Glass_Sheet_Reference.Height + Variables.S1 - 20 mm')
-    doc.Pressure_Roller_Arm.setExpression('Placement.Base.x', f'500 mm + {bridge_x_expr}')
+    doc.Pressure_Roller_Arm.setExpression('Placement.Base.x', f'500 mm + {cut_line_x_expr}')
     doc.Pressure_Roller_Arm.setExpression('Placement.Base.y', '340 mm')
     doc.Pressure_Roller_Arm.setExpression('Placement.Base.z', 'Glass_Sheet_Reference.Placement.Base.z + Glass_Sheet_Reference.Height + Variables.S1 + 5 mm')
-    doc.Pressure_Roller.setExpression('Placement.Base.x', f'500 mm + {bridge_x_expr}')
+    doc.Pressure_Roller.setExpression('Placement.Base.x', f'500 mm + {cut_line_x_expr}')
     doc.Pressure_Roller.setExpression('Placement.Base.y', '3000 mm')
     doc.Pressure_Roller.setExpression('Placement.Base.z', 'Glass_Sheet_Reference.Placement.Base.z + Glass_Sheet_Reference.Height + Variables.S1 + 30 mm')
-    doc.Pressure_Roller_Cylinder.setExpression('Placement.Base.x', f'500 mm + {bridge_x_expr}')
+    doc.Pressure_Roller_Cylinder.setExpression('Placement.Base.x', f'500 mm + {cut_line_x_expr}')
     doc.Pressure_Roller_Cylinder.setExpression('Placement.Base.y', '260 mm')
     doc.Pressure_Roller_Cylinder.setExpression('Placement.Base.z', 'Pressure_Roller_Base.Placement.Base.z - 10 mm')
-    
+
+    # Lamine proses overlay zonlari: cam tutma, kesim, isitma, ayirma ve kirma.
+    # Bunlar mekanik degil, operasyondaki siralamayi sahnede okunur kilar.
+    safe_set_expression('Lamine_Glass_Hold_Zone', 'Placement.Base.x', '130 mm + Variables.E1')
+    safe_set_expression(
+        'Lamine_Glass_Hold_Zone',
+        'Placement.Base.y',
+        '(Glass_Sheet_Reference.Placement.Base.y + (Glass_Sheet_Reference.Width - Lamine_Glass_Hold_Zone.Width) / 2)',
+    )
+    safe_set_expression(
+        'Lamine_Glass_Hold_Zone',
+        'Placement.Base.z',
+        'Glass_Sheet_Reference.Placement.Base.z + Glass_Sheet_Reference.Height + 4 mm',
+    )
+    safe_set_expression('Lamine_Cut_Zone', 'Placement.Base.x', f'455 mm + {cut_line_x_expr}')
+    safe_set_expression('Lamine_Cut_Zone', 'Placement.Base.y', 'Glass_Sheet_Reference.Placement.Base.y + 55 mm')
+    safe_set_expression(
+        'Lamine_Cut_Zone',
+        'Placement.Base.z',
+        'Glass_Sheet_Reference.Placement.Base.z + Glass_Sheet_Reference.Height + 4 mm',
+    )
+    safe_set_expression('Lamine_Heat_Zone', 'Placement.Base.x', f'400 mm + {cut_line_x_expr}')
+    safe_set_expression('Lamine_Heat_Zone', 'Placement.Base.y', 'Glass_Sheet_Reference.Placement.Base.y + 55 mm')
+    safe_set_expression(
+        'Lamine_Heat_Zone',
+        'Placement.Base.z',
+        'Glass_Sheet_Reference.Placement.Base.z + Glass_Sheet_Reference.Height + 4 mm',
+    )
+    safe_set_expression('Lamine_Separation_Zone', 'Placement.Base.x', f'610 mm + {cut_line_x_expr}')
+    safe_set_expression('Lamine_Separation_Zone', 'Placement.Base.y', 'Glass_Sheet_Reference.Placement.Base.y + 55 mm')
+    safe_set_expression(
+        'Lamine_Separation_Zone',
+        'Placement.Base.z',
+        'Glass_Sheet_Reference.Placement.Base.z + Glass_Sheet_Reference.Height + 4 mm',
+    )
+    safe_set_expression('Lamine_Break_Zone', 'Placement.Base.x', f'520 mm + {cut_line_x_expr}')
+    safe_set_expression('Lamine_Break_Zone', 'Placement.Base.y', 'Glass_Sheet_Reference.Placement.Base.y + 55 mm')
+    safe_set_expression(
+        'Lamine_Break_Zone',
+        'Placement.Base.z',
+        'Glass_Sheet_Reference.Placement.Base.z + Glass_Sheet_Reference.Height + 4 mm',
+    )
+
     # Kablo tankları
-    doc.Cable_Track_X.setExpression('Placement.Base.z', f'{machine_z} mm + Variables.A1 / 6')
-    doc.Cable_Track_Y.setExpression('Placement.Base.x', 'Y_Carriage.Placement.Base.x')
+    # X tanki bridge hareketini yanlislikla Z'de izlememeli; sade modelde
+    # zincir ilmegi sabit besleme ile kopru arasinda X'te ortalanir.
+    doc.Cable_Track_X.setExpression('Placement.Base.x', f'50 mm + ({bridge_x_expr}) / 2')
+    doc.Cable_Track_X.setExpression('Placement.Base.y', '40 mm')
+    doc.Cable_Track_X.setExpression('Placement.Base.z', f'{machine_z + 500} mm')
+
+    # Y tanki portal ile X'te tasinir ve Y arabasini FreeCAD Y ekseninde izler.
+    doc.Cable_Track_Y.setExpression('Placement.Base.x', 'Portal_Bridge.Placement.Base.x + 40 mm')
+    doc.Cable_Track_Y.setExpression('Placement.Base.y', 'Y_Carriage.Placement.Base.y - 100 mm')
     doc.Cable_Track_Y.setExpression('Placement.Base.z', 'Y_Carriage.Placement.Base.z + 100 mm')
-    doc.Cable_Track_V.setExpression('Placement.Base.x', 'V_Carriage.Placement.Base.x')
-    doc.Cable_Track_V.setExpression('Placement.Base.y', 'V_Carriage.Placement.Base.y + 50 mm')
+
+    # Z tanki ust kafa kolonuna baglidir; X/Y'de kafayi izler, Z ilmegi strogu gosterir.
+    doc.Cable_Track_Z.setExpression('Placement.Base.x', 'Z_Column.Placement.Base.x + 150 mm')
+    doc.Cable_Track_Z.setExpression('Placement.Base.y', 'Z_Column.Placement.Base.y + 35 mm')
+    doc.Cable_Track_Z.setExpression('Placement.Base.z', f'{machine_z + 210} mm + Variables.C1 / 2')
+
+    # VB kablo tanki BTS tarafindaki sabit istasyonda alt kesicinin Y takibini ve
+    # dikey V strogunu birlikte gorsellestirir.
+    doc.Cable_Track_V.setExpression('Placement.Base.x', 'V_Carriage.Placement.Base.x - 35 mm')
+    doc.Cable_Track_V.setExpression('Placement.Base.y', 'V_Carriage.Placement.Base.y + 25 mm')
+    doc.Cable_Track_V.setExpression('Placement.Base.z', 'V_Carriage.Placement.Base.z - 120 mm')
+
+    # Alt kesici pnömatik hortumu da ayni kinematik referansi izlesin.
+    doc.Pneu_Hose_1.setExpression('Placement.Base.x', 'V_Carriage.Placement.Base.x + 150 mm')
+    doc.Pneu_Hose_1.setExpression('Placement.Base.y', 'V_Carriage.Placement.Base.y + 100 mm')
+    doc.Pneu_Hose_1.setExpression('Placement.Base.z', 'V_Carriage.Placement.Base.z + 40 mm')
+
+    # Slot gorsellerini her kinematik guncellemede tekrar belirgin tut.
+    ensure_vb_slot_visuals(doc)
 
 
 # =============================================================================
@@ -2132,8 +2987,9 @@ def set_axis_positions(doc, x=None, y=None, z=None, v=None, recompute=True):
     if ss is None:
         raise RuntimeError("Variables spreadsheet bulunamadi")
 
+    bridge_x_max = float(MachineParameters.X_VB_MECHANICAL_STOP)
     if x is not None:
-        ss.set("A1", f"{_clamp(float(x), 0.0, MachineParameters.X_MAX)} mm")
+        ss.set("A1", f"{_clamp(float(x), 0.0, bridge_x_max)} mm")
     if y is not None:
         ss.set("B1", f"{_clamp(float(y), 0.0, MachineParameters.Y_MAX)} mm")
     if z is not None:
@@ -2175,6 +3031,69 @@ def set_bridge_clamp_state(doc, is_clamped, recompute=True):
     return ss
 
 
+def set_lamine_phase_pose(doc, phase_name="VB Y Kesimi", recompute=True):
+    """
+    Lamine proses fazlarindan birini tek adimda sahneye uygula.
+
+    Bu yardimci fonksiyon FreeCAD modeli inceleyen bir kullanicinin mekanik
+    yerlesimi tek tek spreadsheet duzenlemeden hizlica gormesini saglar.
+    """
+    params = MachineParameters()
+    phase_sequence = build_lamine_phase_sequence(params)
+    phase_lookup = {phase["phase"].casefold(): phase for phase in phase_sequence}
+    phase_aliases = {
+        "vb y kesim hazirlik": "Simetrik Scoring Hazirlik",
+        "vb y kesimi": "Simetrik Scoring",
+        "kirma": "Cam Kirma",
+        "isitma": "PVB Isitma",
+        "folyo germe": "Gap Acma",
+        "ayirma": "Folyo Kesme ve Ayirma",
+    }
+    lookup_name = str(phase_name)
+    canonical_name = phase_aliases.get(lookup_name.casefold(), lookup_name)
+    phase = phase_lookup.get(canonical_name.casefold())
+    if phase is None:
+        available = ", ".join(item["phase"] for item in phase_sequence)
+        raise ValueError(f"Bilinmeyen lamine fazi: {phase_name}. Gecerli fazlar: {available}")
+
+    target = phase["target"]
+    inputs, outputs = _merge_io_states(
+        {signal: False for signal in LAMINE_INPUT_DESCRIPTIONS},
+        {signal: False for signal in LAMINE_OUTPUT_DESCRIPTIONS},
+        phase["inputs"],
+        phase["outputs"],
+    )
+    inputs["ESTOP_OK"] = True
+    inputs["DOOR_CLOSED"] = True
+    inputs["AIR_PRESSURE_OK"] = True
+
+    set_lamine_mode(doc, outputs.get("LAMINE_MODE_ENABLE", False), recompute=False)
+    set_axis_positions(
+        doc,
+        x=target["x"],
+        y=target["y"],
+        z=params.Z_HOME - target["z"],
+        v=target["v"],
+        recompute=False,
+    )
+    set_bridge_clamp_state(
+        doc,
+        inputs.get("VACUUM_OK", False) and outputs.get("LOADING_VACUUM_ENABLE", False),
+        recompute=False,
+    )
+    update_lamine_io_sheet(doc, inputs, outputs)
+    if recompute:
+        doc.recompute()
+    return phase
+
+
+def show_lamine_cutting_setup(doc, recompute=True):
+    """
+    Modeli dogrudan aktif lamine kesim pozuna al.
+    """
+    return set_lamine_phase_pose(doc, "Simetrik Scoring", recompute=recompute)
+
+
 def _sheet_find_row(sheet, signal_name):
     row = 2
     while True:
@@ -2201,15 +3120,15 @@ def build_lamine_phase_sequence(params):
     """
     Faz bazli proses akisi, I/O ve eksen hedeflerini tanimlar.
     """
-    cut_line_x = params.LAMINE_KESIM_X_BASLANGIC
     cut_start_y = params.LAMINE_KESIM_Y_BASLANGIC
     cut_end_y = params.LAMINE_KESIM_Y_BITIS
-    tension_x = cut_line_x + params.FOLYO_GERME_X_OFFSET
+    cartesian_safe_y = params.Y_PARK_BTS
+    cartesian_safe_z = params.Z_HOME
 
     return [
         {
             "phase": "Bekleme",
-            "target": {"x": params.X_PARK_BTS, "y": params.Y_PARK_BTS, "z": 300, "v": 0},
+            "target": {"x": params.X_PARK_BTS, "y": cartesian_safe_y, "z": cartesian_safe_z, "v": 0},
             "inputs": {"START_CMD": True, "ESTOP_OK": True, "DOOR_CLOSED": True, "AIR_PRESSURE_OK": True},
             "outputs": {"SERVO_ENABLE_X": True, "SERVO_ENABLE_Y": True, "SERVO_ENABLE_Z": True, "SERVO_ENABLE_V": True},
             "guards": ["START_CMD", "ESTOP_OK", "DOOR_CLOSED", "AIR_PRESSURE_OK"],
@@ -2217,7 +3136,7 @@ def build_lamine_phase_sequence(params):
         },
         {
             "phase": "Cam Yakalama ve Orijinleme",
-            "target": {"x": 0, "y": cut_start_y, "z": 300, "v": 0},
+            "target": {"x": 0, "y": cartesian_safe_y, "z": cartesian_safe_z, "v": 0},
             "inputs": {"GLASS_DETECT": True, "VACUUM_OK": True, "SAFE_TO_MOVE_X": True, "UNLOAD_READY": False},
             "outputs": {"VACUUM_PUMP": True, "LOADING_VACUUM_ENABLE": True},
             "guards": ["GLASS_DETECT", "VACUUM_OK", "SAFE_TO_MOVE_X"],
@@ -2225,7 +3144,7 @@ def build_lamine_phase_sequence(params):
         },
         {
             "phase": "Kenar Probu",
-            "target": {"x": 0, "y": cut_start_y, "z": 300, "v": 0},
+            "target": {"x": 0, "y": cartesian_safe_y, "z": cartesian_safe_z, "v": 0},
             "inputs": {"G31_PROBE_INPUT": True, "EDGE_PROBE_OK": True, "SAFE_TO_MOVE_X": True},
             "outputs": {"VACUUM_PUMP": True, "LOADING_VACUUM_ENABLE": True, "EDGE_PROBE_ENABLE": True},
             "guards": ["G31_PROBE_INPUT", "EDGE_PROBE_OK", "SAFE_TO_MOVE_X"],
@@ -2233,39 +3152,60 @@ def build_lamine_phase_sequence(params):
         },
         {
             "phase": "Kesim Hattina Konumlandirma",
-            "target": {"x": cut_line_x, "y": cut_start_y, "z": 284, "v": 0},
+            "target": {"x": params.LAMINE_KESIM_X_BASLANGIC, "y": cartesian_safe_y, "z": cartesian_safe_z, "v": 0},
             "inputs": {"VACUUM_OK": True, "SAFE_TO_MOVE_X": True},
             "outputs": {"VACUUM_PUMP": True, "LOADING_VACUUM_ENABLE": True},
             "guards": ["VACUUM_OK", "SAFE_TO_MOVE_X"],
-            "next_phase": "X Kilitleme",
+            "next_phase": "Simetrik Scoring Hazirlik",
         },
         {
-            "phase": "X Kilitleme",
-            "target": {"x": cut_line_x, "y": cut_start_y, "z": 284, "v": 0},
+            "phase": "Simetrik Scoring Hazirlik",
+            "target": {"x": params.LAMINE_KESIM_X_BASLANGIC, "y": cut_start_y, "z": cartesian_safe_z, "v": 0},
             "inputs": {"VACUUM_OK": True},
-            "outputs": {"VACUUM_PUMP": True, "LOADING_VACUUM_ENABLE": True, "X_AXIS_LOCK": True},
+            "outputs": {
+                "LAMINE_MODE_ENABLE": True,
+                "VB_Y_LINK_ENABLE": True,
+                "VACUUM_PUMP": True,
+                "LOADING_VACUUM_ENABLE": True,
+                "X_AXIS_LOCK": True,
+            },
             "guards": ["VACUUM_OK"],
-            "next_phase": "Senkronize Y Kesimi",
+            "next_phase": "Simetrik Scoring",
         },
         {
-            "phase": "Senkronize Y Kesimi",
-            "target": {"x": cut_line_x, "y": cut_end_y, "z": 284, "v": 250},
+            "phase": "Simetrik Scoring",
+            "target": {"x": params.LAMINE_KESIM_X_BASLANGIC, "y": cut_end_y, "z": cartesian_safe_z, "v": 250},
             "inputs": {"UPPER_CUT_OK": True, "LOWER_CUT_OK": True},
             "outputs": {
                 "X_AXIS_LOCK": True,
-                "ECAM_ENABLE": True,
                 "LAMINE_MODE_ENABLE": True,
+                "VB_Y_LINK_ENABLE": True,
                 "LOWER_CUT_ENABLE": True,
                 "UPPER_CUT_ENABLE": True,
                 "VACUUM_PUMP": True,
                 "LOADING_VACUUM_ENABLE": True,
             },
             "guards": ["UPPER_CUT_OK", "LOWER_CUT_OK"],
-            "next_phase": "Isitma",
+            "next_phase": "Cam Kirma",
         },
         {
-            "phase": "Isitma",
-            "target": {"x": cut_line_x, "y": cut_end_y, "z": 300, "v": 0},
+            "phase": "Cam Kirma",
+            "target": {"x": params.LAMINE_KESIM_X_BASLANGIC, "y": cut_end_y, "z": cartesian_safe_z, "v": 0},
+            "inputs": {"BREAK_OK": True},
+            "outputs": {
+                "BREAKING_BAR": True,
+                "PRESSURE_ROLLER": True,
+                "LAMINE_MODE_ENABLE": True,
+                "X_AXIS_LOCK": True,
+                "VACUUM_PUMP": True,
+                "LOADING_VACUUM_ENABLE": True,
+            },
+            "guards": ["BREAK_OK"],
+            "next_phase": "PVB Isitma",
+        },
+        {
+            "phase": "PVB Isitma",
+            "target": {"x": params.LAMINE_KESIM_X_BASLANGIC, "y": cut_end_y, "z": cartesian_safe_z, "v": 0},
             "inputs": {"HEATER_DOWN_OK": True, "TEMP_READY": True},
             "outputs": {
                 "LAMINE_MODE_ENABLE": True,
@@ -2279,35 +3219,39 @@ def build_lamine_phase_sequence(params):
                 "HEATER_SAFETY_ENABLE": True,
             },
             "guards": ["HEATER_DOWN_OK", "TEMP_READY"],
-            "next_phase": "Folyo Germe",
+            "next_phase": "Gap Acma",
         },
         {
-            "phase": "Folyo Germe",
-            "target": {"x": tension_x, "y": cut_end_y, "z": 300, "v": 0},
+            "phase": "Gap Acma",
+            "target": {"x": params.LAMINE_KESIM_X_BASLANGIC, "y": cut_end_y, "z": cartesian_safe_z, "v": 0},
             "inputs": {"TENSION_OK": True, "VACUUM_OK": True},
-            "outputs": {"LAMINE_MODE_ENABLE": True, "TENSION_RETRACT_ENABLE": True, "VACUUM_PUMP": True, "LOADING_VACUUM_ENABLE": True},
+            "outputs": {
+                "LAMINE_MODE_ENABLE": True,
+                "X_AXIS_LOCK": True,
+                "TENSION_RETRACT_ENABLE": True,
+                "VACUUM_PUMP": True,
+                "LOADING_VACUUM_ENABLE": True,
+            },
             "guards": ["TENSION_OK", "VACUUM_OK"],
-            "next_phase": "Ayirma",
+            "next_phase": "Folyo Kesme ve Ayirma",
         },
         {
-            "phase": "Ayirma",
-            "target": {"x": tension_x, "y": cut_end_y, "z": 300, "v": 0},
+            "phase": "Folyo Kesme ve Ayirma",
+            "target": {"x": params.LAMINE_KESIM_X_BASLANGIC, "y": cut_end_y, "z": cartesian_safe_z, "v": 0},
             "inputs": {"SEPARATION_OK": True},
-            "outputs": {"SEPARATING_BLADE": True, "VACUUM_PUMP": True, "LOADING_VACUUM_ENABLE": True},
+            "outputs": {
+                "SEPARATING_BLADE": True,
+                "LAMINE_MODE_ENABLE": True,
+                "X_AXIS_LOCK": True,
+                "VACUUM_PUMP": True,
+                "LOADING_VACUUM_ENABLE": True,
+            },
             "guards": ["SEPARATION_OK"],
-            "next_phase": "Kirma",
-        },
-        {
-            "phase": "Kirma",
-            "target": {"x": tension_x, "y": cut_end_y, "z": 300, "v": 0},
-            "inputs": {"BREAK_OK": True},
-            "outputs": {"BREAKING_BAR": True},
-            "guards": ["BREAK_OK"],
             "next_phase": "Bosaltma",
         },
         {
             "phase": "Bosaltma",
-            "target": {"x": params.X_PARK_BTS, "y": params.Y_PARK_BTS, "z": 300, "v": 0},
+            "target": {"x": params.X_PARK_BTS, "y": cartesian_safe_y, "z": cartesian_safe_z, "v": 0},
             "inputs": {"UNLOAD_READY": True},
             "outputs": {"CYCLE_COMPLETE": True},
             "guards": ["UNLOAD_READY"],
@@ -2432,7 +3376,7 @@ def _work_z_to_machine_z(z_value):
 
 def _nc_work_to_machine_position(work_position):
     return {
-        "X": _clamp(float(work_position.get("X", 0.0)), 0.0, MachineParameters.X_MAX),
+        "X": _clamp(float(work_position.get("X", 0.0)), 0.0, MachineParameters.X_VB_MECHANICAL_STOP),
         "Y": _clamp(float(work_position.get("Y", 0.0)), 0.0, MachineParameters.Y_MAX),
         "Z": _work_z_to_machine_z(work_position.get("Z", 0.0)),
         "V": 0.0,
@@ -2445,13 +3389,19 @@ def _build_nc_output_state(
     x_axis_lock=False,
     heater_on=False,
     break_on=False,
+    pressure_roller_on=False,
+    separating_blade_on=False,
+    tension_retract_on=False,
+    vb_y_link_on=False,
     ecam_on=False,
     lamine_mode_on=False,
     cycle_complete=False,
+    alarm=False,
 ):
     outputs = {signal: False for signal in LAMINE_OUTPUT_DESCRIPTIONS}
-    outputs["UPPER_CUT_ENABLE"] = bool(spindle_on)
-    outputs["PRESSURE_ROLLER"] = bool(spindle_on)
+    outputs["UPPER_CUT_ENABLE"] = bool(spindle_on) and not bool(alarm)
+    outputs["LOWER_CUT_ENABLE"] = bool(spindle_on) and not bool(alarm)
+    outputs["PRESSURE_ROLLER"] = bool(pressure_roller_on) and not bool(alarm)
     outputs["VACUUM_PUMP"] = bool(vacuum_on)
     outputs["LOADING_VACUUM_ENABLE"] = bool(vacuum_on)
     outputs["X_AXIS_LOCK"] = bool(x_axis_lock)
@@ -2461,9 +3411,13 @@ def _build_nc_output_state(
     outputs["HEATER_ZONE_2"] = bool(heater_on)
     outputs["HEATER_SAFETY_ENABLE"] = bool(heater_on)
     outputs["BREAKING_BAR"] = bool(break_on)
-    outputs["ECAM_ENABLE"] = bool(ecam_on)
+    outputs["SEPARATING_BLADE"] = bool(separating_blade_on)
+    outputs["TENSION_RETRACT_ENABLE"] = bool(tension_retract_on)
+    outputs["VB_Y_LINK_ENABLE"] = bool(vb_y_link_on)
+    outputs["ECAM_ENABLE"] = bool(ecam_on) and not bool(vb_y_link_on)
     outputs["LAMINE_MODE_ENABLE"] = bool(lamine_mode_on)
     outputs["CYCLE_COMPLETE"] = bool(cycle_complete)
+    outputs["ALARM"] = bool(alarm)
     return outputs
 
 
@@ -2717,8 +3671,8 @@ def generate_nc_from_current_orders(
             )
 
     optimizer = NestingOptimizer(
-        MachineParameters.X_MAX,
-        MachineParameters.Y_MAX,
+        MachineParameters.MAX_GLASS_LENGTH,
+        MachineParameters.MAX_GLASS_WIDTH,
         NestingAlgorithm.GUILLOTINE_BESTFIT,
     )
     nesting_result = optimizer.optimize(parts)
@@ -2726,7 +3680,10 @@ def generate_nc_from_current_orders(
     if not placed_parts:
         raise RuntimeError("Yerel nesting sonucu yerlestirilmis parca uretmedi")
 
-    path_optimizer = CuttingPathOptimizer(MachineParameters.X_MAX, MachineParameters.Y_MAX)
+    path_optimizer = CuttingPathOptimizer(
+        MachineParameters.MAX_GLASS_LENGTH,
+        MachineParameters.MAX_GLASS_WIDTH,
+    )
     path_result = path_optimizer.optimize(placed_parts, PathAlgorithm.TWO_OPT)
     cutting_path = path_result.get("path", list(range(len(placed_parts))))
 
@@ -2831,11 +3788,11 @@ def generate_shape_trial_nc_from_current_orders(
         shape_id_root = str(order.get("order_id", "SHAPE"))
 
         for index in range(quantity):
-            if cursor_x + width > MachineParameters.X_MAX - 150.0:
+            if cursor_x + width > MachineParameters.MAX_GLASS_LENGTH - 150.0:
                 cursor_x = 150.0
                 cursor_y += row_height + 150.0
                 row_height = 0.0
-            if cursor_y + height > MachineParameters.Y_MAX - 150.0:
+            if cursor_y + height > MachineParameters.MAX_GLASS_WIDTH - 150.0:
                 break
 
             part_id = f"{shape_id_root}-S{index+1}"
@@ -2969,11 +3926,11 @@ def generate_real_shape_nc_from_current_orders(
         fitted_points = _close_polyline_points(fitted_points)
 
         for index in range(quantity):
-            if cursor_x + width > MachineParameters.X_MAX - 150.0:
+            if cursor_x + width > MachineParameters.MAX_GLASS_LENGTH - 150.0:
                 cursor_x = 150.0
                 cursor_y += row_height + 150.0
                 row_height = 0.0
-            if cursor_y + height > MachineParameters.Y_MAX - 150.0:
+            if cursor_y + height > MachineParameters.MAX_GLASS_WIDTH - 150.0:
                 break
 
             part_id = f"{shape_id_root}-S{index+1}"
@@ -3088,9 +4045,128 @@ def _distance_between_positions(start_position, end_position):
     return math.sqrt(dx * dx + dy * dy + dz * dz)
 
 
+def _quantity_to_mm(value, default=0.0):
+    """FreeCAD quantity/string/float degerlerini mm cinsinden sayiya indirger."""
+    try:
+        if hasattr(value, "Value"):
+            return float(value.Value)
+        return float(value)
+    except Exception:
+        return float(default)
+
+
+def _resolve_active_glass_surface(doc):
+    """
+    Simulasyonda aktif cam referansinin ust yuzey Z degerini bul.
+
+    Float proxy varsa onu oncele; yoksa parametrik Glass_Sheet_Reference kullan.
+    """
+    for object_name in ("Codex_Float_Glass_Sheet", "Glass_Sheet_Reference"):
+        obj = doc.getObject(object_name)
+        if obj is None:
+            continue
+        try:
+            if hasattr(obj, "Shape") and not obj.Shape.isNull():
+                return float(obj.Shape.BoundBox.ZMax), object_name
+        except Exception:
+            pass
+        try:
+            placement_z = float(obj.Placement.Base.z)
+            height_mm = _quantity_to_mm(getattr(obj, "Height", 0.0), default=0.0)
+            return placement_z + height_mm, object_name
+        except Exception:
+            continue
+    return None, None
+
+
+def _get_top_cutter_object(doc):
+    """
+    Modelde ust kesici icin once olasi Top_Cutter adini, sonra Cutting_Head'i dene.
+    """
+    return doc.getObject("Top_Cutter") or doc.getObject("Cutting_Head")
+
+
+def _pin_cut_heads_to_glass_surface(doc, tolerance_mm=0.5):
+    """
+    M03 gorsellestirmesinde ust ve alt kesici kafalari cam ust yuzeyine sabitle.
+
+    Bu override bir sonraki recompute'a kadar gecerlidir; playback dongusunde her
+    adimdan sonra tekrar uygulanarak kafa temas hali korunur.
+    """
+    glass_surface_z, glass_object_name = _resolve_active_glass_surface(doc)
+    if glass_surface_z is None:
+        return {
+            "ok": False,
+            "reason": "glass_surface_missing",
+            "message": "M03 interlock: cam yuzeyi referansi bulunamadi.",
+        }
+
+    top_cutter = _get_top_cutter_object(doc)
+    lower_cutter = doc.getObject("Lower_Cutter_Head")
+    if top_cutter is None or lower_cutter is None:
+        missing = []
+        if top_cutter is None:
+            missing.append("Top_Cutter/Cutting_Head")
+        if lower_cutter is None:
+            missing.append("Lower_Cutter_Head")
+        return {
+            "ok": False,
+            "reason": "cut_head_missing",
+            "message": f"M03 interlock: kesici obje eksik ({', '.join(missing)}).",
+        }
+
+    actual_positions = {}
+    for key, obj in (("top_cutter", top_cutter), ("lower_cutter", lower_cutter)):
+        try:
+            placement = obj.Placement
+            placement.Base = App.Vector(
+                float(placement.Base.x),
+                float(placement.Base.y),
+                float(glass_surface_z),
+            )
+            obj.Placement = placement
+            actual_positions[key] = float(obj.Placement.Base.z)
+        except Exception as exc:
+            return {
+                "ok": False,
+                "reason": f"{key}_placement_failed",
+                "message": f"M03 interlock: {obj.Name} cam yuzeyine alinmadi ({exc}).",
+            }
+
+    max_error_mm = max(abs(z_value - glass_surface_z) for z_value in actual_positions.values())
+    if max_error_mm > float(tolerance_mm):
+        return {
+            "ok": False,
+            "reason": "surface_sync_tolerance",
+            "message": (
+                "M03 interlock: kesici kafalar cam yuzeyine esitlenemedi "
+                f"(maks hata {max_error_mm:.3f} mm)."
+            ),
+            "glass_surface_z_mm": round(glass_surface_z, 3),
+            "max_error_mm": round(max_error_mm, 3),
+        }
+
+    return {
+        "ok": True,
+        "reason": "surface_sync_ok",
+        "message": (
+            f"M03: {glass_object_name} ust yuzeyi {glass_surface_z:.3f} mm "
+            "referansina kesici kafalar sabitlendi."
+        ),
+        "glass_surface_z_mm": round(glass_surface_z, 3),
+        "max_error_mm": round(max_error_mm, 3),
+        "top_cutter_name": top_cutter.Name,
+        "lower_cutter_name": lower_cutter.Name,
+    }
+
+
 def parse_nc_file(nc_path):
     """
     Basit G00/G01/G28 iceren NC dosyasini hareket listesine donusturur.
+
+    Not:
+    - Revize FreeCAD modelinde `#2000` legacy `E-Cam` bayragi olarak yazilmis olsa da
+      oynatim katmaninda `VB_Y_LINK_ENABLE` yani ortak VB-Y senkron linki olarak yorumlanir.
     """
     if not os.path.exists(nc_path):
         raise FileNotFoundError(f"NC dosyasi bulunamadi: {nc_path}")
@@ -3107,6 +4183,10 @@ def parse_nc_file(nc_path):
     x_axis_lock_on = False
     heater_on = False
     break_on = False
+    pressure_roller_on = False
+    separating_blade_on = False
+    tension_retract_on = False
+    vb_y_link_on = False
     ecam_on = False
     lamine_mode_on = False
     blade_delete_on = False
@@ -3126,7 +4206,8 @@ def parse_nc_file(nc_path):
             variable_id, flag_value = assignment_match.groups()
             enabled = flag_value == "1"
             if variable_id == "2000":
-                ecam_on = enabled
+                vb_y_link_on = enabled
+                ecam_on = False
             elif variable_id == "2001":
                 lamine_mode_on = enabled
             elif variable_id == "2002":
@@ -3163,6 +4244,22 @@ def parse_nc_file(nc_path):
             heater_on = True
         if "M13" in tokens:
             break_on = True
+        if "M14" in tokens:
+            separating_blade_on = True
+        if "M15" in tokens:
+            separating_blade_on = False
+        if "M16" in tokens:
+            pressure_roller_on = True
+        if "M17" in tokens:
+            pressure_roller_on = False
+        if "M18" in tokens:
+            tension_retract_on = True
+        if "M19" in tokens:
+            tension_retract_on = False
+        if "M20" in tokens:
+            break_on = False
+        if "M22" in tokens:
+            heater_on = False
 
         if any(code in ("G04", "G4") for code in g_codes):
             dwell_seconds = 0.0
@@ -3182,6 +4279,10 @@ def parse_nc_file(nc_path):
                     "x_axis_lock": x_axis_lock_on,
                     "heater": heater_on,
                     "break": break_on,
+                    "pressure_roller": pressure_roller_on,
+                    "separating_blade": separating_blade_on,
+                    "tension_retract": tension_retract_on,
+                    "vb_y_link": vb_y_link_on,
                     "ecam": ecam_on,
                     "lamine_mode": lamine_mode_on,
                     "blade_delete": blade_delete_on,
@@ -3220,6 +4321,10 @@ def parse_nc_file(nc_path):
                     "x_axis_lock": x_axis_lock_on,
                     "heater": heater_on,
                     "break": break_on,
+                    "pressure_roller": pressure_roller_on,
+                    "separating_blade": separating_blade_on,
+                    "tension_retract": tension_retract_on,
+                    "vb_y_link": vb_y_link_on,
                     "ecam": ecam_on,
                     "lamine_mode": lamine_mode_on,
                     "blade_delete": blade_delete_on,
@@ -3270,6 +4375,10 @@ def parse_nc_file(nc_path):
                 "x_axis_lock": x_axis_lock_on,
                 "heater": heater_on,
                 "break": break_on,
+                "pressure_roller": pressure_roller_on,
+                "separating_blade": separating_blade_on,
+                "tension_retract": tension_retract_on,
+                "vb_y_link": vb_y_link_on,
                 "ecam": ecam_on,
                 "lamine_mode": lamine_mode_on,
                 "blade_delete": blade_delete_on,
@@ -3311,7 +4420,9 @@ def run_nc_file_simulation(doc=None, nc_path=None, playback_step_mm=150.0, verbo
     event_log = []
     previous_spindle = None
     previous_vacuum = None
+    previous_alarm = None
     previous_blade_delete = False
+    alarm_latched = False
 
     if verbose:
         print("=" * 60)
@@ -3339,11 +4450,21 @@ def run_nc_file_simulation(doc=None, nc_path=None, playback_step_mm=150.0, verbo
                 }
             )
 
-        spindle_state = bool(move.get("spindle", False))
+        spindle_commanded = bool(move.get("spindle", False))
+        m03_interlock_state = {"ok": True, "reason": "not_required", "message": ""}
+        if spindle_commanded:
+            m03_interlock_state = _pin_cut_heads_to_glass_surface(doc)
+        alarm_state = not bool(m03_interlock_state.get("ok", True))
+        alarm_latched = alarm_latched or alarm_state
+        spindle_state = spindle_commanded and not alarm_state
         vacuum_state = bool(move.get("vacuum", False))
         x_lock_state = bool(move.get("x_axis_lock", False))
         heater_state = bool(move.get("heater", False))
         break_state = bool(move.get("break", False))
+        pressure_roller_state = bool(move.get("pressure_roller", False))
+        separating_blade_state = bool(move.get("separating_blade", False))
+        tension_retract_state = bool(move.get("tension_retract", False))
+        vb_y_link_state = bool(move.get("vb_y_link", False))
         ecam_state = bool(move.get("ecam", False))
         lamine_mode_state = bool(move.get("lamine_mode", False))
         blade_delete_state = bool(move.get("blade_delete", False))
@@ -3357,6 +4478,27 @@ def run_nc_file_simulation(doc=None, nc_path=None, playback_step_mm=150.0, verbo
                 }
             )
             previous_spindle = spindle_state
+        if previous_alarm is None or alarm_state != previous_alarm:
+            event_log.append(
+                {
+                    "time_s": round(estimated_duration_s, 3),
+                    "move_index": index,
+                    "event": "alarm_on" if alarm_state else "alarm_off",
+                    "source": move["raw"].strip(),
+                    "details": m03_interlock_state.get("message", ""),
+                }
+            )
+            previous_alarm = alarm_state
+        if alarm_state:
+            event_log.append(
+                {
+                    "time_s": round(estimated_duration_s, 3),
+                    "move_index": index,
+                    "event": "m03_interlock_blocked",
+                    "source": move["raw"].strip(),
+                    "details": m03_interlock_state.get("message", ""),
+                }
+            )
         if previous_vacuum is None or vacuum_state != previous_vacuum:
             event_log.append(
                 {
@@ -3384,11 +4526,17 @@ def run_nc_file_simulation(doc=None, nc_path=None, playback_step_mm=150.0, verbo
             x_axis_lock=x_lock_state,
             heater_on=heater_state,
             break_on=break_state,
+            pressure_roller_on=pressure_roller_state,
+            separating_blade_on=separating_blade_state,
+            tension_retract_on=tension_retract_state,
+            vb_y_link_on=vb_y_link_state,
             ecam_on=ecam_state,
             lamine_mode_on=lamine_mode_state,
             cycle_complete=False,
+            alarm=alarm_state,
         )
         update_lamine_io_sheet(doc, {}, current_outputs)
+        set_lamine_mode(doc, lamine_mode_state, recompute=False)
 
         if move["type"] == "dwell":
             estimated_duration_s += float(move.get("dwell_seconds", 0.0))
@@ -3422,6 +4570,39 @@ def run_nc_file_simulation(doc=None, nc_path=None, playback_step_mm=150.0, verbo
                 y_pos = start["Y"] + (end["Y"] - start["Y"]) * ratio
                 z_pos = start["Z"] + (end["Z"] - start["Z"]) * ratio
                 set_axis_positions(doc, x=x_pos, y=y_pos, z=z_pos, v=0.0)
+                if spindle_state:
+                    m03_interlock_state = _pin_cut_heads_to_glass_surface(doc)
+                    if not m03_interlock_state.get("ok", True):
+                        spindle_state = False
+                        alarm_state = True
+                        alarm_latched = True
+                        current_outputs = _build_nc_output_state(
+                            spindle_on=False,
+                            vacuum_on=vacuum_state,
+                            x_axis_lock=x_lock_state,
+                            heater_on=heater_state,
+                            break_on=break_state,
+                            pressure_roller_on=pressure_roller_state,
+                            separating_blade_on=separating_blade_state,
+                            tension_retract_on=tension_retract_state,
+                            vb_y_link_on=vb_y_link_state,
+                            ecam_on=ecam_state,
+                            lamine_mode_on=lamine_mode_state,
+                            cycle_complete=False,
+                            alarm=True,
+                        )
+                        update_lamine_io_sheet(doc, {}, current_outputs)
+                        event_log.append(
+                            {
+                                "time_s": round(estimated_duration_s, 3),
+                                "move_index": index,
+                                "event": "m03_interlock_trip",
+                                "source": move["raw"].strip(),
+                                "details": m03_interlock_state.get("message", ""),
+                            }
+                        )
+                        previous_alarm = True
+                        break
 
         end = _nc_work_to_machine_position(move["to"])
 
@@ -3430,15 +4611,20 @@ def run_nc_file_simulation(doc=None, nc_path=None, playback_step_mm=150.0, verbo
                 f"{index:02d}. {move['type'].upper():5s} | "
                 f"{move['raw'].strip():35s} | "
                 f"X:{end['X']:6.1f} Y:{end['Y']:6.1f} Z:{end['Z']:6.1f}"
+                f"{' | ALARM' if alarm_state else ''}"
             )
 
     final_position = _nc_work_to_machine_position(moves[-1]["to"])
-    update_lamine_io_sheet(doc, {}, _build_nc_output_state(cycle_complete=True))
+    final_outputs = _build_nc_output_state(
+        cycle_complete=not alarm_latched,
+        alarm=alarm_latched,
+    )
+    update_lamine_io_sheet(doc, {}, final_outputs)
     event_log.append(
         {
             "time_s": round(estimated_duration_s, 3),
             "move_index": len(moves),
-            "event": "cycle_complete",
+            "event": "cycle_complete" if not alarm_latched else "cycle_aborted",
             "source": "simulation_end",
         }
     )
@@ -3450,6 +4636,8 @@ def run_nc_file_simulation(doc=None, nc_path=None, playback_step_mm=150.0, verbo
         print(f"Toplam yol (model mm): {total_path_mm:.1f}")
         print(f"Toplam kesim uzunlugu (NC mm): {total_cut_length_mm:.1f}")
         print(f"Tahmini sure (sn): {estimated_duration_s:.2f}")
+        if alarm_latched:
+            print("Interlock sonucu: M03 bloklandi, ALARM latched.")
         print(
             f"Final pozisyon: "
             f"X={final_position['X']:.1f} "
@@ -3470,6 +4658,7 @@ def run_nc_file_simulation(doc=None, nc_path=None, playback_step_mm=150.0, verbo
         "estimated_duration_s": round(estimated_duration_s, 3),
         "estimated_cut_duration_s": round(estimated_cut_duration_s, 3),
         "estimated_rapid_duration_s": round(estimated_rapid_duration_s, 3),
+        "alarm": bool(alarm_latched),
         "event_log": event_log,
         "final_position": final_position,
         "nc_path": nc_path,
@@ -3504,6 +4693,7 @@ def export_nc_simulation_report(result, report_path=None):
         "estimated_duration_s": result["estimated_duration_s"],
         "estimated_cut_duration_s": result["estimated_cut_duration_s"],
         "estimated_rapid_duration_s": result["estimated_rapid_duration_s"],
+        "alarm": result.get("alarm", False),
         "final_position": result["final_position"],
         "event_log": result["event_log"],
     }
@@ -3573,13 +4763,12 @@ def run_lamine_cutting_simulation(doc, params, duration_sec=45):
     Lamine cam kesim süreci simülasyonu
     
     Süreç adımları:
-    1. Cam yükleme ve vakum
-    2. Isıtma (Heizstab)
-    3. Üst kesim (Z ekseni)
-    4. Alt kesim (V ekseni - senkronize)
-    5. Ayırma (Trennklinge)
-    6. Kırma (Brechleiste)
-    7. Cam boşaltma
+    1. Cam yükleme, vakum ve X ile VB hattına konumlama
+    2. Simetrik scoring (ust/alt kafa ortak VB-Y)
+    3. Cam kırma
+    4. PVB ısıtma
+    5. Gap açma ve folyo kesme/ayırma
+    6. Cam boşaltma
     """
     print("=" * 60)
     print("LAMİNE CAM KESİM SİMÜLASYONU BAŞLATILIYOR")
@@ -3588,6 +4777,26 @@ def run_lamine_cutting_simulation(doc, params, duration_sec=45):
     ss = doc.getObject("Variables")
     if ss is None:
         raise RuntimeError("Variables spreadsheet bulunamadi")
+
+    y_carriage = doc.getObject("Y_Carriage")
+    z_carriage = doc.getObject("Z_Carriage")
+    vb_y_carriage = doc.getObject("VB_Y_Carriage")
+    portal_bridge = doc.getObject("Portal_Bridge")
+
+    def _obj_axis_value(obj, axis_name):
+        if obj is None:
+            return None
+        try:
+            return float(getattr(obj.Placement.Base, axis_name))
+        except Exception:
+            return None
+
+    motion_trace = {
+        "cartesian_y_y_mm": [],
+        "cartesian_z_z_mm": [],
+        "vb_y_y_mm": [],
+        "bridge_x_mm": [],
+    }
 
     phase_sequence = build_lamine_phase_sequence(params)
     populate_lamine_phase_sheet(doc, phase_sequence)
@@ -3634,6 +4843,13 @@ def run_lamine_cutting_simulation(doc, params, duration_sec=45):
             current_phase["inputs"],
             current_phase["outputs"],
         )
+        # Fazlar arasinda hedef Y interpolasyonu yaparken lamine mod bir sonraki
+        # fazda aktif olacaksa onu erkenden uygula. Boylece B1 hareketi kartezyen
+        # Y yerine dogru anda VB ortak Y eksenini surer.
+        motion_lamine_mode = bool(
+            current_phase["outputs"].get("LAMINE_MODE_ENABLE", False)
+            or next_phase["outputs"].get("LAMINE_MODE_ENABLE", False)
+        )
 
         if step == steps:
             final_phase = phase_sequence[-1]
@@ -3648,12 +4864,13 @@ def run_lamine_cutting_simulation(doc, params, duration_sec=45):
                 final_phase["outputs"],
             )
             current_phase = final_phase
+            motion_lamine_mode = bool(final_phase["outputs"].get("LAMINE_MODE_ENABLE", False))
 
+        set_lamine_mode(doc, motion_lamine_mode, recompute=False)
         ss.set('A1', f'{x_pos} mm')
         ss.set('B1', f'{y_pos} mm')
         ss.set('C1', f'{params.Z_HOME - z_pos} mm')
         ss.set('D1', f'{v_pos} mm')
-        set_lamine_mode(doc, outputs.get("LAMINE_MODE_ENABLE", False), recompute=False)
         set_bridge_clamp_state(
             doc,
             inputs.get("VACUUM_OK", False) and outputs.get("LOADING_VACUUM_ENABLE", False),
@@ -3662,6 +4879,11 @@ def run_lamine_cutting_simulation(doc, params, duration_sec=45):
 
         update_lamine_io_sheet(doc, inputs, outputs)
         doc.recompute()
+
+        motion_trace["cartesian_y_y_mm"].append(_obj_axis_value(y_carriage, "y"))
+        motion_trace["cartesian_z_z_mm"].append(_obj_axis_value(z_carriage, "z"))
+        motion_trace["vb_y_y_mm"].append(_obj_axis_value(vb_y_carriage, "y"))
+        motion_trace["bridge_x_mm"].append(_obj_axis_value(portal_bridge, "x"))
 
         if current_phase["phase"] != last_phase_name:
             print(f"[FAZ] {current_phase['phase']} -> sartlar: {', '.join(current_phase['guards'])}")
@@ -3678,16 +4900,507 @@ def run_lamine_cutting_simulation(doc, params, duration_sec=45):
             print(f"      DI : {', '.join(active_inputs)}")
             print(f"      DO : {', '.join(active_outputs)}")
 
-        time.sleep(step_time * 0.05)
-    
+    def _series_summary(values):
+        numeric = [float(value) for value in values if value is not None]
+        if not numeric:
+            return {"min": None, "max": None, "delta": None, "moved": None}
+        min_value = min(numeric)
+        max_value = max(numeric)
+        delta = max_value - min_value
+        return {
+            "min": round(min_value, 2),
+            "max": round(max_value, 2),
+            "delta": round(delta, 2),
+            "moved": delta > 0.01,
+        }
+
+    sanity_report = {
+        "cartesian_y": _series_summary(motion_trace["cartesian_y_y_mm"]),
+        "cartesian_z": _series_summary(motion_trace["cartesian_z_z_mm"]),
+        "vb_y": _series_summary(motion_trace["vb_y_y_mm"]),
+        "bridge_x": _series_summary(motion_trace["bridge_x_mm"]),
+    }
+
     print("-" * 60)
-    print("LAMİNE CAM KESİM SİMÜLASYONU TAMAMLANDI")
+    print("LAMINE SIMULASYON SANITY CHECK")
+    print(
+        f"  CartesianYMoved = {sanity_report['cartesian_y']['moved']} | "
+        f"delta = {sanity_report['cartesian_y']['delta']} mm"
+    )
+    print(
+        f"  CartesianZMoved = {sanity_report['cartesian_z']['moved']} | "
+        f"delta = {sanity_report['cartesian_z']['delta']} mm"
+    )
+    print(
+        f"  VBYMoved        = {sanity_report['vb_y']['moved']} | "
+        f"delta = {sanity_report['vb_y']['delta']} mm"
+    )
+    print(
+        f"  BridgeXMoved    = {sanity_report['bridge_x']['moved']} | "
+        f"delta = {sanity_report['bridge_x']['delta']} mm"
+    )
+    print("  Beklenen: CartesianY=False, CartesianZ=False, VBY=True, BridgeX=True")
     print("=" * 60)
+
+    return {
+        "phases": [phase["phase"] for phase in phase_sequence],
+        "sanity_report": sanity_report,
+        "duration_s": float(duration_sec),
+        "steps": int(steps),
+    }
+
+
+def apply_structural_hierarchy(doc):
+    """
+    Beyaz kartezyen kopru ile lila VB istasyonunu fiziksel/hiyerarsik olarak ayir.
+    """
+    gantry_group = ensure_group(doc, "Gantry_White", "Gantry_White")
+    vb_station_group = ensure_group(doc, "VB_Station_Purple", "VB_Station_Purple")
+    lamine_process_group = ensure_group(doc, "Lamine_Process", "Lamine_Process")
+
+    add_objects_to_group(
+        gantry_group,
+        [
+            doc.getObject("Portal_Bridge"),
+            doc.getObject("Portal_Left_Support"),
+            doc.getObject("Portal_Right_Support"),
+            doc.getObject("Y_Carriage"),
+            doc.getObject("Y_Rail"),
+            doc.getObject("Motor_Y"),
+            doc.getObject("Z_Column"),
+            doc.getObject("Z_Carriage"),
+            doc.getObject("Cutting_Head"),
+            doc.getObject("Cutting_Wheel"),
+            doc.getObject("Motor_Z"),
+            doc.getObject("Portal_Lift_Frame"),
+            doc.getObject("Portal_Lift_Riser_Left"),
+            doc.getObject("Portal_Lift_Riser_Right"),
+            doc.getObject("Portal_Vacuum_Manifold"),
+            doc.getObject("Portal_Vacuum_Header_Left"),
+            doc.getObject("Portal_Vacuum_Header_Right"),
+            [doc.getObject(f"Portal_Vacuum_Bracket_{idx}") for idx in range(1, 9)],
+            [doc.getObject(f"Portal_Vacuum_Cup_{idx}") for idx in range(1, 9)],
+            [doc.getObject(f"Portal_Vacuum_Pad_{idx}") for idx in range(1, 9)],
+            doc.getObject("Vacuum_Base"),
+            doc.getObject("Vacuum_Channel"),
+            doc.getObject("Vacuum_Pressure_Sensor"),
+            [doc.getObject(f"Vacuum_Cup_{idx}") for idx in range(1, 9)],
+            doc.getObject("Portal_Blade_Wiper_Block"),
+            doc.getObject("Portal_Blade_Wiper_Pad"),
+        ],
+    )
+
+    add_objects_to_group(
+        vb_station_group,
+        [
+            doc.getObject("VB_Upper_Bridge"),
+            doc.getObject("VB_Upper_Support_Front"),
+            doc.getObject("VB_Upper_Support_Rear"),
+            doc.getObject("VB_Y_Rail"),
+            doc.getObject("VB_Y_Carriage"),
+            doc.getObject("VB_Y_Motor"),
+            doc.getObject("VB_C_Frame"),
+            doc.getObject("VB_Top_Cutter_Head"),
+            doc.getObject("VB_Top_Cutting_Wheel"),
+            doc.getObject("VB_Link_Cover"),
+            doc.getObject("VB_Base_Plate"),
+            doc.getObject("V_Rail"),
+            doc.getObject("V_Carriage"),
+            doc.getObject("Lower_Cutter_Head"),
+            doc.getObject("Lower_Cutting_Wheel"),
+            doc.getObject("Motor_V"),
+            doc.getObject("VB_Pneu_Cylinder"),
+        ],
+    )
+
+    add_objects_to_group(
+        lamine_process_group,
+        [
+            doc.getObject("Lamine_Glass_Hold_Zone"),
+            doc.getObject("Lamine_Cut_Zone"),
+            doc.getObject("Lamine_Heat_Zone"),
+            doc.getObject("Lamine_Separation_Zone"),
+            doc.getObject("Lamine_Break_Zone"),
+            doc.getObject("Lamine_Process_Label"),
+        ],
+    )
+
+    set_object_style(doc, "Portal_Lift_Frame", label="Gantry_Lift_Frame", color=(0.78, 0.80, 0.82), visible=True)
+    set_object_style(doc, "Portal_Lift_Riser_Left", label="Gantry_Lift_Riser_Left", color=(0.68, 0.70, 0.73), visible=True)
+    set_object_style(doc, "Portal_Lift_Riser_Right", label="Gantry_Lift_Riser_Right", color=(0.68, 0.70, 0.73), visible=True)
+    set_object_style(doc, "Portal_Vacuum_Manifold", label="Gantry_8_Line_Manifold", color=(0.38, 0.40, 0.42), visible=True)
+    set_object_style(doc, "Portal_Vacuum_Header_Left", label="Gantry_Vacuum_Header_Left", color=(0.20, 0.24, 0.28), visible=True)
+    set_object_style(doc, "Portal_Vacuum_Header_Right", label="Gantry_Vacuum_Header_Right", color=(0.20, 0.24, 0.28), visible=True)
+    for idx in range(1, 9):
+        set_object_style(
+            doc,
+            f"Portal_Vacuum_Bracket_{idx}",
+            label=f"Gantry_Vacuum_Bracket_{idx}",
+            color=(0.74, 0.75, 0.77),
+            visible=True,
+        )
+    for idx in range(1, 9):
+        set_object_style(
+            doc,
+            f"Portal_Vacuum_Cup_{idx}",
+            label=f"Gantry_Vacuum_Module_{idx}",
+            color=(0.70, 0.72, 0.75),
+            visible=True,
+        )
+        set_object_style(
+            doc,
+            f"Portal_Vacuum_Pad_{idx}",
+            label=f"Gantry_Vacuum_Pad_{idx}",
+            color=(0.94, 0.80, 0.24),
+            visible=True,
+        )
+
+    white = (0.82, 0.84, 0.86)
+    purple = (0.67, 0.52, 0.82)
+    purple_dark = (0.61, 0.45, 0.78)
+
+    set_object_style(doc, "Portal_Bridge", label="Gantry_White_Bridge", color=white)
+    set_object_style(doc, "Portal_Left_Support", label="Gantry_White_Left_Support", color=(0.87, 0.89, 0.91))
+    set_object_style(doc, "Portal_Right_Support", label="Gantry_White_Right_Support", color=(0.87, 0.89, 0.91))
+    set_object_style(doc, "Y_Carriage", label="Gantry_White_Y_Axis", color=(0.84, 0.88, 0.92))
+    set_object_style(doc, "Vacuum_Base", label="Legacy_Wide_Vacuum_Base", color=(0.72, 0.72, 0.74), visible=False)
+    set_object_style(doc, "Vacuum_Channel", label="Legacy_Wide_Vacuum_Channel", color=(0.40, 0.40, 0.42), visible=False)
+    set_object_style(doc, "Vacuum_Pressure_Sensor", label="Legacy_Wide_Vacuum_Sensor", color=(0.40, 0.40, 0.60), visible=False)
+    set_object_style(doc, "Portal_Blade_Wiper_Block", label="Gantry_White_Blade_Wiper_Block", color=(0.80, 0.80, 0.82))
+    set_object_style(doc, "Portal_Blade_Wiper_Pad", label="Gantry_White_Blade_Wiper_Pad", color=(0.18, 0.18, 0.18))
+    set_object_style(doc, "Grinding_Motor_Housing", visible=False)
+    set_object_style(doc, "Grinding_Spindle", visible=False)
+    set_object_style(doc, "Grinding_Wheel", visible=False)
+    set_object_style(doc, "Grinding_Wheel_Guard", visible=False)
+    set_object_style(doc, "Grinding_Vacuum_Nozzle", visible=False)
+    set_object_style(doc, "Grinding_Pressure_Sensor", visible=False)
+    for idx in range(1, 9):
+        set_object_style(
+            doc,
+            f"Vacuum_Cup_{idx}",
+            label=f"Legacy_Wide_Vacuum_Cup_{idx}",
+            color=(0.15, 0.15, 0.18),
+            visible=False,
+        )
+
+    set_object_style(doc, "VB_Upper_Bridge", label="VB_Y_Axis_Bridge", color=purple)
+    set_object_style(doc, "VB_Y_Rail", label="VB_Y_Axis_Rail", color=purple_dark)
+    set_object_style(doc, "VB_Y_Carriage", label="VB_Y_Axis_Carriage", color=purple)
+    set_object_style(doc, "VB_Y_Motor", label="VB_Y_Axis_Motor", color=(0.18, 0.18, 0.22))
+    set_object_style(doc, "VB_C_Frame", label="VB_Y_Axis_C_Frame", color=purple_dark)
+    set_object_style(doc, "VB_Top_Cutter_Head", label="VB_Y_Axis_Top_Cutter", color=(0.79, 0.62, 0.88))
+    set_object_style(doc, "Lower_Cutter_Head", label="VB_Y_Axis_Lower_Cutter", color=(0.79, 0.62, 0.88))
+    set_object_style(doc, "VB_Top_Cutting_Wheel", label="VB_Y_Axis_Top_Wheel", color=(0.88, 0.88, 0.91))
+    set_object_style(doc, "Lower_Cutting_Wheel", label="VB_Y_Axis_Lower_Wheel", color=(0.88, 0.88, 0.91))
+    set_object_style(doc, "Heater_Base", label="VB_PVB_Heater_Base", color=(0.62, 0.50, 0.42))
+    set_object_style(doc, "Heater_Rod", label="VB_PVB_Heater_Bar", color=(0.90, 0.70, 0.50))
+    set_object_style(doc, "Heater_Housing", label="VB_PVB_Heater_Housing", color=(0.70, 0.60, 0.50))
+    set_object_style(doc, "Heater_Pneu_Cylinder", label="VB_PVB_Heater_Cylinder", color=(0.30, 0.30, 0.40))
+    set_object_style(doc, "Breaking_Bar_Base", label="VB_Break_Bar_Base", color=(0.50, 0.50, 0.50))
+    set_object_style(doc, "Breaking_Profile", label="VB_Break_Bar_Profile", color=(0.66, 0.66, 0.68))
+    set_object_style(doc, "Separating_Blade", label="VB_Foil_Separation_Blade", color=(0.84, 0.84, 0.86))
+    set_object_style(doc, "Separating_Blade_Edge", label="VB_Foil_Separation_Edge", color=(0.92, 0.92, 0.94))
+    set_object_style(doc, "Pressure_Roller_Base", label="VB_Pressure_Roller_Base", color=(0.50, 0.50, 0.50))
+    set_object_style(doc, "Pressure_Roller", label="VB_Pressure_Roller", color=(0.36, 0.36, 0.38))
+    set_object_style(doc, "Lamine_Glass_Hold_Zone", label="Lamine_Glass_Hold_Zone", color=(0.96, 0.82, 0.18), transparency=68)
+    set_object_style(doc, "Lamine_Cut_Zone", label="Lamine_Cut_Zone", color=(0.95, 0.22, 0.28), transparency=45)
+    set_object_style(doc, "Lamine_Heat_Zone", label="Lamine_Heat_Zone", color=(0.96, 0.58, 0.12), transparency=58)
+    set_object_style(doc, "Lamine_Separation_Zone", label="Lamine_Separation_Zone", color=(0.12, 0.82, 0.86), transparency=58)
+    set_object_style(doc, "Lamine_Break_Zone", label="Lamine_Break_Zone", color=(0.60, 0.36, 0.86), transparency=58)
+
+    return {
+        "gantry_group": gantry_group,
+        "vb_station_group": vb_station_group,
+        "lamine_process_group": lamine_process_group,
+    }
 
 
 # =============================================================================
 # TAM MAKİNE MONTAJI
 # =============================================================================
+
+def upgrade_existing_document_to_dual_bridge_layout(doc=None):
+    """
+    Acik FreeCAD belgesini iki koprulu revize geometriye yukselter.
+    """
+    if doc is None:
+        doc = App.ActiveDocument
+    if doc is None:
+        raise RuntimeError("Aktif FreeCAD dokumani bulunamadi")
+
+    params = MachineParameters()
+    table_grid = doc.getObject("Table_Grid")
+    if table_grid is None:
+        raise RuntimeError("Table_Grid bulunamadi; revizyon uygulanamiyor")
+
+    variables = doc.getObject("Variables")
+    if variables is not None:
+        ensure_variables_sheet_defaults(variables, params, preserve_existing=True)
+
+    frame = {"table_grid": table_grid}
+    table_bb = table_grid.Shape.BoundBox
+    glass_length = min(params.MAX_GLASS_LENGTH, table_bb.XLength)
+    glass_width = min(params.MAX_GLASS_WIDTH, table_bb.YLength)
+    glass_x = table_bb.XMin + max((table_bb.XLength - glass_length) / 2.0, 0.0)
+    glass_y = table_bb.YMin + max((table_bb.YLength - glass_width) / 2.0, 0.0)
+
+    glass_reference = doc.getObject("Glass_Sheet_Reference")
+    if glass_reference is None:
+        glass_reference = create_glass_reference(doc, frame, params)
+    else:
+        try:
+            glass_reference.Width = glass_width
+            glass_reference.Height = params.LAMINE_KALINLIK
+            glass_reference.Length = glass_length
+            glass_reference.Placement.Base = App.Vector(glass_x, glass_y, table_bb.ZMax)
+            if hasattr(glass_reference, "ViewObject") and glass_reference.ViewObject:
+                glass_reference.ViewObject.Transparency = 75
+        except Exception:
+            try:
+                doc.removeObject(glass_reference.Name)
+            except Exception:
+                pass
+            glass_reference = create_glass_reference(doc, frame, params)
+
+    if (
+        doc.getObject("Portal_Vacuum_Manifold") is None
+        or doc.getObject("Portal_Lift_Frame") is None
+        or doc.getObject("Portal_Vacuum_Cup_8") is None
+        or doc.getObject("Portal_Vacuum_Pad_8") is None
+        or doc.getObject("Portal_Vacuum_Bracket_8") is None
+    ):
+        for obj_name in [
+            "Portal_Lift_Frame",
+            "Portal_Lift_Riser_Left",
+            "Portal_Lift_Riser_Right",
+            "Portal_Vacuum_Manifold",
+            "Portal_Vacuum_Header_Left",
+            "Portal_Vacuum_Header_Right",
+            "Portal_Blade_Wiper_Block",
+            "Portal_Blade_Wiper_Pad",
+        ] + [f"Portal_Vacuum_Bracket_{idx}" for idx in range(1, 9)] + [f"Portal_Vacuum_Cup_{idx}" for idx in range(1, 9)] + [f"Portal_Vacuum_Pad_{idx}" for idx in range(1, 9)]:
+            if doc.getObject(obj_name) is not None:
+                try:
+                    doc.removeObject(obj_name)
+                except Exception:
+                    pass
+        create_portal_service_modules(
+            doc,
+            {"carriage": doc.getObject("Y_Carriage")},
+            {"head": doc.getObject("Cutting_Head")},
+        )
+    else:
+        for obj_name, dims in {
+            "Portal_Lift_Frame": (2920, 64, 126),
+            "Portal_Lift_Riser_Left": (95, 210, 58),
+            "Portal_Lift_Riser_Right": (95, 210, 58),
+            "Portal_Vacuum_Manifold": (2770, 28, 52),
+            "Portal_Vacuum_Bracket_1": (42, 24, 88),
+            "Portal_Vacuum_Bracket_2": (42, 24, 88),
+            "Portal_Vacuum_Bracket_3": (42, 24, 88),
+            "Portal_Vacuum_Bracket_4": (42, 24, 88),
+            "Portal_Vacuum_Bracket_5": (42, 24, 88),
+            "Portal_Vacuum_Bracket_6": (42, 24, 88),
+            "Portal_Vacuum_Bracket_7": (42, 24, 88),
+            "Portal_Vacuum_Bracket_8": (42, 24, 88),
+        }.items():
+            obj = doc.getObject(obj_name)
+            if obj is None:
+                continue
+            try:
+                obj.Width, obj.Height, obj.Length = dims
+            except Exception:
+                pass
+
+        for idx in range(1, 9):
+            cup = doc.getObject(f"Portal_Vacuum_Cup_{idx}")
+            pad = doc.getObject(f"Portal_Vacuum_Pad_{idx}")
+            if cup is None:
+                pass
+            else:
+                try:
+                    cup.Width = 138
+                    cup.Height = 34
+                    cup.Length = 92
+                except Exception:
+                    pass
+            if pad is None:
+                continue
+            try:
+                pad.Width = 126
+                pad.Height = 8
+                pad.Length = 84
+            except Exception:
+                pass
+
+    lamine_process_visuals = ensure_lamine_process_visuals(doc, params)
+
+    if doc.getObject("VB_Upper_Bridge") is None:
+        create_vb_upper_bridge(doc, frame, params)
+    if doc.getObject("VB_C_Frame") is None:
+        create_vb_lower_cutter(doc, frame, params)
+    else:
+        vb_resize_map = {
+            "VB_Upper_Bridge": (params.VB_Y_BRIDGE_SPAN, 76, 120),
+            "VB_Upper_Support_Front": (120, 420, 110),
+            "VB_Upper_Support_Rear": (120, 420, 110),
+            "VB_Y_Carriage": (240, 140, 120),
+            "VB_Y_Rail": (params.VB_Y_RAIL_SPAN, 24, 34),
+            "VB_Top_Cutter_Head": (90, 210, 72),
+            "VB_C_Frame": (params.VB_C_FRAME_WIDTH, params.VB_C_FRAME_HEIGHT, params.VB_C_FRAME_DEPTH),
+            "VB_Base_Plate": (420, 24, 250),
+            "V_Rail": (params.VB_Y_RAIL_SPAN + 120.0, 30, 40),
+            "V_Carriage": (200, 95, 140),
+            "Lower_Cutter_Head": (92, 220, 72),
+            "VB_Link_Cover": (64, 540, 60),
+        }
+        for obj_name, dims in vb_resize_map.items():
+            obj = doc.getObject(obj_name)
+            if obj is None:
+                continue
+            try:
+                obj.Width, obj.Height, obj.Length = dims
+            except Exception:
+                pass
+
+    lower_head = doc.getObject("Lower_Cutter_Head")
+    table_z = float(table_grid.Placement.Base.z)
+    breakout_x_origin = params.FRAME_LENGTH + params.INTERFACE_GAP
+
+    for idx in range(8):
+        roller = doc.getObject(f"BTS_Roller_{idx+1}")
+        if roller is not None:
+            try:
+                roller.Placement.Base.x = breakout_x_origin + 280 + idx * 260
+                roller.Placement.Base.y = 75
+                roller.Placement.Base.z = 770
+                roller.Placement.Rotation = App.Rotation(App.Vector(1, 0, 0), -90)
+            except Exception:
+                pass
+
+    if lower_head is not None and doc.getObject("Lower_Head_Park_Sensor") is None:
+        create_box(
+            doc, "Lower_Head_Park_Sensor",
+            width=35, height=35, depth=60,
+            color=(0.2, 0.7, 0.2),
+            position=App.Vector(
+                lower_head.Placement.Base.x - 140,
+                lower_head.Placement.Base.y,
+                table_z - 290,
+            ),
+        )
+    if lower_head is not None and doc.getObject("Lower_Head_Work_Sensor") is None:
+        create_box(
+            doc, "Lower_Head_Work_Sensor",
+            width=35, height=35, depth=60,
+            color=(0.85, 0.55, 0.15),
+            position=App.Vector(
+                lower_head.Placement.Base.x - 140,
+                lower_head.Placement.Base.y,
+                table_z - 130,
+            ),
+        )
+
+    if doc.getObject("Vacuum_Base") is None:
+        create_box(
+            doc, "Vacuum_Base",
+            width=2450, height=60, depth=240,
+            color=(0.5, 0.5, 0.5),
+            position=App.Vector(650, 420, table_z + 145),
+        )
+    if doc.getObject("Vacuum_Channel") is None:
+        create_box(
+            doc, "Vacuum_Channel",
+            width=2200, height=20, depth=80,
+            color=(0.3, 0.3, 0.3),
+            position=App.Vector(700, 550, table_z + 185),
+        )
+    if doc.getObject("Vacuum_Pressure_Sensor") is None:
+        create_box(
+            doc, "Vacuum_Pressure_Sensor",
+            width=40, height=40, depth=30,
+            color=(0.4, 0.4, 0.6),
+            position=App.Vector(900, 1470, table_z + 195),
+        )
+
+    cup_positions = [
+        (720, 520), (850, 520),
+        (720, 1020), (850, 1020),
+        (720, 1520), (850, 1520),
+        (720, 2020), (850, 2020),
+    ]
+    for idx, (x_pos, y_pos) in enumerate(cup_positions, start=1):
+        if doc.getObject(f"Vacuum_Cup_{idx}") is None:
+            create_cylinder(
+                doc, f"Vacuum_Cup_{idx}",
+                radius=38, height=38,
+                color=(0.2, 0.2, 0.2),
+                position=App.Vector(x_pos, y_pos, table_z + 105),
+            )
+
+    for name, color in (
+        ("Portal_Bridge", (0.16, 0.63, 0.92)),
+        ("Portal_Left_Support", (0.16, 0.57, 0.86)),
+        ("Portal_Right_Support", (0.16, 0.57, 0.86)),
+        ("Y_Carriage", (0.84, 0.88, 0.92)),
+        ("V_Carriage", (0.64, 0.49, 0.79)),
+        ("Lower_Cutter_Head", (0.84, 0.74, 0.90)),
+    ):
+        obj = doc.getObject(name)
+        if obj is not None and hasattr(obj, "ViewObject") and obj.ViewObject:
+            try:
+                obj.ViewObject.ShapeColor = color
+            except Exception:
+                pass
+
+    main_group = doc.getObject("MainMachine")
+    vb_group = doc.getObject("VBModule")
+    if main_group is not None:
+        add_objects_to_group(
+            main_group,
+            [
+                glass_reference,
+                doc.getObject("Portal_Lift_Frame"),
+                doc.getObject("Portal_Lift_Riser_Left"),
+                doc.getObject("Portal_Lift_Riser_Right"),
+                doc.getObject("Portal_Vacuum_Manifold"),
+                doc.getObject("Portal_Vacuum_Header_Left"),
+                doc.getObject("Portal_Vacuum_Header_Right"),
+                [doc.getObject(f"Portal_Vacuum_Cup_{idx}") for idx in range(1, 9)],
+                doc.getObject("Portal_Blade_Wiper_Block"),
+                doc.getObject("Portal_Blade_Wiper_Pad"),
+                doc.getObject("Vacuum_Base"),
+                doc.getObject("Vacuum_Channel"),
+                doc.getObject("Vacuum_Pressure_Sensor"),
+                [doc.getObject(f"Vacuum_Cup_{idx}") for idx in range(1, 9)],
+            ],
+        )
+    if vb_group is not None:
+        add_objects_to_group(
+            vb_group,
+            [
+                doc.getObject("VB_Upper_Bridge"),
+                doc.getObject("VB_Upper_Support_Front"),
+                doc.getObject("VB_Upper_Support_Rear"),
+                doc.getObject("VB_Y_Rail"),
+                doc.getObject("VB_Y_Carriage"),
+                doc.getObject("VB_Y_Motor"),
+                doc.getObject("VB_Top_Cutter_Head"),
+                doc.getObject("VB_Top_Cutting_Wheel"),
+                doc.getObject("VB_Link_Cover"),
+            ],
+        )
+    control_group = doc.getObject("ControlLayer")
+    if control_group is not None:
+        add_objects_to_group(control_group, lamine_process_visuals)
+
+    position_operator_terminal(doc, params)
+    ensure_vb_slot_visuals(doc)
+    setup_kinematics(doc, params)
+    apply_structural_hierarchy(doc)
+    doc.recompute()
+    return doc
+
 
 def create_complete_machine():
     """
@@ -3717,13 +5430,17 @@ def create_complete_machine():
     breakout_group = create_group(doc, "BreakoutModule", "BTS Cikis Masasi")
     electronics_group = create_group(doc, "ElectricalEquipment", "Pano ve Operator Terminali")
     control_group = create_group(doc, "ControlLayer", "Kontrol ve Spreadsheetler")
+    gantry_white_group = create_group(doc, "Gantry_White", "Gantry_White")
+    vb_station_group = create_group(doc, "VB_Station_Purple", "VB_Station_Purple")
     
     # Parçaları oluştur
     print("\nParçalar oluşturuluyor...")
     
     # Ana şase
     frame = create_frame_assembly(doc, params)
+    frame.update(ensure_vb_slot_visuals(doc))
     glass_reference = create_glass_reference(doc, frame, params)
+    lamine_process_visuals = ensure_lamine_process_visuals(doc, params)
     lower_cutter_channel = create_lower_cutter_channel_reference(doc, frame)
 
     # Hat modulleri
@@ -3737,11 +5454,12 @@ def create_complete_machine():
     
     # Z ekseni (üst kesim kafası)
     z_axis = create_z_axis_assembly(doc, y_axis)
+    portal_services = create_portal_service_modules(doc, y_axis, z_axis)
     
     # VB-Modul bileşenleri
-    vb_lower = create_vb_lower_cutter(doc, frame)
+    vb_upper = create_vb_upper_bridge(doc, frame, params)
+    vb_lower = create_vb_lower_cutter(doc, frame, params)
     vb_heater = create_vb_heater(doc, frame)
-    vb_vacuum = create_vb_vacuum(doc, frame)
     vb_breaking = create_vb_breaking_bar(doc, frame)
     vb_separating = create_vb_separating_blade(doc, frame)
     vb_roller = create_vb_pressure_roller(doc, frame)
@@ -3761,15 +5479,19 @@ def create_complete_machine():
 
     # Grup hiyerarsisi
     add_objects_to_group(loading_group, loading_station)
-    add_objects_to_group(main_group, [frame, glass_reference, lower_cutter_channel, portal, y_axis, z_axis, cables])
-    add_objects_to_group(vb_group, [vb_lower, vb_heater, vb_vacuum, vb_breaking, vb_separating, vb_roller])
+    add_objects_to_group(main_group, [frame, glass_reference, lower_cutter_channel, gantry_white_group, cables])
+    add_objects_to_group(vb_group, [vb_station_group, vb_heater, vb_breaking, vb_separating, vb_roller])
+    add_objects_to_group(gantry_white_group, [portal, y_axis, z_axis, portal_services])
+    add_objects_to_group(vb_station_group, [vb_upper, vb_lower])
     add_objects_to_group(breakout_group, breakout_table)
     add_objects_to_group(electronics_group, [main_panel, operator_terminal])
-    add_objects_to_group(control_group, [ss, io_sheet, phase_sheet])
+    add_objects_to_group(control_group, [ss, io_sheet, phase_sheet, lamine_process_visuals])
     
     # Kinematik bağlantılar
     print("\nKinematik bağlantılar kuruluyor...")
+    position_operator_terminal(doc, params)
     setup_kinematics(doc, params)
+    apply_structural_hierarchy(doc)
     
     # Güncelle
     doc.recompute()
@@ -3782,14 +5504,18 @@ def create_complete_machine():
     print("=" * 60)
     print("\nEKSENLER:")
     print("  X Ekseni (Portal): 6000mm strok")
-    print("  Y Ekseni (Kafa Yatay): 3000mm strok")
+    print("  Y Ekseni (Kartezyen ust kafa): 3000mm strok")
     print("  Z Ekseni (Üst Kesim): 300mm strok")
-    print("  V Ekseni (Alt Kesici): 300mm strok (Y ile senkronize)")
+    print("  VB-Y Ekseni (ust + alt bagli lamine koprusu): 3000mm strok")
+    print("  V Ekseni (Alt kesici dikey strok): 300mm strok")
     print("\nVB-MODUL BİLEŞENLERİ:")
+    print("  - Dar lila ust VB koprusu (sabit X, yalniz Y)")
+    print("  - Ust/alt mekanik bagli lamine kesim kafalari")
     print("  - Alt kesici ünitesi")
     print("\nHAT MODULLERI:")
     print("  - ATH/BSK yukleme istasyonu")
     print("  - BTS kirma/bosaltma masasi")
+    print("  - Kartezyen kopru vakum + lama silme servisi")
     print("  - Isıtıcı çubuk (Heizstab)")
     print("  - Vakum vantuz sistemi")
     print("  - Kırma çıtası (Brechleiste)")
@@ -3802,6 +5528,8 @@ def create_complete_machine():
     print("  - Lamine_Phases spreadsheet: faz-geçiş kuralları")
     print("\nSİMÜLASYON İÇİN:")
     print("  run_lamine_cutting_simulation(App.ActiveDocument, MachineParameters())")
+    print("  show_lamine_cutting_setup(App.ActiveDocument)")
+    print("  set_lamine_phase_pose(App.ActiveDocument, 'PVB Isitma')")
     print("\nNC300 KOPRUSU İÇİN:")
     print("  run_nc300_lamine_cycle(App.ActiveDocument, 25.0)")
     print("\nMANUEL HAREKET İÇİN:")
@@ -3820,8 +5548,13 @@ def export_machine_outputs(doc=None, export_root=None):
     if doc is None:
         raise RuntimeError("Export icin aktif FreeCAD dokumani bulunamadi")
 
+    # Dinamik yol cozumleme - hardcoded path yerine script konumundan turetilir
     if export_root is None:
-        export_root = "/Users/oktaycit/Projeler/CNCRevizyon/CAD/FreeCAD/07_Exports"
+        try:
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            export_root = os.path.join(script_dir, "..", "07_Exports")
+        except Exception:
+            export_root = "/Users/oktaycit/Projeler/CNCRevizyon/CAD/FreeCAD/07_Exports"
 
     fcstd_dir = os.path.join(export_root, "FCStd")
     step_dir = os.path.join(export_root, "STEP", "Assembly")
